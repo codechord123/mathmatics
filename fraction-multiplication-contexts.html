@@ -1,0 +1,1273 @@
+<title>분수의 곱셈 상황맥락 지도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ---------- tokens ---------- */
+:root{
+  --paper:#F4F6F3;
+  --surface:#FFFFFF;
+  --surface-2:#EAEFE9;
+  --surface-3:#E1E8E0;
+  --ink:#16211C;
+  --ink-2:#3B4A42;
+  --muted:#6C7A72;
+  --rule:#DCE3DC;
+  --rule-strong:#B4C0B7;
+  --fa:#1B6C9E;          /* 가로 · 첫째 인수 · 자연수 부분 */
+  --fa-soft:#D3E5F1;
+  --fb:#B7791A;          /* 세로 · 둘째 인수 · 분수 부분 */
+  --fb-soft:#F6E6C4;
+  --fc:#26775A;          /* 겹친 부분 · 결과 */
+  --fc-soft:#C7E2D5;
+  --warn:#A8442F;
+  --warn-soft:#F6E1DA;
+  --shadow:0 1px 2px rgba(22,33,28,.05), 0 10px 26px -16px rgba(22,33,28,.28);
+  --serif:'Gowun Batang', 'Nanum Myeongjo', serif;
+  --sans:'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --mono:'IBM Plex Mono', ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1411; --surface:#161D19; --surface-2:#1D2622; --surface-3:#25302B;
+    --ink:#E6EDE7; --ink-2:#BECABF; --muted:#8A998F;
+    --rule:#2A3530; --rule-strong:#3E4C45;
+    --fa:#77B6DE; --fa-soft:#1B3A4C;
+    --fb:#E0AC55; --fb-soft:#463516;
+    --fc:#63BE93; --fc-soft:#1B3F30;
+    --warn:#E08A72; --warn-soft:#3B241D;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1411; --surface:#161D19; --surface-2:#1D2622; --surface-3:#25302B;
+  --ink:#E6EDE7; --ink-2:#BECABF; --muted:#8A998F;
+  --rule:#2A3530; --rule-strong:#3E4C45;
+  --fa:#77B6DE; --fa-soft:#1B3A4C;
+  --fb:#E0AC55; --fb-soft:#463516;
+  --fc:#63BE93; --fc-soft:#1B3F30;
+  --warn:#E08A72; --warn-soft:#3B241D;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-weight:400; font-size:16px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px; margin:0 auto; padding-inline:20px}
+
+/* ---------- fractions ---------- */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.02; margin:0 .12em}
+.fr .n{font-size:.64em; padding:0 .22em}
+.fr .d{font-size:.64em; padding:0 .22em; border-top:1.5px solid currentColor; margin-top:.06em}
+.mx{display:inline-flex; align-items:center; vertical-align:middle; gap:.1em; white-space:nowrap}
+.eq{font-family:var(--sans); font-variant-numeric:tabular-nums; white-space:nowrap}
+.eq .op{color:var(--muted); padding:0 .18em}
+
+/* ---------- header ---------- */
+.hero{padding-block:56px 34px; border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--fc); font-weight:600}
+h1{font-family:var(--serif); font-weight:700; font-size:clamp(32px,5.2vw,52px); line-height:1.16; margin:.28em 0 .18em; text-wrap:balance; letter-spacing:-.01em}
+.hero .lede{font-size:17px; color:var(--ink-2); max-width:62ch; margin:0}
+.hero-meta{display:flex; flex-wrap:wrap; gap:8px 10px; margin-top:22px}
+.tag{font-family:var(--mono); font-size:12px; color:var(--muted); border:1px solid var(--rule); border-radius:999px; padding:4px 11px; background:var(--surface)}
+
+/* ---------- sticky nav ---------- */
+nav.chips{position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--paper) 90%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--rule)}
+.chips-inner{display:flex; gap:6px; overflow-x:auto; padding-block:10px; scrollbar-width:thin}
+.chips a{
+  flex:0 0 auto; text-decoration:none; color:var(--ink-2); font-size:13.5px; font-weight:500;
+  padding:6px 13px; border-radius:8px; border:1px solid transparent; white-space:nowrap;
+}
+.chips a:hover{background:var(--surface-2); color:var(--ink)}
+.chips a.on{background:var(--fc); color:#fff; border-color:var(--fc)}
+.chips a:focus-visible{outline:2px solid var(--fc); outline-offset:2px}
+
+/* ---------- intro ---------- */
+.intro{padding-block:44px 10px}
+.intro h2{font-family:var(--serif); font-size:26px; font-weight:700; margin:0 0 6px}
+.intro p{color:var(--ink-2); max-width:66ch; margin:0 0 26px}
+.mapfig{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:14px; padding:22px 18px 16px; box-shadow:var(--shadow)}
+.mapfig svg{display:block; width:100%; height:auto}
+.mapfig figcaption{margin-top:14px; font-size:13.5px; color:var(--muted); text-align:center}
+.legend{display:flex; flex-wrap:wrap; gap:10px 22px; margin:26px 0 0; padding:16px 18px; background:var(--surface-2); border-radius:12px}
+.legend div{display:flex; align-items:center; gap:9px; font-size:13.5px; color:var(--ink-2)}
+.sw{width:16px; height:16px; border-radius:4px; border:1.5px solid var(--rule-strong); flex:0 0 auto}
+.sw.a{background:var(--fa-soft); border-color:var(--fa)}
+.sw.b{background:var(--fb-soft); border-color:var(--fb)}
+.sw.c{background:var(--fc-soft); border-color:var(--fc)}
+
+/* ---------- lesson band ---------- */
+.lesson{padding-block:52px 8px; border-top:1px solid var(--rule); margin-top:44px}
+.lesson-head{display:grid; grid-template-columns:auto 1fr; gap:6px 20px; align-items:start}
+.chasi{
+  font-family:var(--mono); font-size:12.5px; font-weight:600; letter-spacing:.06em;
+  color:#fff; background:var(--ink); border-radius:7px; padding:5px 11px; align-self:start; white-space:nowrap;
+}
+.lesson h2{font-family:var(--serif); font-weight:700; font-size:clamp(24px,3.4vw,34px); margin:0; line-height:1.25; letter-spacing:-.01em}
+.lesson-sub{grid-column:2; display:flex; flex-wrap:wrap; gap:6px 14px; align-items:baseline; margin-top:2px}
+.pages{font-family:var(--mono); font-size:12px; color:var(--muted)}
+.meaning{
+  grid-column:1/-1; margin-top:20px; padding:18px 20px; border-radius:12px;
+  background:var(--surface); border:1px solid var(--rule); border-left:4px solid var(--fc);
+}
+.meaning b{color:var(--fc)}
+.meaning .from{display:block; margin-top:8px; font-size:14px; color:var(--muted)}
+
+/* ---------- context article ---------- */
+.ctx{margin-top:30px; background:var(--surface); border:1px solid var(--rule); border-radius:16px; padding:24px 24px 26px; box-shadow:var(--shadow)}
+.ctx-head{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:14px}
+.ctx-no{font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.1em; color:var(--muted)}
+.ctx-model{font-size:13.5px; font-weight:600; color:var(--fc); background:var(--fc-soft); border-radius:6px; padding:3px 10px}
+.ctx-story{font-size:18px; line-height:1.95; margin:0 0 16px; color:var(--ink); max-width:70ch}
+.ctx-story b{font-weight:600}
+.ctx-eq{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin:0 0 22px;
+  padding:14px 18px; background:var(--surface-2); border-radius:10px;
+  font-family:var(--serif); font-size:clamp(20px,3vw,26px); font-weight:700;
+}
+.ctx-eq .lbl{font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.1em; color:var(--muted); align-self:center}
+.ctx-body{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(260px,1fr); gap:26px 30px; align-items:start}
+@media (max-width:900px){ .ctx-body{grid-template-columns:1fr} }
+
+figure.dg{margin:0}
+figure.dg .dg-canvas svg{display:block; width:100%; height:auto}
+figure.dg figcaption{margin-top:12px; font-size:13px; line-height:1.55; color:var(--muted); border-top:1px solid var(--rule); padding-top:10px}
+
+.steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px}
+.steps li{display:grid; grid-template-columns:26px 1fr; gap:12px}
+.sn{width:26px; height:26px; border-radius:50%; background:var(--fc); color:#fff; font-family:var(--mono); font-size:12.5px; font-weight:600; display:grid; place-items:center; margin-top:2px}
+.steps h4{margin:0 0 3px; font-size:14.5px; font-weight:600; color:var(--ink)}
+.steps p{margin:0; font-size:14.5px; line-height:1.62; color:var(--ink-2)}
+.steps .calc{display:block; margin-top:6px; padding:8px 12px; background:var(--surface-2); border-radius:8px; font-size:15.5px; color:var(--ink)}
+
+/* ---------- teaching notes ---------- */
+.notes{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:26px}
+.note{padding:18px 20px; border-radius:12px; font-size:14.5px; line-height:1.62}
+.note h4{margin:0 0 7px; font-size:13px; font-family:var(--mono); letter-spacing:.09em; text-transform:uppercase; font-weight:600}
+.note p{margin:0; color:var(--ink-2)}
+.note.point{background:var(--surface-2)}
+.note.point h4{color:var(--fc)}
+.note.trap{background:var(--warn-soft)}
+.note.trap h4{color:var(--warn)}
+.note.trap p{color:var(--ink-2)}
+.note .wrong{color:var(--warn); font-weight:600; background:color-mix(in srgb, var(--warn) 12%, transparent); border-radius:5px; padding:1px 6px}
+.note .wrong::before{content:'✗ '; font-weight:700}
+.note .right{color:var(--fc); font-weight:600; background:color-mix(in srgb, var(--fc) 12%, transparent); border-radius:5px; padding:1px 6px}
+.note .right::before{content:'✓ '; font-weight:700}
+
+/* ---------- footer ---------- */
+footer{margin-top:60px; padding-block:30px 60px; border-top:1px solid var(--rule); color:var(--muted); font-size:13.5px}
+footer p{margin:0 0 6px; max-width:70ch}
+
+/* ---------- diagram svg classes ---------- */
+.dg-t{font-family:var(--sans); font-variant-numeric:tabular-nums}
+.dg-m{font-family:var(--mono)}
+.dg-ink{fill:var(--ink)} .dg-i2{fill:var(--ink-2)} .dg-mut{fill:var(--muted)}
+.dg-fa{fill:var(--fa)} .dg-fb{fill:var(--fb)} .dg-fc{fill:var(--fc)} .dg-inv{fill:#fff}
+.dgs-ink{stroke:var(--ink);stroke-width:1.3;fill:none}
+.dgs-i2{stroke:var(--ink-2);stroke-width:1.3;fill:none}
+.dgs-mut{stroke:var(--rule-strong);stroke-width:1.2;fill:none}
+.dgs-fa{stroke:var(--fa);stroke-width:1.6;fill:none}
+.dgs-fb{stroke:var(--fb);stroke-width:1.6;fill:none}
+.dgs-fc{stroke:var(--fc);stroke-width:1.8;fill:none}
+.dg-frame{fill:none; stroke:var(--ink-2); stroke-width:1.6}
+.dg-grid{stroke:var(--rule-strong); stroke-width:1; fill:none}
+.dg-dash{stroke:var(--rule-strong); stroke-width:1.1; stroke-dasharray:4 4; fill:none}
+.f-a{fill:var(--fa-soft)} .f-b{fill:var(--fb-soft)} .f-c{fill:var(--fc-soft)} .f-n{fill:var(--surface-2)} .f-none{fill:none}
+.mk-fa{fill:var(--fa)} .mk-fb{fill:var(--fb)} .mk-fc{fill:var(--fc)} .mk-ink{fill:var(--ink-2)}
+
+/* ---------- print ---------- */
+@media print{
+  nav.chips{display:none}
+  body{background:#fff}
+  .lesson{break-before:page; border-top:none}
+  .ctx{break-inside:avoid; box-shadow:none}
+  .hero{padding-block:0 20px}
+}
+@media (prefers-reduced-motion:reduce){ *{animation:none!important; transition:none!important} }
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">초등 5학년 · 분수의 곱셈 · 2~8차시</div>
+    <h1>분수의 곱셈 상황맥락 지도</h1>
+    <p class="lede">차시마다 <b>배 · 측정(수직선) · 비율</b> 세 가지 맥락을 붙이고, 그 맥락이 그림에서 어떻게 계산으로 바뀌는지를 단계로 펼쳐 놓았습니다. 식을 먼저 알려 주는 자료가 아니라, 그림에서 식이 나오는 순서로 읽는 자료입니다.</p>
+    <div class="hero-meta">
+      <span class="tag">6개 차시</span>
+      <span class="tag">18개 상황맥락</span>
+      <span class="tag">그림 18컷 · 단계별 풀이</span>
+      <span class="tag">수업 투사 · 인쇄 겸용</span>
+    </div>
+  </div>
+</header>
+
+<nav class="chips" aria-label="차시 이동">
+  <div class="wrap chips-inner">
+    <a href="#map">개념 흐름</a>
+    <a href="#c2">2차시 (진분수)×(자연수)</a>
+    <a href="#c3">3차시 (대분수)×(자연수)</a>
+    <a href="#c4">4차시 (자연수)×(진분수)</a>
+    <a href="#c5">5차시 (자연수)×(대분수)</a>
+    <a href="#c67">6·7차시 (진분수)×(진분수)</a>
+    <a href="#c8">8차시 (대분수)×(대분수)</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ================= 개념 흐름 ================= -->
+<section class="intro" id="map">
+  <h2>여섯 차시는 무엇이 달라지며 이어지는가</h2>
+  <p>같은 &ldquo;곱셈&rdquo;이지만 <b>곱하는 수</b>가 자연수인지 분수인지에 따라 말로 읽는 방법이 달라집니다. 이 전환점을 놓치면 아이들은 4차시에서 &ldquo;곱했는데 왜 작아지지?&rdquo;에서 막힙니다.</p>
+
+  <figure class="mapfig">
+    <svg viewBox="0 0 1000 322" role="img" aria-label="2차시부터 8차시까지의 개념 흐름도. 곱하는 수가 자연수인 구간, 곱하는 수가 분수인 구간, 분수끼리 곱하는 구간의 세 갈래로 나뉜다.">
+      <!-- panel 1 -->
+      <rect x="10" y="14" width="270" height="214" rx="12" class="f-n" stroke="none"/>
+      <text class="dg-t dg-fa" x="145" y="38" text-anchor="middle" font-size="14" font-weight="600">몇 개 만큼</text>
+      <text class="dg-t dg-mut" x="145" y="55" text-anchor="middle" font-size="11.5">곱하는 수가 자연수</text>
+      <rect x="30" y="66" width="230" height="52" rx="9" fill="var(--surface)" stroke="var(--rule-strong)" stroke-width="1.2"/>
+      <text class="dg-t dg-mut dg-m" x="45" y="86" text-anchor="start" font-size="11">2차시</text>
+      <text class="dg-t dg-ink" x="45" y="105" text-anchor="start" font-size="15" font-weight="600">(진분수) × (자연수)</text>
+      <rect x="30" y="130" width="230" height="52" rx="9" fill="var(--surface)" stroke="var(--rule-strong)" stroke-width="1.2"/>
+      <text class="dg-t dg-mut dg-m" x="45" y="150" text-anchor="start" font-size="11">3차시</text>
+      <text class="dg-t dg-ink" x="45" y="169" text-anchor="start" font-size="15" font-weight="600">(대분수) × (자연수)</text>
+      <text class="dg-t dg-i2" x="145" y="204" text-anchor="middle" font-size="12.5">똑같은 양을 여러 번 더하기</text>
+      <text class="dg-t dg-fc" x="145" y="220" text-anchor="middle" font-size="12.5" font-weight="600">결과는 반드시 커진다</text>
+
+      <!-- panel 2 -->
+      <rect x="365" y="14" width="270" height="214" rx="12" class="f-n" stroke="none"/>
+      <text class="dg-t dg-fb" x="500" y="38" text-anchor="middle" font-size="14" font-weight="600">~의 얼마만큼 · 몇 배</text>
+      <text class="dg-t dg-mut" x="500" y="55" text-anchor="middle" font-size="11.5">곱하는 수가 분수</text>
+      <rect x="385" y="66" width="230" height="52" rx="9" fill="var(--surface)" stroke="var(--rule-strong)" stroke-width="1.2"/>
+      <text class="dg-t dg-mut dg-m" x="400" y="86" text-anchor="start" font-size="11">4차시</text>
+      <text class="dg-t dg-ink" x="400" y="105" text-anchor="start" font-size="15" font-weight="600">(자연수) × (진분수)</text>
+      <rect x="385" y="130" width="230" height="52" rx="9" fill="var(--surface)" stroke="var(--rule-strong)" stroke-width="1.2"/>
+      <text class="dg-t dg-mut dg-m" x="400" y="150" text-anchor="start" font-size="11">5차시</text>
+      <text class="dg-t dg-ink" x="400" y="169" text-anchor="start" font-size="15" font-weight="600">(자연수) × (대분수)</text>
+      <text class="dg-t dg-i2" x="500" y="204" text-anchor="middle" font-size="12.5">전체를 똑같이 나눈 것의 일부</text>
+      <text class="dg-t dg-warn" x="500" y="220" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--warn)">진분수배는 작아진다</text>
+
+      <!-- panel 3 -->
+      <rect x="720" y="14" width="270" height="214" rx="12" class="f-n" stroke="none"/>
+      <text class="dg-t dg-fc" x="855" y="38" text-anchor="middle" font-size="14" font-weight="600">부분의 부분 · 넓이</text>
+      <text class="dg-t dg-mut" x="855" y="55" text-anchor="middle" font-size="11.5">두 수 모두 분수</text>
+      <rect x="740" y="66" width="230" height="52" rx="9" fill="var(--surface)" stroke="var(--rule-strong)" stroke-width="1.2"/>
+      <text class="dg-t dg-mut dg-m" x="755" y="86" text-anchor="start" font-size="11">6·7차시</text>
+      <text class="dg-t dg-ink" x="755" y="105" text-anchor="start" font-size="15" font-weight="600">(진분수) × (진분수)</text>
+      <rect x="740" y="130" width="230" height="52" rx="9" fill="var(--surface)" stroke="var(--rule-strong)" stroke-width="1.2"/>
+      <text class="dg-t dg-mut dg-m" x="755" y="150" text-anchor="start" font-size="11">8차시</text>
+      <text class="dg-t dg-ink" x="755" y="169" text-anchor="start" font-size="15" font-weight="600">(대분수) × (대분수)</text>
+      <text class="dg-t dg-i2" x="855" y="204" text-anchor="middle" font-size="12.5">가로 × 세로로 겹치는 칸</text>
+      <text class="dg-t dg-fc" x="855" y="220" text-anchor="middle" font-size="12.5" font-weight="600">직사각형 넓이가 모범 모델</text>
+
+      <!-- transitions -->
+      <defs>
+        <marker id="mapArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,1 L9,5 L0,9 z" class="mk-ink"/>
+        </marker>
+      </defs>
+      <line x1="288" y1="124" x2="357" y2="124" class="dgs-i2" marker-end="url(#mapArrow)"/>
+      <text class="dg-t dg-ink" x="322" y="100" text-anchor="middle" font-size="11.5" font-weight="600">곱하는 수가</text>
+      <text class="dg-t dg-ink" x="322" y="114" text-anchor="middle" font-size="11.5" font-weight="600">분수로</text>
+      <line x1="643" y1="124" x2="712" y2="124" class="dgs-i2" marker-end="url(#mapArrow)"/>
+      <text class="dg-t dg-ink" x="677" y="100" text-anchor="middle" font-size="11.5" font-weight="600">곱해지는 수도</text>
+      <text class="dg-t dg-ink" x="677" y="114" text-anchor="middle" font-size="11.5" font-weight="600">분수로</text>
+
+      <!-- size axis -->
+      <line x1="200" y1="278" x2="800" y2="278" class="dgs-mut"/>
+      <line x1="500" y1="266" x2="500" y2="290" class="dgs-ink"/>
+      <text class="dg-t dg-ink dg-m" x="500" y="308" text-anchor="middle" font-size="13" font-weight="600">1</text>
+      <path d="M340,278 L212,278" class="dgs-mut" marker-end="url(#mapArrow)"/>
+      <path d="M660,278 L788,278" class="dgs-mut" marker-end="url(#mapArrow)"/>
+      <text class="dg-t dg-i2" x="345" y="262" text-anchor="middle" font-size="12.5">1보다 작은 수를 곱하면 <tspan fill="var(--warn)" font-weight="600">작아진다</tspan></text>
+      <text class="dg-t dg-i2" x="655" y="262" text-anchor="middle" font-size="12.5">1보다 큰 수를 곱하면 <tspan fill="var(--fc)" font-weight="600">커진다</tspan></text>
+    </svg>
+    <figcaption>세 갈래는 계산 절차가 아니라 <b>말로 읽는 방식</b>으로 나뉩니다. 아래 축은 여섯 차시를 관통하는 한 가지 판단 기준입니다.</figcaption>
+  </figure>
+
+  <div class="legend" aria-label="그림 색 규칙">
+    <div><span class="sw a"></span> 첫째 인수 · 가로 방향 · 자연수 부분</div>
+    <div><span class="sw b"></span> 둘째 인수 · 세로 방향 · 분수 부분</div>
+    <div><span class="sw c"></span> 겹친 부분 = 곱한 값(답)</div>
+  </div>
+</section>
+
+<!-- ================= 2차시 ================= -->
+<section class="lesson" id="c2">
+  <div class="lesson-head">
+    <span class="chasi">2차시</span>
+    <h2>(진분수) × (자연수)</h2>
+    <div class="lesson-sub"><span class="pages">수 36–37p · 수익 26–27p</span></div>
+    <div class="meaning">
+      <b>읽는 법 —</b> <span class="eq" data-eq="2/5 × 6"></span> 은 &ldquo;<span class="eq" data-eq="2/5"></span> 씩 6묶음&rdquo;, 곧 <span class="eq" data-eq="2/5"></span> 을 6번 더한 것입니다.
+      <span class="from">자연수의 곱셈에서 배운 <b>동수누가</b>가 그대로 이어집니다. 달라진 것은 &ldquo;하나&rdquo;의 크기가 분수라는 점뿐입니다.</span>
+    </div>
+  </div>
+
+  <!-- 2-1 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 1</span><span class="ctx-model">묶음 · 반복덧셈 모델</span></div>
+    <p class="ctx-story">딸기우유 한 팩에 우유가 <span class="eq" data-eq="2/5"></span> L 들어 있습니다. 이 우유 <b>6팩</b>에 들어 있는 우유는 모두 몇 L일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="2/5 × 6 = 12/5 = 2_2/5"></span><span>L</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"bars","count":6,"whole":0,"numer":2,"denom":5,"orient":"h","unit":"L","rowA":"① 한 팩씩 그리기 — 1L를 5칸으로 나눈 것 중 2칸","rowB":"② 색칠한 칸만 모으기","noteA":"6팩","alt":"5칸 중 2칸이 칠해진 우유팩 6개를 모으면 1L짜리 2개와 5분의 2가 된다"}'></div>
+        <figcaption>1 L를 5등분한 <span class="eq" data-eq="1/5"></span> L 조각이 <b>2개씩 6묶음 = 12개</b>. 5조각이 모이면 1 L가 되므로 2 L와 <span class="eq" data-eq="2/5"></span> L가 남습니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>무엇이 1인지 정한다</h4><p>1 L짜리 통 하나가 &ldquo;1&rdquo;입니다. 한 팩은 그 통을 5칸으로 나눈 것 중 2칸.</p></div></li>
+        <li><span class="sn">2</span><div><h4>조각의 개수만 센다</h4><p>조각의 <b>크기</b>(<span class="eq" data-eq="1/5"></span>)는 변하지 않고 <b>개수</b>만 6배가 됩니다.<span class="calc"><span class="eq" data-eq="2/5 × 6 = ( 2 × 6 ) / 5 = 12/5"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>대분수로 바꿔 크기를 확인한다</h4><p><span class="eq" data-eq="12/5 = 2_2/5"></span> → <b>2와 <span class="eq" data-eq="2/5"></span> L</b>. 한 팩이 반 컵쯤이니 6팩이면 2 L가 조금 넘는다는 어림과 맞습니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 2-2 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 2</span><span class="ctx-model">수직선 · 측정 모델</span></div>
+    <p class="ctx-story">리본 한 도막의 길이가 <span class="eq" data-eq="3/4"></span> m입니다. 이 리본 <b>5도막</b>을 겹치지 않게 길게 이어 붙이면 전체 길이는 몇 m일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="3/4 × 5 = 15/4 = 3_3/4"></span><span>m</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"numberline","mode":"hops","min":0,"max":4,"denom":4,"hop":{"w":0,"n":3,"d":4},"count":5,"unit":"m","title":"0에서 출발해 4분의 3 m씩 다섯 번 뛰기","alt":"0부터 4까지의 수직선 위에서 4분의 3씩 다섯 번 뛰면 4분의 15, 즉 3과 4분의 3에 도착한다"}'></div>
+        <figcaption>같은 크기의 뜀뛰기를 <b>이어 붙이는</b> 그림입니다. 도착점의 눈금을 읽으면 <span class="eq" data-eq="15/4"></span>, 대분수로는 <span class="eq" data-eq="3_3/4"></span> m.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>눈금 한 칸을 정한다</h4><p>1 m를 4칸으로 나누어 한 칸을 <span class="eq" data-eq="1/4"></span> m로 잡습니다. 리본 한 도막은 <b>3칸</b>.</p></div></li>
+        <li><span class="sn">2</span><div><h4>같은 뜀뛰기를 5번 이어 붙인다</h4><p>3칸씩 5번이므로 칸 수는 <span class="eq" data-eq="3 × 5 = 15"></span>칸.<span class="calc"><span class="eq" data-eq="3/4 × 5 = ( 3 × 5 ) / 4 = 15/4"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>4칸씩 묶어 1 m를 만든다</h4><p>15칸 &divide; 4칸 = 3 m가 되고 3칸이 남습니다 → <b><span class="eq" data-eq="3_3/4"></span> m</b>. 도막마다 1 m가 안 되므로 답이 5 m보다 작다는 점도 함께 확인합니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 2-3 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 3</span><span class="ctx-model">비율 · 단위량 모델</span></div>
+    <p class="ctx-story">수도꼭지에서 물이 <b>1분에 <span class="eq" data-eq="5/6"></span> L씩</b> 일정하게 나옵니다. 이 수도로 <b>4분</b> 동안 물을 받으면 몇 L를 받을 수 있을까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="5/6 × 4 = 20/6 = 10/3 = 3_1/3"></span><span>L</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"bars","count":4,"whole":0,"numer":5,"denom":6,"orient":"v","unit":"L","rowA":"① 1분마다 받은 물 — 1L 통의 6칸 중 5칸","rowB":"② 받은 물을 모아 통에 다시 채우기","noteA":"4분","alt":"6칸 중 5칸이 찬 물통 4개의 물을 모으면 가득 찬 통 3개와 6분의 2가 된다"}'></div>
+        <figcaption>1분치를 통 하나로 보지 말고 <b><span class="eq" data-eq="1/6"></span> L 조각 5개</b>로 봅니다. 4분이면 조각 20개, 6개씩 채우면 통 3개와 조각 2개.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>단위량을 확인한다</h4><p>&ldquo;1분에 <span class="eq" data-eq="5/6"></span> L&rdquo;가 기준입니다. 시간이 곱하는 수 자리에 옵니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>먼저 약분하면 계산이 짧다</h4><p>분모 6과 곱하는 수 4의 공약수 2로 미리 약분합니다.<span class="calc"><span class="eq" data-eq="5/6 × 4 = ( 5 × 4 ) / 6 = 20/6 = 10/3"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>대분수로 답하고 어림한다</h4><p><span class="eq" data-eq="10/3 = 3_1/3"></span> → <b><span class="eq" data-eq="3_1/3"></span> L</b>. 1분에 1 L가 조금 못 되니 4분이면 4 L보다 조금 작아야 맞습니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <div class="notes">
+    <div class="note point"><h4>지도 포인트</h4><p>분모는 그대로 두고 분자에만 자연수를 곱하는 이유를 &ldquo;<b>조각의 크기는 그대로, 개수만 늘어나기 때문</b>&rdquo;이라고 그림에서 말하게 합니다. 규칙을 먼저 알려 주면 3차시에서 자연수 부분을 빠뜨립니다.</p></div>
+    <div class="note trap"><h4>자주 나오는 오답</h4><p>분모에도 곱하는 실수. <span class="wrong"><span class="eq" data-eq="2/5 × 6 = 12/30"></span></span> → <span class="right"><span class="eq" data-eq="12/5"></span></span>. 그림으로 되돌아가 &ldquo;칸을 더 잘게 나눈 적이 있느냐&rdquo;고 물으면 스스로 찾아냅니다.</p></div>
+  </div>
+</section>
+
+<!-- ================= 3차시 ================= -->
+<section class="lesson" id="c3">
+  <div class="lesson-head">
+    <span class="chasi">3차시</span>
+    <h2>(대분수) × (자연수)</h2>
+    <div class="lesson-sub"><span class="pages">수 38–39p · 수익 28–29p</span></div>
+    <div class="meaning">
+      <b>읽는 법 —</b> 2차시와 의미는 똑같이 &ldquo;<b>몇 묶음</b>&rdquo;입니다. 다만 한 묶음이 <span class="eq" data-eq="1_3/4"></span>처럼 <b>1보다 커졌습니다</b>.
+      <span class="from">그래서 계산 방법이 두 갈래로 갈립니다. ① 가분수로 바꾸어 한 번에 곱하기 ② 자연수 부분과 분수 부분을 따로 곱해 더하기.</span>
+    </div>
+  </div>
+
+  <!-- 3-1 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 1</span><span class="ctx-model">묶음 · 반복덧셈 모델</span></div>
+    <p class="ctx-story">사과 한 상자의 무게가 <span class="eq" data-eq="1_3/4"></span> kg입니다. 똑같은 사과 <b>4상자</b>의 무게는 모두 몇 kg일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="1_3/4 × 4 = 7"></span><span>kg</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"bars","count":4,"whole":1,"numer":3,"denom":4,"orient":"h","unit":"kg","rowA":"① 한 상자씩 그리기 — 1kg 한 개와 4분의 3","rowB":"② 자연수 부분끼리, 분수 부분끼리 모으기","noteA":"4상자","alt":"1과 4분의 3 묶음 4개를 모으면 온전한 1kg 4개와 4분의 3 조각 4개가 되어 모두 7kg이 된다"}'></div>
+        <figcaption><b>파란 칸 4개(=4 kg)</b>와 <b>노란 <span class="eq" data-eq="3/4"></span> 조각 4개</b>가 나옵니다. 조각 4개는 12조각이므로 다시 3 kg. 합쳐서 7 kg.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>방법 ① 가분수로 바꾸어 곱한다</h4><p><span class="eq" data-eq="1_3/4 = 7/4"></span> 로 고친 뒤 2차시와 똑같이 계산합니다.<span class="calc"><span class="eq" data-eq="7/4 × 4 = 28/4 = 7"></span></span></p></div></li>
+        <li><span class="sn">2</span><div><h4>방법 ② 두 부분으로 나누어 곱한다</h4><p>그림의 파란 칸과 노란 조각을 따로 세는 방법입니다.<span class="calc"><span class="eq" data-eq="( 1 × 4 ) + ( 3/4 × 4 ) = 4 + 3 = 7"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>두 답이 같은지 맞춰 본다</h4><p>둘 다 <b>7 kg</b>. 한 상자가 2 kg이 안 되므로 4상자는 8 kg보다 작아야 한다는 어림과도 맞습니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 3-2 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 2</span><span class="ctx-model">수직선 · 측정 모델</span></div>
+    <p class="ctx-story">물통 하나에 물이 <span class="eq" data-eq="1_2/3"></span> L씩 들어 있습니다. 똑같은 물통 <b>3개</b>에 담긴 물은 모두 몇 L일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="1_2/3 × 3 = 5"></span><span>L</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"numberline","mode":"hops","min":0,"max":5,"denom":3,"hop":{"w":1,"n":2,"d":3},"count":3,"unit":"L","title":"1과 3분의 2 L씩 세 번 뛰기","alt":"0부터 5까지의 수직선에서 1과 3분의 2씩 세 번 뛰면 정확히 5에 도착한다"}'></div>
+        <figcaption>한 번의 뜀뛰기가 <b>1보다 큽니다</b>. 그래서 뜀뛰기 한 번이 눈금 1을 지나치고, 세 번 만에 딱 5 L에 닿습니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>한 칸을 <span class="eq" data-eq="1/3"></span> L로 잡는다</h4><p>물통 하나는 <b>5칸</b>(<span class="eq" data-eq="5/3"></span> L)입니다. 대분수를 가분수로 보는 것이 그림에서는 &ldquo;칸 수 세기&rdquo;입니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>칸 수를 3배 한다</h4><p><span class="calc"><span class="eq" data-eq="5/3 × 3 = 15/3 = 5"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>부분으로 나눠 검산한다</h4><p><span class="eq" data-eq="( 1 × 3 ) + ( 2/3 × 3 ) = 3 + 2 = 5"></span>. 답이 <b>딱 떨어지는 자연수</b>가 되는 경우도 있음을 짚어 줍니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 3-3 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 3</span><span class="ctx-model">비율 · 단위량 모델</span></div>
+    <p class="ctx-story">지훈이는 한 시간에 <span class="eq" data-eq="2_1/2"></span> km를 걷습니다. 같은 빠르기로 <b>3시간</b> 동안 걸으면 몇 km를 갈 수 있을까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="2_1/2 × 3 = 15/2 = 7_1/2"></span><span>km</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"dnl","topName":"시간","botName":"거리 (km)","ticks":[{"p":0,"t":{"t":"0"},"b":{"t":"0"}},{"p":0.3333,"t":{"t":"1"},"b":{"w":2,"n":1,"d":2}},{"p":0.6667,"t":{"t":"2"},"b":{"t":"5"}},{"p":1,"t":{"t":"3"},"b":{"w":7,"n":1,"d":2},"hi":true}],"alt":"시간과 거리를 짝지은 이중 수직선. 1시간에 2와 2분의 1 km, 3시간에 7과 2분의 1 km"}'></div>
+        <figcaption><b>이중 수직선</b>은 두 양이 같은 비율로 함께 늘어남을 보여 줍니다. 시간이 3배가 되면 거리도 3배.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>1시간 자리에 <span class="eq" data-eq="2_1/2"></span>를 적는다</h4><p>이중 수직선의 위는 시간, 아래는 거리. <b>짝지어진 두 눈금</b>이 늘 함께 움직입니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>가분수로 바꿔 곱한다</h4><p><span class="calc"><span class="eq" data-eq="2_1/2 × 3 = 5/2 × 3 = 15/2"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>답의 단위를 확인한다</h4><p><span class="eq" data-eq="15/2 = 7_1/2"></span> → <b><span class="eq" data-eq="7_1/2"></span> km</b>. 시간에 거리를 곱한 것이 아니라, <b>1시간당 거리</b>를 시간만큼 곱했다는 점을 말로 확인시킵니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <div class="notes">
+    <div class="note point"><h4>지도 포인트</h4><p>두 방법 중 하나를 강요하지 않습니다. <b>자연수 부분이 큰 수</b>(<span class="eq" data-eq="12_1/5 × 4"></span>)에서는 나누어 곱하기가, <b>분모가 큰 수</b>에서는 가분수가 편하다는 것을 아이들이 비교해 보게 합니다.</p></div>
+    <div class="note trap"><h4>자주 나오는 오답</h4><p>자연수 부분을 잊는 실수. <span class="wrong"><span class="eq" data-eq="1_3/4 × 4 = 3"></span></span> → 분수 부분만 곱한 것입니다. 그림에서 <b>파란 칸 4개가 사라졌다</b>고 짚어 주면 즉시 알아챕니다.</p></div>
+  </div>
+</section>
+
+<!-- ================= 4차시 ================= -->
+<section class="lesson" id="c4">
+  <div class="lesson-head">
+    <span class="chasi">4차시</span>
+    <h2>(자연수) × (진분수)</h2>
+    <div class="lesson-sub"><span class="pages">수 40–41p · 수익 30–31p</span></div>
+    <div class="meaning">
+      <b>읽는 법이 바뀌는 지점 —</b> <span class="eq" data-eq="12 × 2/3"></span> 은 &ldquo;12를 <span class="eq" data-eq="2/3"></span>번 더한다&rdquo;가 아니라 &ldquo;<b>12의 <span class="eq" data-eq="2/3"></span>만큼</b>&rdquo;입니다.
+      <span class="from">이 단원에서 가장 큰 개념 전환입니다. 곱하는 수가 1보다 작으므로 <b>결과가 원래 수보다 작아집니다</b>.</span>
+    </div>
+  </div>
+
+  <!-- 4-1 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 1</span><span class="ctx-model">부분–전체 · 분할 모델</span></div>
+    <p class="ctx-story">색종이가 <b>12장</b> 있습니다. 그중 <span class="eq" data-eq="2/3"></span>을 종이접기에 썼습니다. 종이접기에 쓴 색종이는 몇 장일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="12 × 2/3 = 24/3 = 8"></span><span>장</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"partwhole","mode":"grid","total":12,"groups":3,"fill":2,"cols":4,"unit":"장","wholeLabel":"색종이 전체 12장","alt":"색종이 12장을 4장씩 3묶음으로 나누고 그중 2묶음 8장을 색칠한 그림"}'></div>
+        <figcaption>&ldquo;<span class="eq" data-eq="2/3"></span>&rdquo;은 <b>3묶음으로 똑같이 나눈 것 중 2묶음</b>이라는 뜻. 나누기(&divide;3)와 곱하기(&times;2)가 한 식 안에 들어 있습니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>분모만큼 똑같이 나눈다</h4><p>분모 3 → 12장을 <b>3묶음</b>으로. 한 묶음은 <span class="eq" data-eq="12 ÷ 3 = 4"></span>장.</p></div></li>
+        <li><span class="sn">2</span><div><h4>분자만큼 가져온다</h4><p>분자 2 → <b>2묶음</b>을 가져오면 <span class="eq" data-eq="4 × 2 = 8"></span>장.<span class="calc"><span class="eq" data-eq="12 × 2/3 = ( 12 × 2 ) / 3 = 24/3 = 8"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>커졌는지 작아졌는지 말한다</h4><p>답 8장은 처음 12장보다 <b>작습니다</b>. &ldquo;곱했는데 작아진 이유&rdquo;를 <span class="eq" data-eq="2/3"></span>이 1보다 작다는 사실로 설명하게 합니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 4-2 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 2</span><span class="ctx-model">수직선 · 측정 모델</span></div>
+    <p class="ctx-story">길이가 <b>10 m</b>인 끈이 있습니다. 이 끈의 <span class="eq" data-eq="3/5"></span>만큼을 잘라서 썼습니다. 사용한 끈의 길이는 몇 m일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="10 × 3/5 = 30/5 = 6"></span><span>m</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"numberline","mode":"partition","min":0,"max":10,"parts":5,"fill":3,"unit":"m","partLabel":"2 m","title":"10 m를 5묶음으로 나누고 그중 3묶음 쓰기","alt":"0부터 10까지의 수직선을 5등분하여 각 2미터로 만들고 앞의 3칸 6미터를 색칠한 그림"}'></div>
+        <figcaption>연속량(길이)에서도 방법은 같습니다. 전체를 <b>분모 수만큼</b> 나눈 다음 <b>분자 수만큼</b> 가져옵니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>전체를 5등분한다</h4><p>10 m &divide; 5 = <b>2 m</b>가 한 칸. 수직선의 눈금이 2 m 간격이 됩니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>3칸을 색칠한다</h4><p><span class="eq" data-eq="2 × 3 = 6"></span> m.<span class="calc"><span class="eq" data-eq="10 × 3/5 = ( 10 × 3 ) / 5 = 30/5 = 6"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>남은 양도 함께 읽는다</h4><p>쓴 것이 6 m, 남은 것은 <span class="eq" data-eq="10 × 2/5 = 4"></span> m. 두 값을 더하면 10 m가 되는지 확인시킵니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 4-3 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 3</span><span class="ctx-model">배 · 비교 모델</span></div>
+    <p class="ctx-story">형은 <b>8000원</b>을 가지고 있습니다. 내가 가진 돈은 형이 가진 돈의 <span class="eq" data-eq="3/4"></span>배입니다. 내가 가진 돈은 얼마일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="8000 × 3/4 = 6000"></span><span>원</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"partwhole","mode":"strip","total":8000,"groups":4,"fill":3,"unit":"원","cellText":"2000원","wholeLabel":"형의 돈 8000원 (기준 1배)","fillLabel":"나의 돈 = 8000원의 3/4배","alt":"8000원을 나타내는 띠를 4등분해 각 2000원으로 만들고 앞의 3칸 6000원을 색칠한 그림"}'></div>
+        <figcaption>&ldquo;<span class="eq" data-eq="3/4"></span>배&rdquo;는 <b>기준의 일부</b>라는 뜻. 5차시의 &ldquo;<span class="eq" data-eq="1_1/3"></span>배&rdquo;와 나란히 두면 1보다 작은 배와 큰 배의 차이가 한눈에 보입니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>기준이 무엇인지 찾는다</h4><p>&ldquo;<b>형이 가진 돈의</b>&rdquo; → 기준(1배)은 형의 8000원. 기준을 띠로 먼저 그립니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>기준을 4등분하고 3칸을 가져온다</h4><p>한 칸 2000원 &times; 3칸.<span class="calc"><span class="eq" data-eq="8000 × 3/4 = ( 8000 × 3 ) / 4 = 6000"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>&ldquo;배&rdquo;의 뜻을 말로 정리한다</h4><p><b>1배보다 작은 배</b>이므로 내 돈은 형보다 적습니다. 배 = 항상 커지는 것이 아니라는 점을 이 맥락에서 못 박습니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <div class="notes">
+    <div class="note point"><h4>지도 포인트</h4><p>&ldquo;<b>~의</b>&rdquo;라는 말이 곧 곱셈 기호라는 것을 반복해서 짚습니다. <span class="eq" data-eq="12"></span>의 <span class="eq" data-eq="2/3"></span> → <span class="eq" data-eq="12 × 2/3"></span>. 문장에서 &ldquo;의&rdquo;를 찾아 &times;로 바꾸는 연습이 문장제 해결의 핵심 열쇠입니다.</p></div>
+    <div class="note trap"><h4>자주 나오는 오개념</h4><p><b>&ldquo;곱하면 항상 커진다&rdquo;</b>. 4차시는 이 믿음이 깨지는 차시입니다. 계산으로 반박하지 말고, 색종이 8장이 12장보다 <b>눈에 보이게 적다</b>는 그림으로 반박하게 하세요.</p></div>
+  </div>
+</section>
+
+<!-- ================= 5차시 ================= -->
+<section class="lesson" id="c5">
+  <div class="lesson-head">
+    <span class="chasi">5차시</span>
+    <h2>(자연수) × (대분수)</h2>
+    <div class="lesson-sub"><span class="pages">수 42–43p · 수익 32–33p</span></div>
+    <div class="meaning">
+      <b>읽는 법 —</b> 4차시와 똑같이 &ldquo;<b>~의 얼마만큼 · 몇 배</b>&rdquo;입니다. 다만 곱하는 수가 <b>1보다 크므로</b> 결과가 원래 수보다 커집니다.
+      <span class="from">&ldquo;1배 하고도 얼마만큼 더&rdquo;로 읽는 순간, 자연수 부분과 분수 부분을 나누어 곱하는 계산이 그림에서 저절로 나옵니다.</span>
+    </div>
+  </div>
+
+  <!-- 5-1 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 1</span><span class="ctx-model">배 · Scaling 모델</span></div>
+    <p class="ctx-story">내 몸무게는 <b>45 kg</b>입니다. 우리 형의 몸무게는 내 몸무게의 <span class="eq" data-eq="1_1/3"></span>배(1배 하고도 <span class="eq" data-eq="1/3"></span>배 더)입니다. 형의 몸무게는 몇 kg일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="45 × 1_1/3 = 60"></span><span>kg</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"compare","cell":{"t":"15","u":"kg"},"baseCells":3,"compCells":4,"baseLabel":"나 — 45 kg (기준 1배)","compLabel":"형 — 45 kg의 1과 3분의 1배","braceA":"1배 = 45 kg","braceB":"1/3배 = 15 kg","totalLabel":"= 60 kg","alt":"45kg을 15kg짜리 세 칸으로 나눈 기준 막대와, 그보다 한 칸 더 긴 60kg 막대를 비교한 그림"}'></div>
+        <figcaption>기준 막대를 <b>분모 수(3)만큼</b> 나누어 두면 &ldquo;<span class="eq" data-eq="1/3"></span>배 더&rdquo;가 <b>한 칸 더</b>로 보입니다. 배 모델의 핵심 장면입니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>기준을 3등분한다</h4><p>분모가 3이므로 45 kg을 3칸으로. 한 칸은 <span class="eq" data-eq="45 ÷ 3 = 15"></span> kg.</p></div></li>
+        <li><span class="sn">2</span><div><h4>1배 + <span class="eq" data-eq="1/3"></span>배로 나누어 곱한다</h4><p><span class="calc"><span class="eq" data-eq="( 45 × 1 ) + ( 45 × 1/3 ) = 45 + 15 = 60"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>가분수로도 확인한다</h4><p><span class="eq" data-eq="45 × 4/3 = 180/3 = 60"></span> → <b>60 kg</b>. 4칸 &times; 15 kg으로 그림에서도 곧바로 읽힙니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 5-2 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 2</span><span class="ctx-model">수직선 · 측정 모델</span></div>
+    <p class="ctx-story">철사 <b>1 m</b>의 무게가 <b>6 g</b>입니다. 이 철사 <span class="eq" data-eq="2_3/4"></span> m의 무게는 몇 g일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="6 × 2_3/4 = 33/2 = 16_1/2"></span><span>g</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"dnl","topName":"길이 (m)","botName":"무게 (g)","ticks":[{"p":0,"t":{"t":"0"},"b":{"t":"0"}},{"p":0.3333,"t":{"t":"1"},"b":{"t":"6"}},{"p":0.6667,"t":{"t":"2"},"b":{"t":"12"}},{"p":0.9167,"t":{"w":2,"n":3,"d":4},"b":{"w":16,"n":1,"d":2},"hi":true},{"p":1,"t":{"t":"3"},"b":{"t":"18"}}],"alt":"길이와 무게를 짝지은 이중 수직선. 1미터에 6그램, 2와 4분의 3미터에 16과 2분의 1그램"}'></div>
+        <figcaption>1 m(6 g)짜리가 <b>2개</b> 있고, 나머지 <span class="eq" data-eq="3/4"></span>개만큼(4.5 g)이 더 있는 상황입니다. 눈금 사이의 위치를 읽는 연습이 됩니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>1 m에 해당하는 무게를 고정한다</h4><p>단위량 6 g. 길이가 곱하는 수 자리에 옵니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>2 m분과 <span class="eq" data-eq="3/4"></span> m분을 따로 구한다</h4><p><span class="calc"><span class="eq" data-eq="( 6 × 2 ) + ( 6 × 3/4 ) = 12 + 9/2 = 12 + 4_1/2"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>합해서 답을 쓴다</h4><p><b><span class="eq" data-eq="16_1/2"></span> g</b>. 가분수로 하면 <span class="eq" data-eq="6 × 11/4 = 66/4 = 33/2"></span>로 같은 값입니다. 3 m가 18 g이니 그보다 조금 작아야 맞습니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 5-3 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 3</span><span class="ctx-model">비율 · Rate 모델</span></div>
+    <p class="ctx-story">1시간에 일을 <b>2번</b> 완수할 수 있는 숙련공이 있습니다. 이 사람이 <span class="eq" data-eq="3_1/2"></span>시간 동안 쉬지 않고 일하면 총 몇 번의 일을 완수할 수 있을까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="2 × 3_1/2 = 7"></span><span>번</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"rate","wholes":3,"numer":1,"denom":2,"dots":2,"axisName":"시간","blockLabel":{"t":"2","u":"번"},"partialLabel":{"t":"1","u":"번"},"totalLabel":"모두 7번","markLabel":{"w":3,"n":1,"d":2,"u":"시간"},"alt":"1시간마다 일 2번을 나타내는 블록 3개와 반 시간짜리 블록 1개를 이어 모두 7번이 되는 그림"}'></div>
+        <figcaption>시간이라는 <b>연속적인 흐름</b> 속에 대분수가 들어가는 대표 상황입니다. 반 시간 칸에는 일이 <b>1번</b>만 들어갑니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>1시간 블록을 만든다</h4><p>블록 하나 = 1시간 = 일 2번. 시간축을 먼저 그리는 것이 순서입니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>3시간분과 <span class="eq" data-eq="1/2"></span>시간분을 나눈다</h4><p><span class="calc"><span class="eq" data-eq="( 2 × 3 ) + ( 2 × 1/2 ) = 6 + 1 = 7"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>가분수로 검산한다</h4><p><span class="eq" data-eq="2 × 7/2 = 14/2 = 7"></span> → <b>7번</b>. 3시간이면 6번, 4시간이면 8번이니 그 사이 값이라는 어림도 성립합니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <div class="notes">
+    <div class="note point"><h4>지도 포인트</h4><p>4차시(<span class="eq" data-eq="3/4"></span>배 → 작아짐)와 5차시(<span class="eq" data-eq="1_1/3"></span>배 → 커짐)를 <b>같은 칠판에 나란히</b> 그리세요. &ldquo;곱하는 수가 1보다 큰가 작은가&rdquo; 하나로 두 차시가 묶입니다.</p></div>
+    <div class="note trap"><h4>자주 나오는 오답</h4><p>자연수 부분에만 곱하기. <span class="wrong"><span class="eq" data-eq="45 × 1_1/3 = 45"></span></span>, 또는 대분수를 잘못 고친 <span class="wrong"><span class="eq" data-eq="1_1/3 = 3/4"></span></span>. 가분수 변환 <span class="right"><span class="eq" data-eq="1_1/3 = 4/3"></span></span>을 그림의 <b>칸 4개</b>로 확인시킵니다.</p></div>
+  </div>
+</section>
+
+<!-- ================= 6·7차시 ================= -->
+<section class="lesson" id="c67">
+  <div class="lesson-head">
+    <span class="chasi">6·7차시</span>
+    <h2>(진분수) × (진분수)</h2>
+    <div class="lesson-sub"><span class="pages">수 44–47p · 수익 34–35p</span></div>
+    <div class="meaning">
+      <b>읽는 법 —</b> &ldquo;<b>부분의 부분</b>&rdquo;입니다. <span class="eq" data-eq="3/4 × 2/5"></span> 은 &ldquo;<span class="eq" data-eq="3/4"></span>의 <span class="eq" data-eq="2/5"></span>만큼&rdquo;.
+      <span class="from">한 방향으로만 자르던 것을 <b>가로·세로 두 방향으로</b> 자르면, 겹친 칸의 수가 곧 분자의 곱, 전체 칸의 수가 분모의 곱이 됩니다.</span>
+    </div>
+  </div>
+
+  <!-- 67-1 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 1</span><span class="ctx-model">넓이 모델 (기본형)</span></div>
+    <p class="ctx-story">직사각형 모양의 작은 텃밭이 있습니다. 가로가 <span class="eq" data-eq="3/4"></span> m, 세로가 <span class="eq" data-eq="2/5"></span> m입니다. 이 텃밭의 넓이는 몇 m&sup2;일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="3/4 × 2/5 = 6/20 = 3/10"></span><span>m²</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"area","cols":4,"colsFill":3,"rows":5,"rowsFill":2,"topFrac":{"n":3,"d":4},"leftFrac":{"n":2,"d":5},"wholeLabel":"한 변이 1 m인 정사각형 — 넓이 1 m²","sideLabel":"","lines":["가로 3/4 → 세로선 4칸 중 3칸","세로 2/5 → 가로선 5칸 중 2칸","겹친 칸 6개 · 전체 20칸"],"result":{"n":6,"d":20},"result2":{"n":3,"d":10},"unit":"m²","alt":"한 변이 1미터인 정사각형을 가로 4등분 세로 5등분해 20칸을 만들고, 가로 3칸 세로 2칸이 겹친 6칸을 표시한 넓이 모델"}'></div>
+        <figcaption>전체 <b>20칸</b>은 분모의 곱 <span class="eq" data-eq="4 × 5"></span>, 겹친 <b>6칸</b>은 분자의 곱 <span class="eq" data-eq="3 × 2"></span>. 규칙이 그림에서 그대로 나옵니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>한 변이 1 m인 정사각형을 그린다</h4><p>이 정사각형의 넓이가 <b>1 m&sup2;</b>. 모든 비교의 기준이 됩니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>가로와 세로를 각각 자른다</h4><p>가로는 4등분해 3칸(파랑), 세로는 5등분해 2칸(노랑). 두 색이 <b>겹친 칸</b>이 텃밭입니다.</p></div></li>
+        <li><span class="sn">3</span><div><h4>칸을 세어 식과 맞춘다</h4><p><span class="calc"><span class="eq" data-eq="3/4 × 2/5 = ( 3 × 2 ) / ( 4 × 5 ) = 6/20 = 3/10"></span></span>답 <b><span class="eq" data-eq="3/10"></span> m&sup2;</b>는 1 m&sup2;보다 <b>작습니다</b>.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 67-2 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 2</span><span class="ctx-model">부분의 부분 · 띠 모델</span></div>
+    <p class="ctx-story">피자 한 판의 <span class="eq" data-eq="1/2"></span>이 남아 있었습니다. 동생이 <b>남은 피자의 <span class="eq" data-eq="2/3"></span></b>를 먹었습니다. 동생이 먹은 양은 피자 한 판의 얼마일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="1/2 × 2/3 = 2/6 = 1/3"></span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"tape","d1":2,"n1":1,"d2":3,"n2":2,"labels":["① 피자 한 판 전체 = 1","② 남아 있던 양 — 전체의 1/2","③ 동생이 먹은 양 — 그 1/2을 3등분한 것 중 2","④ 전체를 기준으로 다시 보기 — 6칸 중 2칸"],"result":"= 2/6 = 1/3","alt":"띠를 절반으로 나누고 그 절반을 다시 3등분해 2칸을 칠한 뒤, 전체를 6등분해 2칸임을 확인하는 그림"}'></div>
+        <figcaption>세 번째 줄의 &ldquo;<span class="eq" data-eq="2/3"></span>&rdquo;는 <b>전체가 아니라 남은 피자</b>를 기준으로 한 것입니다. 네 번째 줄에서 기준을 전체로 되돌립니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>기준이 두 번 바뀐다는 것을 안다</h4><p>처음 기준은 <b>피자 한 판</b>, 두 번째 기준은 <b>남은 피자</b>. 아이들이 가장 많이 헷갈리는 지점입니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>남은 부분을 다시 3등분한다</h4><p><span class="eq" data-eq="1/2"></span>을 3으로 나누면 한 칸이 <span class="eq" data-eq="1/6"></span>. 그중 2칸이므로 <span class="eq" data-eq="2/6"></span>.</p></div></li>
+        <li><span class="sn">3</span><div><h4>식으로 정리하고 약분한다</h4><p><span class="calc"><span class="eq" data-eq="1/2 × 2/3 = ( 1 × 2 ) / ( 2 × 3 ) = 2/6 = 1/3"></span></span>답 <b><span class="eq" data-eq="1/3"></span></b>은 <span class="eq" data-eq="1/2"></span>보다도 작습니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 67-3 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 3</span><span class="ctx-model">집합 · 비율 모델</span></div>
+    <p class="ctx-story">우리 학교 5학년 학생의 <span class="eq" data-eq="3/5"></span>가 여학생입니다. 그리고 여학생의 <span class="eq" data-eq="1/4"></span>이 안경을 썼습니다. 안경을 쓴 여학생은 5학년 전체의 얼마일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="3/5 × 1/4 = 3/20"></span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"area","cols":5,"colsFill":3,"rows":4,"rowsFill":1,"topFrac":{"n":3,"d":5},"leftFrac":{"n":1,"d":4},"wholeLabel":"5학년 전체","sideLabel":"","lines":["세로줄 5칸 중 3칸 = 여학생 3/5","가로줄 4칸 중 1칸 = 그중 1/4","겹친 칸 3개 · 전체 20칸"],"result":{"n":3,"d":20},"unit":"","alt":"5학년 전체를 20칸 격자로 나타내고 여학생 3/5와 그중 1/4이 겹치는 3칸을 표시한 그림"}'></div>
+        <figcaption>사람 수를 몰라도 <b>비율만으로</b> 답할 수 있습니다. 격자 한 칸이 &ldquo;전체의 <span class="eq" data-eq="1/20"></span>&rdquo;이라는 뜻이기 때문입니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>전체를 세로로 5등분한다</h4><p>여학생 <span class="eq" data-eq="3/5"></span> → 세로줄 <b>3칸</b>을 파랑으로.</p></div></li>
+        <li><span class="sn">2</span><div><h4>그 부분을 가로로 4등분한다</h4><p>여학생 중 <span class="eq" data-eq="1/4"></span> → 가로줄 <b>1칸</b>을 노랑으로. 겹친 칸이 답입니다.</p></div></li>
+        <li><span class="sn">3</span><div><h4>겹친 칸을 전체로 나눈다</h4><p><span class="calc"><span class="eq" data-eq="3/5 × 1/4 = ( 3 × 1 ) / ( 5 × 4 ) = 3/20"></span></span>학생이 40명이라면 <span class="eq" data-eq="40 × 3/20 = 6"></span>명으로 확장해 볼 수 있습니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <div class="notes">
+    <div class="note point"><h4>지도 포인트</h4><p>약분은 <b>곱한 뒤</b>에도, <b>곱하기 전</b>에도 됩니다. <span class="eq" data-eq="3/4 × 2/5"></span>에서 2와 4를 미리 약분하면 <span class="eq" data-eq="3/2 × 1/5 = 3/10"></span>. 두 길이 같은 답에 닿는다는 것을 한 번은 직접 확인시키세요.</p></div>
+    <div class="note trap"><h4>자주 나오는 오답</h4><p>분모끼리 더하기. <span class="wrong"><span class="eq" data-eq="3/4 × 2/5 = 6/9"></span></span> → 덧셈의 통분과 뒤섞인 경우입니다. 격자 그림에서 <b>전체 칸이 20개</b>임을 세어 보게 하면 <span class="right"><span class="eq" data-eq="4 × 5 = 20"></span></span>이 눈으로 확인됩니다.</p></div>
+  </div>
+</section>
+
+<!-- ================= 8차시 ================= -->
+<section class="lesson" id="c8">
+  <div class="lesson-head">
+    <span class="chasi">8차시</span>
+    <h2>(대분수) × (대분수)</h2>
+    <div class="lesson-sub"><span class="pages">수 48–49p · 수익 36–37p</span></div>
+    <div class="meaning">
+      <b>읽는 법 —</b> 6·7차시의 <b>넓이 모델 그대로</b>입니다. 다만 가로와 세로가 각각 1보다 크므로 직사각형이 <b>네 조각</b>으로 나뉩니다.
+      <span class="from">이 네 조각을 다 세지 않으면 답이 모자랍니다. 대분수끼리는 <b>반드시 가분수로 고친 뒤</b> 곱하는 이유가 여기에 있습니다.</span>
+    </div>
+  </div>
+
+  <!-- 8-1 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 1</span><span class="ctx-model">넓이 모델 · 부분곱</span></div>
+    <p class="ctx-story">학교 화단이 직사각형 모양입니다. 가로가 <span class="eq" data-eq="2_1/2"></span> m, 세로가 <span class="eq" data-eq="1_2/3"></span> m입니다. 이 화단의 넓이는 몇 m&sup2;일까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="2_1/2 × 1_2/3 = 5/2 × 5/3 = 25/6 = 4_1/6"></span><span>m²</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"areamixed","aw":2,"an":1,"ad":2,"bw":1,"bn":2,"bd":3,"unit":"m","alt":"가로 2와 2분의 1, 세로 1과 3분의 2인 직사각형을 네 부분으로 나누어 각 부분의 넓이를 구하는 그림"}'></div>
+        <figcaption>네 조각의 넓이를 모두 더하면 <span class="eq" data-eq="2 + 4/3 + 1/2 + 1/3 = 4_1/6"></span>. 가분수로 한 번에 곱한 <span class="eq" data-eq="25/6"></span>과 정확히 같습니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>가로와 세로를 각각 두 도막으로 나눈다</h4><p>가로 = 2 + <span class="eq" data-eq="1/2"></span>, 세로 = 1 + <span class="eq" data-eq="2/3"></span>. 그래서 직사각형이 <b>2&times;2 = 네 조각</b>이 됩니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>네 조각을 모두 더한다</h4><p><span class="calc"><span class="eq" data-eq="2 × 1 = 2"></span> · <span class="eq" data-eq="2 × 2/3 = 4/3"></span> · <span class="eq" data-eq="1/2 × 1 = 1/2"></span> · <span class="eq" data-eq="1/2 × 2/3 = 1/3"></span></span>합 <span class="eq" data-eq="2 + 4/3 + 1/2 + 1/3 = 4_1/6"></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>가분수로 한 번에 곱한다</h4><p><span class="calc"><span class="eq" data-eq="5/2 × 5/3 = 25/6 = 4_1/6"></span></span>실제 계산은 이 방법을 쓰되, <b>왜 맞는지</b>는 네 조각 그림이 설명해 줍니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 8-2 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 2</span><span class="ctx-model">배 · Scaling 모델</span></div>
+    <p class="ctx-story">냉장고에 주스가 <span class="eq" data-eq="1_1/2"></span> L 있습니다. 우유는 주스의 <span class="eq" data-eq="1_1/3"></span>배만큼 있습니다. 우유는 몇 L 있을까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="1_1/2 × 1_1/3 = 3/2 × 4/3 = 12/6 = 2"></span><span>L</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"compare","cell":{"n":1,"d":2,"u":"L"},"baseCells":3,"compCells":4,"baseLabel":"주스 — 1과 2분의 1 L (기준 1배)","compLabel":"우유 — 주스의 1과 3분의 1배","braceA":"1배 = 1_1/2 L","braceB":"1/3배 = 1/2 L","totalLabel":"= 2 L","alt":"2분의 1리터짜리 세 칸으로 된 주스 막대와 한 칸 더 긴 네 칸짜리 우유 막대를 비교한 그림"}'></div>
+        <figcaption>기준이 대분수여도 방법은 5차시와 같습니다. 기준(<span class="eq" data-eq="1_1/2"></span> L)을 <b>3등분</b>하면 한 칸이 <span class="eq" data-eq="1/2"></span> L, 거기에 한 칸을 더합니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>기준을 분모 수만큼 나눈다</h4><p>&ldquo;<span class="eq" data-eq="1_1/3"></span>배&rdquo;의 분모가 3이므로 주스 <span class="eq" data-eq="1_1/2"></span> L를 <b>3칸</b>으로. 한 칸은 <span class="eq" data-eq="1/2"></span> L.</p></div></li>
+        <li><span class="sn">2</span><div><h4>1배에 <span class="eq" data-eq="1/3"></span>배를 더한다</h4><p><span class="calc"><span class="eq" data-eq="1_1/2 + 1/2 = 2"></span></span>그림에서는 <b>4칸 &times; <span class="eq" data-eq="1/2"></span> L = 2 L</b>.</p></div></li>
+        <li><span class="sn">3</span><div><h4>가분수 계산으로 확인한다</h4><p><span class="eq" data-eq="3/2 × 4/3 = 12/6 = 2"></span> → <b>2 L</b>. 약분을 먼저 하면 <span class="eq" data-eq="1 × 2 / 1 × 1 = 2"></span>로 더 간단합니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- 8-3 -->
+  <article class="ctx">
+    <div class="ctx-head"><span class="ctx-no">맥락 3</span><span class="ctx-model">비율 · Rate 모델</span></div>
+    <p class="ctx-story">등산로를 한 시간에 <span class="eq" data-eq="3_1/3"></span> km씩 걷는 사람이 있습니다. 같은 빠르기로 <span class="eq" data-eq="2_1/4"></span>시간 동안 걸으면 몇 km를 갈까요?</p>
+    <div class="ctx-eq"><span class="lbl">식</span><span class="eq" data-eq="3_1/3 × 2_1/4 = 10/3 × 9/4 = 15/2 = 7_1/2"></span><span>km</span></div>
+    <div class="ctx-body">
+      <figure class="dg">
+        <div class="dg-canvas" data-dg='{"type":"dnl","topName":"시간","botName":"거리 (km)","ticks":[{"p":0,"t":{"t":"0"},"b":{"t":"0"}},{"p":0.4,"t":{"t":"1"},"b":{"w":3,"n":1,"d":3}},{"p":0.8,"t":{"t":"2"},"b":{"w":6,"n":2,"d":3}},{"p":0.9,"t":{"w":2,"n":1,"d":4},"b":{"w":7,"n":1,"d":2},"hi":true}],"alt":"시간과 거리를 짝지은 이중 수직선. 1시간에 3과 3분의 1 km, 2와 4분의 1시간에 7과 2분의 1 km"}'></div>
+        <figcaption>두 수 모두 대분수여도 이중 수직선의 구조는 그대로입니다. 답이 <b>2시간분(<span class="eq" data-eq="6_2/3"></span> km)보다 조금 크다</b>는 어림이 검산이 됩니다.</figcaption>
+      </figure>
+      <ol class="steps">
+        <li><span class="sn">1</span><div><h4>두 수를 모두 가분수로 고친다</h4><p><span class="eq" data-eq="3_1/3 = 10/3"></span>, <span class="eq" data-eq="2_1/4 = 9/4"></span>. 대분수끼리는 이 단계를 건너뛸 수 없습니다.</p></div></li>
+        <li><span class="sn">2</span><div><h4>곱하기 전에 약분한다</h4><p>10과 4를 2로, 9와 3을 3으로 약분합니다.<span class="calc"><span class="eq" data-eq="10/3 × 9/4 = ( 5 × 3 ) / ( 1 × 2 ) = 15/2"></span></span></p></div></li>
+        <li><span class="sn">3</span><div><h4>대분수로 답하고 어림과 맞춘다</h4><p><span class="eq" data-eq="15/2 = 7_1/2"></span> → <b><span class="eq" data-eq="7_1/2"></span> km</b>. 2시간에 <span class="eq" data-eq="6_2/3"></span> km, 3시간에 10 km이므로 그 사이입니다.</p></div></li>
+      </ol>
+    </div>
+  </article>
+
+  <div class="notes">
+    <div class="note point"><h4>지도 포인트</h4><p>8차시의 넓이 그림은 <b>중학교 전개(a+b)(c+d)로 이어지는 다리</b>입니다. 네 조각에 ①②③④ 번호를 붙여 놓고 &ldquo;하나라도 빠지면 화단이 좁아진다&rdquo;고 말하게 하면 오래 남습니다.</p></div>
+    <div class="note trap"><h4>가장 위험한 오답</h4><p>자연수끼리, 분수끼리 따로 곱하기. <span class="wrong"><span class="eq" data-eq="2_1/2 × 1_2/3 = 2_1/3"></span></span> — 네 조각 중 <b>②와 ③을 통째로 빠뜨린</b> 값입니다. 빠진 넓이가 <span class="eq" data-eq="4/3 + 1/2 = 1_5/6"></span>이고, 이를 더하면 정답 <span class="right"><span class="eq" data-eq="4_1/6"></span></span>이 됩니다. 그림 위에서 직접 짚어 주세요.</p></div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <p><b>수업에서 쓰는 순서</b> — ① 상황 문장만 먼저 보여 주고 &ldquo;무엇이 1인가?&rdquo;를 묻습니다. ② 그림을 띄우고 아이들이 식을 말하게 합니다. ③ 단계별 풀이는 마지막에 확인용으로 엽니다.</p>
+    <p>세 가지 모델(배 · 측정 · 비율)은 여섯 차시에 걸쳐 같은 자리에 놓여 있습니다. 차시가 바뀌어도 <b>같은 모델끼리 이어서 비교</b>하면 개념 전이가 빨라집니다.</p>
+    <p style="margin-top:14px">교과서 대응 — 2차시 수36–37p · 3차시 수38–39p · 4차시 수40–41p · 5차시 수42–43p · 6·7차시 수44–47p · 8차시 수48–49p</p>
+  </div>
+</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+
+/* ============ HTML fraction rendering ============ */
+function frEl(n,d){
+  var s=document.createElement('span'); s.className='fr';
+  var a=document.createElement('span'); a.className='n'; a.textContent=n;
+  var b=document.createElement('span'); b.className='d'; b.textContent=d;
+  s.appendChild(a); s.appendChild(b); return s;
+}
+function mixEl(w,n,d){
+  var s=document.createElement('span'); s.className='mx';
+  var t=document.createElement('span'); t.textContent=w; s.appendChild(t);
+  s.appendChild(frEl(n,d)); return s;
+}
+function tokenEl(tok){
+  var m=/^(\d+)_(\d+)\/(\d+)$/.exec(tok);
+  if(m) return mixEl(m[1],m[2],m[3]);
+  m=/^(\d+)\/(\d+)$/.exec(tok);
+  if(m) return frEl(m[1],m[2]);
+  var s=document.createElement('span');
+  if(tok==='×'||tok==='='||tok==='+'||tok==='÷'||tok==='−'||tok==='-') s.className='op';
+  s.textContent=tok; return s;
+}
+document.querySelectorAll('[data-eq]').forEach(function(host){
+  var toks=host.getAttribute('data-eq').trim().split(/\s+/);
+  host.textContent='';
+  toks.forEach(function(t,i){
+    if(i) host.appendChild(document.createTextNode(' '));
+    host.appendChild(tokenEl(t));
+  });
+});
+
+/* ============ SVG helpers ============ */
+var NS='http://www.w3.org/2000/svg';
+function S(tag,a){var e=document.createElementNS(NS,tag);for(var k in a){if(a[k]!==null&&a[k]!==undefined)e.setAttribute(k,a[k]);}return e;}
+function add(p,e){p.appendChild(e);return e;}
+function T(p,x,y,s,o){
+  o=o||{};
+  var t=S('text',{x:x,y:y,'text-anchor':o.a||'middle','font-size':o.s||13,'font-weight':o.w||500,
+    'class':'dg-t '+(o.m?'dg-m ':'')+(o.c||'dg-ink')});
+  t.textContent=s; return add(p,t);
+}
+function tw(str,s){
+  var w=0; str=String(str);
+  for(var i=0;i<str.length;i++){
+    var c=str.charCodeAt(i), ch=str[i];
+    if(c>0x1100&&c<0xD7FF) w+=s*0.98;
+    else if(ch>='0'&&ch<='9') w+=s*0.58;
+    else if(ch===' ') w+=s*0.3;
+    else w+=s*0.55;
+  }
+  return w;
+}
+/* value = {t:"6",u:"g"} or {w:2,n:3,d:4,u:"m"} */
+function vW(v,s){
+  if(!v) return 0;
+  var w=0;
+  if(v.n!==undefined){
+    if(v.w) w+=tw(v.w,s*1.1)+3;
+    w+=Math.max(tw(v.n,s*0.86),tw(v.d,s*0.86))+8;
+  } else w+=tw(v.t,s);
+  if(v.u) w+=tw(v.u,s*0.9)+4;
+  return w;
+}
+function vDraw(p,cx,cy,v,s,cls){
+  cls=cls||'dg-ink';
+  var scls=cls.replace('dg-','dgs-');
+  var total=vW(v,s), x=cx-total/2;
+  if(v.n!==undefined){
+    if(v.w){ var ww=tw(v.w,s*1.1); T(p,x+ww/2,cy+s*0.38,v.w,{s:s*1.1,w:600,c:cls}); x+=ww+3; }
+    var fw=Math.max(tw(v.n,s*0.86),tw(v.d,s*0.86))+8;
+    var fx=x+fw/2;
+    T(p,fx,cy-3.5,v.n,{s:s*0.86,w:600,c:cls});
+    add(p,S('line',{x1:fx-fw/2+2,y1:cy,x2:fx+fw/2-2,y2:cy,'class':scls,'stroke-width':1.3}));
+    T(p,fx,cy+s*0.92,v.d,{s:s*0.86,w:600,c:cls});
+    x+=fw;
+  } else {
+    var tW=tw(v.t,s);
+    T(p,x+tW/2,cy+s*0.36,v.t,{s:s,w:600,c:cls}); x+=tW;
+  }
+  if(v.u){ var uw=tw(v.u,s*0.9); T(p,x+4+uw/2,cy+s*0.36,v.u,{s:s*0.9,w:500,c:cls}); }
+}
+var uid=0;
+function arrowDef(g,cls){
+  var id='ah'+(++uid);
+  var d=add(g,S('defs',{}));
+  var mk=add(d,S('marker',{id:id,viewBox:'0 0 10 10',refX:'8.5',refY:'5',markerWidth:'7',markerHeight:'7',orient:'auto'}));
+  add(mk,S('path',{d:'M0,1 L9,5 L0,9 z','class':'mk-'+cls}));
+  return 'url(#'+id+')';
+}
+/* denom cells inside a box, numer filled */
+function cells(g,x,y,w,h,d,n,vert,fill){
+  if(n>0){
+    if(vert){ var ch=h/d; add(g,S('rect',{x:x,y:y+h-n*ch,width:w,height:n*ch,'class':fill})); }
+    else { var cw=w/d; add(g,S('rect',{x:x,y:y,width:n*cw,height:h,'class':fill})); }
+  }
+  for(var i=1;i<d;i++){
+    if(vert){ var yy=y+h*i/d; add(g,S('line',{x1:x,y1:yy,x2:x+w,y2:yy,'class':'dg-grid'})); }
+    else { var xx=x+w*i/d; add(g,S('line',{x1:xx,y1:y,x2:xx,y2:y+h,'class':'dg-grid'})); }
+  }
+  add(g,S('rect',{x:x,y:y,width:w,height:h,'class':'dg-frame'}));
+}
+function bracket(g,x1,x2,y,dir,cls){
+  var t=6*dir;
+  add(g,S('path',{d:'M'+x1+' '+(y+t)+' L'+x1+' '+y+' L'+x2+' '+y+' L'+x2+' '+(y+t),'class':cls||'dgs-mut'}));
+}
+function gcd(a,b){return b?gcd(b,a%b):a;}
+
+/* ============ renderers ============ */
+var DG={};
+
+/* --- bars: n groups of (whole + numer/denom) --- */
+DG.bars=function(g,sp){
+  var vert=sp.orient==='v';
+  var U=vert?48:58, H=vert?106:50, GAP=vert?20:16, SG=5;
+  var per=sp.whole+(sp.numer>0?1:0);
+  var gw=per*U;
+  var yA=32;
+  T(g,0,16,sp.rowA,{a:'start',s:12.5,c:'dg-mut',w:600});
+  var i,j,x;
+  for(i=0;i<sp.count;i++){
+    x=i*(gw+GAP);
+    for(j=0;j<sp.whole;j++) cells(g,x+j*U,yA,U,H,1,1,vert,'f-a');
+    if(sp.numer>0) cells(g,x+sp.whole*U,yA,U,H,sp.denom,sp.numer,vert,'f-b');
+    vDraw(g,x+gw/2,yA+H+18,{w:sp.whole||undefined,n:sp.numer,d:sp.denom,u:sp.unit},11.5,'dg-i2');
+  }
+  var rowAW=sp.count*gw+(sp.count-1)*GAP;
+  T(g,rowAW/2,yA+H+48,sp.noteA+' 만큼',{s:12.5,c:'dg-mut'});
+
+  var yBt=yA+H+72, yB=yBt+14;
+  T(g,0,yBt,sp.rowB,{a:'start',s:12.5,c:'dg-mut',w:600});
+  var blue=sp.count*sp.whole, pieces=sp.count*sp.numer;
+  var full=Math.floor(pieces/sp.denom), rem=pieces%sp.denom;
+  var nsq=blue+full+(rem?1:0), k=0;
+  for(i=0;i<blue;i++){ cells(g,k*(U+SG),yB,U,H,1,1,vert,'f-a'); k++; }
+  for(i=0;i<full;i++){ cells(g,k*(U+SG),yB,U,H,sp.denom,sp.denom,vert,'f-c'); k++; }
+  if(rem){ cells(g,k*(U+SG),yB,U,H,sp.denom,rem,vert,'f-c'); k++; }
+  var rowBW=nsq*U+(nsq-1)*SG;
+  var totW=blue+full;
+  var res={w:totW||undefined,n:rem||undefined,d:rem?sp.denom:undefined,t:rem?undefined:String(totW),u:sp.unit};
+  var rx=rowBW+26, resW=vW(res,17)+22;
+  T(g,rx,yB+H/2+6,'=',{a:'start',s:18,c:'dg-i2',w:600});
+  vDraw(g,rx+22+vW(res,17)/2,yB+H/2,res,17,'dg-fc');
+  if(rem){
+    var q2=gcd(rem,sp.denom)||1;
+    if(q2>1){
+      var res2={w:totW||undefined,n:rem/q2,d:sp.denom/q2,u:sp.unit};
+      var rx2=rx+22+vW(res,17)+16;
+      T(g,rx2,yB+H/2+6,'=',{a:'start',s:18,c:'dg-i2',w:600});
+      vDraw(g,rx2+22+vW(res2,17)/2,yB+H/2,res2,17,'dg-fc');
+      resW+=16+22+vW(res2,17);
+    }
+  }
+  if(rem) T(g,rowBW/2,yB+H+24,'1/'+sp.denom+' 조각 '+pieces+'개 = '+totW+'개와 '+rem+'조각',{s:12,c:'dg-mut'});
+  else T(g,rowBW/2,yB+H+24,'1/'+sp.denom+' 조각 '+pieces+'개 = '+full+'개',{s:12,c:'dg-mut'});
+
+  return {w:Math.max(rowAW,rowBW+resW), h:yB+H+40};
+};
+
+/* --- numberline: hops | partition --- */
+DG.numberline=function(g,sp){
+  var x0=54, x1=676, W=x1-x0;
+  var ppu=W/(sp.max-sp.min);
+  if(sp.mode==='partition'){
+    var yBar=52, hBar=44;
+    T(g,0,20,sp.title,{a:'start',s:12.5,c:'dg-mut',w:600});
+    var pw=W/sp.parts, i;
+    for(i=0;i<sp.parts;i++){
+      add(g,S('rect',{x:x0+i*pw,y:yBar,width:pw,height:hBar,'class':i<sp.fill?'f-c':'f-n'}));
+    }
+    for(i=1;i<sp.parts;i++) add(g,S('line',{x1:x0+i*pw,y1:yBar,x2:x0+i*pw,y2:yBar+hBar,'class':'dg-grid'}));
+    add(g,S('rect',{x:x0,y:yBar,width:W,height:hBar,'class':'dg-frame'}));
+    for(i=0;i<sp.parts;i++) T(g,x0+(i+0.5)*pw,yBar+hBar/2+5,sp.partLabel,{s:14,w:600,c:i<sp.fill?'dg-fc':'dg-mut'});
+    var yAx=yBar+hBar+22;
+    add(g,S('line',{x1:x0,y1:yAx,x2:x1,y2:yAx,'class':'dgs-i2'}));
+    for(i=0;i<=sp.parts;i++){
+      var xx=x0+i*pw;
+      add(g,S('line',{x1:xx,y1:yAx-6,x2:xx,y2:yAx+6,'class':'dgs-i2'}));
+      T(g,xx,yAx+24,String(sp.min+(sp.max-sp.min)*i/sp.parts),{s:12.5,c:'dg-i2',m:true});
+    }
+    T(g,x1+2,yAx+24,sp.unit,{a:'start',s:12,c:'dg-mut'});
+    bracket(g,x0,x0+sp.fill*pw,yBar-10,-1,'dgs-fc');
+    T(g,x0+sp.fill*pw/2,yBar-20,sp.fill+'묶음 = '+(sp.fill*parseFloat(sp.partLabel))+' '+sp.unit,{s:13,w:600,c:'dg-fc'});
+    bracket(g,x0,x1,yAx+38,1,'dgs-mut');
+    T(g,(x0+x1)/2,yAx+58,'전체 '+sp.max+' '+sp.unit+' — '+sp.parts+'묶음으로 똑같이 나누기',{s:12.5,c:'dg-mut'});
+    return {w:720,h:yAx+72};
+  }
+  /* hops */
+  var yAx=178;
+  T(g,0,20,sp.title,{a:'start',s:12.5,c:'dg-mut',w:600});
+  var hop=sp.hop.w+sp.hop.n/sp.hop.d;
+  var aA=arrowDef(g,'fa'), aB=arrowDef(g,'fb');
+  add(g,S('line',{x1:x0,y1:yAx,x2:x1+10,y2:yAx,'class':'dgs-i2'}));
+  var total=(sp.max-sp.min)*sp.denom, i, xx;
+  for(i=0;i<=total;i++){
+    xx=x0+i*(W/total);
+    var major=(i%sp.denom===0);
+    add(g,S('line',{x1:xx,y1:yAx-(major?9:5),x2:xx,y2:yAx+(major?9:5),'class':major?'dgs-i2':'dgs-mut'}));
+    if(major) T(g,xx,yAx+27,String(sp.min+i/sp.denom),{s:13,w:600,c:'dg-i2',m:true});
+  }
+  T(g,x1+16,yAx+27,sp.unit,{a:'start',s:12,c:'dg-mut'});
+  var spacing=hop*ppu;
+  for(i=0;i<sp.count;i++){
+    var xa=x0+i*spacing, xb=x0+(i+1)*spacing;
+    var lift=Math.min(52,20+spacing*0.22);
+    var cls=(i%2===0)?'dgs-fa':'dgs-fb';
+    add(g,S('path',{d:'M'+xa+' '+(yAx-6)+' Q '+((xa+xb)/2)+' '+(yAx-6-lift*2)+' '+xb+' '+(yAx-6),
+      'class':cls,'stroke-width':1.9,'marker-end':(i%2===0)?aA:aB}));
+    vDraw(g,(xa+xb)/2,yAx-16-lift,{w:sp.hop.w||undefined,n:sp.hop.n,d:sp.hop.d},12.5,(i%2===0)?'dg-fa':'dg-fb');
+    /* cumulative label under axis */
+    var cn=(i+1)*(sp.hop.w*sp.hop.d+sp.hop.n), cd=sp.hop.d;
+    var gg=gcd(cn,cd)||1; cn/=gg; cd/=gg;
+    var cw=Math.floor(cn/cd), crem=cn-cw*cd;
+    var last=(i===sp.count-1);
+    if(spacing>=54){
+      vDraw(g,xb,yAx+50,{w:cw||undefined,n:crem||undefined,d:crem?cd:undefined,t:crem?undefined:String(cw)},
+        last?13:10.5,last?'dg-fc':'dg-mut');
+    }
+    if(last){
+      add(g,S('line',{x1:xb,y1:yAx-8,x2:xb,y2:yAx+34,'class':'dgs-fc','stroke-dasharray':'4 3'}));
+    }
+  }
+  T(g,x0,yAx+78,sp.count+'번 뛴 자리가 답입니다.',{a:'start',s:12.5,c:'dg-mut'});
+  return {w:720,h:yAx+92};
+};
+
+/* --- partwhole: grid | strip --- */
+DG.partwhole=function(g,sp){
+  if(sp.mode==='strip'){
+    var x0=40,x1=660,W=x1-x0,y=64,h=58,pw=W/sp.groups,i;
+    T(g,x0,26,sp.wholeLabel,{a:'start',s:13,c:'dg-i2',w:600});
+    bracket(g,x0,x1,42,-1,'dgs-mut');
+    for(i=0;i<sp.groups;i++)
+      add(g,S('rect',{x:x0+i*pw,y:y,width:pw,height:h,'class':i<sp.fill?'f-c':'f-n'}));
+    for(i=1;i<sp.groups;i++) add(g,S('line',{x1:x0+i*pw,y1:y,x2:x0+i*pw,y2:y+h,'class':'dg-grid'}));
+    add(g,S('rect',{x:x0,y:y,width:W,height:h,'class':'dg-frame'}));
+    for(i=0;i<sp.groups;i++) T(g,x0+(i+0.5)*pw,y+h/2+5,sp.cellText,{s:14,w:600,c:i<sp.fill?'dg-fc':'dg-mut'});
+    bracket(g,x0,x0+sp.fill*pw,y+h+14,1,'dgs-fc');
+    T(g,x0+sp.fill*pw/2,y+h+38,sp.fillLabel,{s:13.5,w:600,c:'dg-fc'});
+    T(g,x0+sp.fill*pw/2,y+h+58,'= '+(sp.total/sp.groups*sp.fill).toLocaleString('ko-KR')+' '+sp.unit,{s:15,w:700,c:'dg-fc'});
+    T(g,x0,y+h+90,'분모 '+sp.groups+' → '+sp.groups+'등분 · 분자 '+sp.fill+' → '+sp.fill+'칸 가져오기',{a:'start',s:12.5,c:'dg-mut'});
+    return {w:720,h:y+h+104};
+  }
+  /* grid */
+  var it=42, gap=9, cols=sp.cols, gx=118, gy=44, i, r, c;
+  T(g,gx,26,sp.wholeLabel,{a:'start',s:13,c:'dg-i2',w:600});
+  for(r=0;r<sp.groups;r++){
+    for(c=0;c<cols;c++){
+      add(g,S('rect',{x:gx+c*(it+gap),y:gy+r*(it+gap),width:it,height:it,rx:5,
+        'class':r<sp.fill?'f-c':'f-n'}));
+      add(g,S('rect',{x:gx+c*(it+gap),y:gy+r*(it+gap),width:it,height:it,rx:5,
+        fill:'none',stroke:r<sp.fill?'var(--fc)':'var(--rule-strong)','stroke-width':1.4}));
+    }
+    T(g,gx-14,gy+r*(it+gap)+it/2+5,'1묶음 = '+(sp.total/sp.groups)+sp.unit,
+      {a:'end',s:12.5,c:r<sp.fill?'dg-fc':'dg-mut',w:r<sp.fill?600:400});
+  }
+  var gw=cols*it+(cols-1)*gap, gh=sp.groups*it+(sp.groups-1)*gap;
+  var bx=gx+gw+16;
+  add(g,S('path',{d:'M'+bx+' '+gy+' L'+(bx+8)+' '+gy+' L'+(bx+8)+' '+(gy+sp.fill*(it+gap)-gap)+' L'+bx+' '+(gy+sp.fill*(it+gap)-gap),'class':'dgs-fc'}));
+  T(g,bx+18,gy+(sp.fill*(it+gap)-gap)/2-2,sp.fill+'묶음',{a:'start',s:13.5,w:600,c:'dg-fc'});
+  T(g,bx+18,gy+(sp.fill*(it+gap)-gap)/2+18,'= '+(sp.total/sp.groups*sp.fill)+sp.unit,{a:'start',s:15,w:700,c:'dg-fc'});
+  T(g,gx,gy+gh+30,'분모 '+sp.groups+' → '+sp.groups+'묶음으로 똑같이 나누기 · 분자 '+sp.fill+' → '+sp.fill+'묶음 가져오기',
+    {a:'start',s:12.5,c:'dg-mut'});
+  return {w:bx+150,h:gy+gh+44};
+};
+
+/* --- compare bars (배 모델) --- */
+DG.compare=function(g,sp){
+  var cw=88, ch=48, x0=26, yA=44, yB=140;
+  var i;
+  T(g,x0,26,sp.baseLabel,{a:'start',s:13,c:'dg-fa',w:600});
+  for(i=0;i<sp.baseCells;i++){
+    add(g,S('rect',{x:x0+i*cw,y:yA,width:cw,height:ch,'class':'f-a'}));
+    add(g,S('line',{x1:x0+i*cw,y1:yA,x2:x0+i*cw,y2:yA+ch,'class':'dg-grid'}));
+    vDraw(g,x0+(i+0.5)*cw,yA+ch/2,sp.cell,12.5,'dg-fa');
+  }
+  add(g,S('rect',{x:x0,y:yA,width:sp.baseCells*cw,height:ch,'class':'dg-frame'}));
+
+  T(g,x0,yB-18,sp.compLabel,{a:'start',s:13,c:'dg-fc',w:600});
+  for(i=0;i<sp.compCells;i++){
+    add(g,S('rect',{x:x0+i*cw,y:yB,width:cw,height:ch,'class':i<sp.baseCells?'f-a':'f-b'}));
+    add(g,S('line',{x1:x0+i*cw,y1:yB,x2:x0+i*cw,y2:yB+ch,'class':'dg-grid'}));
+    vDraw(g,x0+(i+0.5)*cw,yB+ch/2,sp.cell,12.5,i<sp.baseCells?'dg-fa':'dg-fb');
+  }
+  add(g,S('rect',{x:x0,y:yB,width:sp.compCells*cw,height:ch,'class':'dg-frame'}));
+
+  /* guide line showing the extra piece */
+  add(g,S('line',{x1:x0+sp.baseCells*cw,y1:yA,x2:x0+sp.baseCells*cw,y2:yB+ch+10,'class':'dg-dash'}));
+
+  bracket(g,x0,x0+sp.baseCells*cw,yB+ch+14,1,'dgs-fa');
+  var eqA=document.createElementNS(NS,'g'); add(g,eqA);
+  T(g,x0+sp.baseCells*cw/2,yB+ch+36,sp.braceA.replace(/_/,' ').replace(/\//,'/'),{s:13,w:600,c:'dg-fa'});
+  bracket(g,x0+sp.baseCells*cw,x0+sp.compCells*cw,yB+ch+14,1,'dgs-fb');
+  T(g,x0+(sp.baseCells+sp.compCells)*cw/2,yB+ch+36,sp.braceB.replace(/_/,' '),{s:13,w:600,c:'dg-fb'});
+
+  var rx=x0+sp.compCells*cw+22;
+  T(g,rx,yB+ch/2+7,sp.totalLabel,{a:'start',s:19,w:700,c:'dg-fc'});
+  return {w:rx+tw(sp.totalLabel,19)+16, h:yB+ch+56};
+};
+
+/* --- area model (unit square) --- */
+DG.area=function(g,sp){
+  var Sq=286, x=86, y=52;
+  var cw=Sq/sp.cols, rh=Sq/sp.rows;
+  add(g,S('rect',{x:x,y:y,width:Sq,height:Sq,'class':'f-n'}));
+  add(g,S('rect',{x:x,y:y,width:sp.colsFill*cw,height:Sq,'class':'f-a'}));
+  add(g,S('rect',{x:x,y:y,width:Sq,height:sp.rowsFill*rh,'class':'f-b'}));
+  add(g,S('rect',{x:x,y:y,width:sp.colsFill*cw,height:sp.rowsFill*rh,'class':'f-c'}));
+  add(g,S('rect',{x:x,y:y,width:sp.colsFill*cw,height:sp.rowsFill*rh,fill:'none',stroke:'var(--fc)','stroke-width':2.4}));
+  var i;
+  for(i=1;i<sp.cols;i++) add(g,S('line',{x1:x+i*cw,y1:y,x2:x+i*cw,y2:y+Sq,'class':'dg-grid'}));
+  for(i=1;i<sp.rows;i++) add(g,S('line',{x1:x,y1:y+i*rh,x2:x+Sq,y2:y+i*rh,'class':'dg-grid'}));
+  add(g,S('rect',{x:x,y:y,width:Sq,height:Sq,'class':'dg-frame'}));
+
+  bracket(g,x,x+sp.colsFill*cw,y-12,-1,'dgs-fa');
+  vDraw(g,x+sp.colsFill*cw/2,y-30,{n:sp.topFrac.n,d:sp.topFrac.d},14,'dg-fa');
+  var bx2=x-14, by2=y+sp.rowsFill*rh;
+  add(g,S('path',{d:'M'+(bx2-6)+' '+y+' L'+bx2+' '+y+' L'+bx2+' '+by2+' L'+(bx2-6)+' '+by2,'class':'dgs-fb'}));
+  vDraw(g,x-44,y+sp.rowsFill*rh/2,{n:sp.leftFrac.n,d:sp.leftFrac.d},14,'dg-fb');
+  if(sp.wholeLabel) T(g,x+Sq/2,y+Sq+26,sp.wholeLabel,{s:12.5,c:'dg-mut'});
+  if(sp.sideLabel) T(g,x+Sq+10,y+Sq+26,sp.sideLabel,{a:'start',s:12.5,c:'dg-mut'});
+
+  var px=x+Sq+44, py=y+34;
+  sp.lines.forEach(function(ln,i){
+    var m=/^(.*?)(\d+)\/(\d+)(.*)$/.exec(ln);
+    T(g,px,py+i*30,ln.replace('/','/'),{a:'start',s:13.5,c:i===2?'dg-fc':'dg-i2',w:i===2?600:400});
+  });
+  var ry=py+3*30+22;
+  T(g,px,ry,'답',{a:'start',s:12,c:'dg-mut',m:true});
+  var rw=vW({n:sp.result.n,d:sp.result.d},19);
+  vDraw(g,px+rw/2,ry+26,{n:sp.result.n,d:sp.result.d},19,'dg-fc');
+  var nx=px+rw+10;
+  if(sp.result2){
+    T(g,nx,ry+32,'=',{a:'start',s:17,c:'dg-i2',w:600});
+    var r2w=vW({n:sp.result2.n,d:sp.result2.d},19);
+    vDraw(g,nx+20+r2w/2,ry+26,{n:sp.result2.n,d:sp.result2.d},19,'dg-fc');
+    nx=nx+20+r2w;
+  }
+  if(sp.unit) T(g,nx+8,ry+32,sp.unit,{a:'start',s:15,c:'dg-fc',w:600});
+  return {w:px+230,h:y+Sq+44};
+};
+
+/* --- mixed × mixed area (partial products) --- */
+DG.areamixed=function(g,sp){
+  var ux=104, uy=88, x=88, y=56;
+  var aTot=sp.aw+sp.an/sp.ad, bTot=sp.bw+sp.bn/sp.bd;
+  var W=aTot*ux, H=bTot*uy, sx=x+sp.aw*ux, sy=y+sp.bw*uy;
+  var regions=[
+    {x:x,y:y,w:sp.aw*ux,h:sp.bw*uy,cls:'f-a',no:'1'},
+    {x:sx,y:y,w:W-sp.aw*ux,h:sp.bw*uy,cls:'f-b',no:'2'},
+    {x:x,y:sy,w:sp.aw*ux,h:H-sp.bw*uy,cls:'f-b',no:'3'},
+    {x:sx,y:sy,w:W-sp.aw*ux,h:H-sp.bw*uy,cls:'f-c',no:'4'}
+  ];
+  regions.forEach(function(r){
+    add(g,S('rect',{x:r.x,y:r.y,width:r.w,height:r.h,'class':r.cls}));
+    add(g,S('circle',{cx:r.x+r.w/2,cy:r.y+r.h/2,r:13,fill:'var(--surface)',stroke:'var(--ink-2)','stroke-width':1.3}));
+    T(g,r.x+r.w/2,r.y+r.h/2+5,r.no,{s:13.5,w:700,c:'dg-ink',m:true});
+  });
+  var i;
+  for(i=1;i<=sp.aw;i++) add(g,S('line',{x1:x+i*ux,y1:y,x2:x+i*ux,y2:y+H,'class':'dg-grid'}));
+  for(i=1;i<=sp.bw;i++) add(g,S('line',{x1:x,y1:y+i*uy,x2:x+W,y2:y+i*uy,'class':'dg-grid'}));
+  add(g,S('rect',{x:x,y:y,width:W,height:H,'class':'dg-frame'}));
+
+  bracket(g,x,sx,y-12,-1,'dgs-fa');
+  T(g,(x+sx)/2,y-22,String(sp.aw),{s:14,w:700,c:'dg-fa'});
+  bracket(g,sx,x+W,y-12,-1,'dgs-fb');
+  vDraw(g,(sx+x+W)/2,y-30,{n:sp.an,d:sp.ad},12.5,'dg-fb');
+  T(g,x+W/2,y-44,'가로 '+sp.aw+' + '+sp.an+'/'+sp.ad+' = '+(sp.aw*sp.ad+sp.an)+'/'+sp.ad+' '+sp.unit,{s:12.5,c:'dg-mut'});
+
+  add(g,S('path',{d:'M'+(x-14)+' '+y+' L'+(x-20)+' '+y+' L'+(x-20)+' '+sy+' L'+(x-14)+' '+sy,'class':'dgs-fa'}));
+  T(g,x-32,(y+sy)/2+5,String(sp.bw),{s:14,w:700,c:'dg-fa'});
+  add(g,S('path',{d:'M'+(x-14)+' '+sy+' L'+(x-20)+' '+sy+' L'+(x-20)+' '+(y+H)+' L'+(x-14)+' '+(y+H),'class':'dgs-fb'}));
+  vDraw(g,x-36,(sy+y+H)/2,{n:sp.bn,d:sp.bd},12.5,'dg-fb');
+
+  /* legend */
+  var lx=x+W+48, ly=y+6;
+  var an=sp.an, ad=sp.ad, bn=sp.bn, bd=sp.bd;
+  var items=[
+    {no:'1',txt:sp.aw+' × '+sp.bw,v:{t:String(sp.aw*sp.bw)}},
+    {no:'2',txt:an+'/'+ad+' × '+sp.bw,v:red(an*sp.bw,ad)},
+    {no:'3',txt:sp.aw+' × '+bn+'/'+bd,v:red(sp.aw*bn,bd)},
+    {no:'4',txt:an+'/'+ad+' × '+bn+'/'+bd,v:red(an*bn,ad*bd)}
+  ];
+  function red(n,d){var q=gcd(n,d)||1;n/=q;d/=q;return d===1?{t:String(n)}:{n:n,d:d};}
+  items.forEach(function(it,i){
+    var yy=ly+i*38;
+    add(g,S('circle',{cx:lx+11,cy:yy+2,r:11,fill:'var(--surface-2)',stroke:'var(--ink-2)','stroke-width':1.2}));
+    T(g,lx+11,yy+7,it.no,{s:12.5,w:700,c:'dg-ink',m:true});
+    T(g,lx+30,yy+7,it.txt+'  =',{a:'start',s:13.5,c:'dg-i2'});
+    vDraw(g,lx+30+tw(it.txt+'  =',13.5)+14,yy+2,it.v,14,'dg-ink');
+  });
+  var sn=(sp.aw*sp.ad+sp.an)*(sp.bw*sp.bd+sp.bn), sd=sp.ad*sp.bd;
+  var q=gcd(sn,sd)||1; sn/=q; sd/=q;
+  var wpart=Math.floor(sn/sd), rpart=sn-wpart*sd;
+  var sy2=ly+4*38+16;
+  add(g,S('line',{x1:lx,y1:sy2-8,x2:lx+188,y2:sy2-8,'class':'dgs-mut'}));
+  T(g,lx,sy2+16,'네 조각의 합',{a:'start',s:12.5,c:'dg-mut'});
+  vDraw(g,lx+34,sy2+48,{n:sn,d:sd},19,'dg-fc');
+  T(g,lx+62,sy2+54,'=',{a:'start',s:17,c:'dg-i2',w:600});
+  vDraw(g,lx+112,sy2+48,{w:wpart,n:rpart,d:sd,u:sp.unit+'²'},19,'dg-fc');
+  return {w:lx+230,h:Math.max(y+H+40,sy2+76)};
+};
+
+/* --- tape: part of a part --- */
+DG.tape=function(g,sp){
+  var x=34, W=628, h=38, rows=[24,102,180,258], i, j;
+  /* row 1 whole */
+  T(g,x,rows[0]-8,sp.labels[0],{a:'start',s:12.5,c:'dg-mut',w:600});
+  add(g,S('rect',{x:x,y:rows[0],width:W,height:h,'class':'f-n'}));
+  add(g,S('rect',{x:x,y:rows[0],width:W,height:h,'class':'dg-frame'}));
+  /* row 2: d1 parts, n1 filled */
+  T(g,x,rows[1]-8,sp.labels[1],{a:'start',s:12.5,c:'dg-fa',w:600});
+  var p1=W/sp.d1;
+  add(g,S('rect',{x:x,y:rows[1],width:sp.n1*p1,height:h,'class':'f-a'}));
+  for(i=1;i<sp.d1;i++) add(g,S('line',{x1:x+i*p1,y1:rows[1],x2:x+i*p1,y2:rows[1]+h,'class':'dg-grid'}));
+  add(g,S('rect',{x:x,y:rows[1],width:W,height:h,'class':'dg-frame'}));
+  T(g,x+sp.n1*p1/2,rows[1]+h/2+5,sp.n1+'/'+sp.d1,{s:14,w:700,c:'dg-fa'});
+  /* connectors */
+  add(g,S('line',{x1:x,y1:rows[1]+h,x2:x,y2:rows[2],'class':'dg-dash'}));
+  add(g,S('line',{x1:x+sp.n1*p1,y1:rows[1]+h,x2:x+sp.n1*p1,y2:rows[2],'class':'dg-dash'}));
+  /* row 3: zoom into the shaded part */
+  T(g,x,rows[2]-8,sp.labels[2],{a:'start',s:12.5,c:'dg-fc',w:600});
+  var Z=sp.n1*p1, p2=Z/sp.d2;
+  add(g,S('rect',{x:x,y:rows[2],width:sp.n2*p2,height:h,'class':'f-c'}));
+  for(i=1;i<sp.d2;i++) add(g,S('line',{x1:x+i*p2,y1:rows[2],x2:x+i*p2,y2:rows[2]+h,'class':'dg-grid'}));
+  add(g,S('rect',{x:x,y:rows[2],width:Z,height:h,'class':'dg-frame'}));
+  T(g,x+sp.n2*p2/2,rows[2]+h/2+5,sp.n2+'/'+sp.d2,{s:14,w:700,c:'dg-fc'});
+  /* row 4: back to the whole, d1*d2 parts */
+  T(g,x,rows[3]-8,sp.labels[3],{a:'start',s:12.5,c:'dg-i2',w:600});
+  var D=sp.d1*sp.d2, p3=W/D;
+  add(g,S('rect',{x:x,y:rows[3],width:sp.n1*sp.n2*p3,height:h,'class':'f-c'}));
+  for(i=1;i<D;i++) add(g,S('line',{x1:x+i*p3,y1:rows[3],x2:x+i*p3,y2:rows[3]+h,'class':'dg-grid'}));
+  add(g,S('rect',{x:x,y:rows[3],width:W,height:h,'class':'dg-frame'}));
+  T(g,x+sp.n1*sp.n2*p3/2,rows[3]+h/2+5,(sp.n1*sp.n2)+'/'+D,{s:14,w:700,c:'dg-fc'});
+  var rn=sp.n1*sp.n2, rd=D, q=gcd(rn,rd)||1;
+  var ry=rows[3]+h+30;
+  T(g,x,ry,'전체를 '+D+'칸으로 보면 '+rn+'칸',{a:'start',s:13,c:'dg-mut'});
+  var bx=x+W-150;
+  vDraw(g,bx,ry-6,{n:rn,d:rd},18,'dg-fc');
+  T(g,bx+26,ry,'=',{a:'start',s:17,c:'dg-i2',w:600});
+  vDraw(g,bx+72,ry-6,{n:rn/q,d:rd/q},18,'dg-fc');
+  return {w:720,h:ry+24};
+};
+
+/* --- rate blocks --- */
+DG.rate=function(g,sp){
+  var bw=124, bh=68, x0=40, y=62, i, j;
+  var used=sp.wholes+sp.numer/sp.denom;
+  bracket(g,x0,x0+used*bw,y-16,-1,'dgs-fc');
+  T(g,x0+used*bw/2,y-26,sp.totalLabel,{s:15,w:700,c:'dg-fc'});
+  for(i=0;i<sp.wholes;i++){
+    var bx=x0+i*bw;
+    add(g,S('rect',{x:bx,y:y,width:bw,height:bh,'class':'f-a'}));
+    add(g,S('rect',{x:bx,y:y,width:bw,height:bh,'class':'dg-frame'}));
+    if(sp.dots) for(j=0;j<sp.dots;j++)
+      add(g,S('circle',{cx:bx+bw/2+(j-(sp.dots-1)/2)*24,cy:y+24,r:8,fill:'var(--fa)'}));
+    vDraw(g,bx+bw/2,y+bh-16,sp.blockLabel,13,'dg-fa');
+  }
+  var px=x0+sp.wholes*bw;
+  add(g,S('rect',{x:px,y:y,width:bw*sp.numer/sp.denom,height:bh,'class':'f-b'}));
+  for(i=1;i<sp.denom;i++) add(g,S('line',{x1:px+i*bw/sp.denom,y1:y,x2:px+i*bw/sp.denom,y2:y+bh,'class':'dg-grid'}));
+  add(g,S('rect',{x:px,y:y,width:bw,height:bh,'class':'dg-frame'}));
+  add(g,S('circle',{cx:px+bw*sp.numer/sp.denom/2,cy:y+24,r:8,fill:'var(--fb)'}));
+  vDraw(g,px+bw*sp.numer/sp.denom/2,y+bh-16,sp.partialLabel,13,'dg-fb');
+
+  var yAx=y+bh+26;
+  add(g,S('line',{x1:x0,y1:yAx,x2:x0+(sp.wholes+1)*bw+14,y2:yAx,'class':'dgs-i2','marker-end':arrowDef(g,'ink')}));
+  for(i=0;i<=sp.wholes+1;i++){
+    var xx=x0+i*bw;
+    add(g,S('line',{x1:xx,y1:yAx-6,x2:xx,y2:yAx+6,'class':'dgs-i2'}));
+    T(g,xx,yAx+24,String(i),{s:13,w:600,c:'dg-i2',m:true});
+  }
+  T(g,x0+(sp.wholes+1)*bw+22,yAx+24,sp.axisName,{a:'start',s:12,c:'dg-mut'});
+  var mx=x0+used*bw;
+  add(g,S('path',{d:'M'+mx+' '+(yAx-9)+' l-7,-11 l14,0 z',fill:'var(--fc)'}));
+  add(g,S('line',{x1:mx,y1:y,x2:mx,y2:yAx-9,'class':'dgs-fc','stroke-dasharray':'4 3'}));
+  vDraw(g,mx,yAx+48,sp.markLabel,13.5,'dg-fc');
+  return {w:x0+(sp.wholes+1)*bw+80,h:yAx+70};
+};
+
+/* --- double number line --- */
+DG.dnl=function(g,sp){
+  var x0=112, x1=684, W=x1-x0, yT=104, yB=176;
+  T(g,0,yT+5,sp.topName,{a:'start',s:12.5,c:'dg-mut',w:600});
+  T(g,0,yB+5,sp.botName,{a:'start',s:12.5,c:'dg-mut',w:600});
+  var aI=arrowDef(g,'ink');
+  add(g,S('line',{x1:x0,y1:yT,x2:x1+14,y2:yT,'class':'dgs-i2','marker-end':aI}));
+  add(g,S('line',{x1:x0,y1:yB,x2:x1+14,y2:yB,'class':'dgs-i2','marker-end':arrowDef(g,'ink')}));
+  sp.ticks.forEach(function(tk){
+    var xx=x0+tk.p*W;
+    var hi=!!tk.hi;
+    add(g,S('line',{x1:xx,y1:yT,x2:xx,y2:yB,'class':hi?'dgs-fc':'dg-dash','stroke-width':hi?2:1.1}));
+    add(g,S('line',{x1:xx,y1:yT-7,x2:xx,y2:yT+7,'class':hi?'dgs-fc':'dgs-i2'}));
+    add(g,S('line',{x1:xx,y1:yB-7,x2:xx,y2:yB+7,'class':hi?'dgs-fc':'dgs-i2'}));
+    vDraw(g,xx,yT-26,tk.t,hi?14:12.5,hi?'dg-fc':'dg-i2');
+    vDraw(g,xx,yB+30,tk.b,hi?14:12.5,hi?'dg-fc':'dg-i2');
+  });
+  T(g,x0,44,'위·아래 눈금은 항상 짝을 이루어 함께 늘어납니다.',{a:'start',s:12.5,c:'dg-mut'});
+  return {w:720,h:yB+66};
+};
+
+/* ============ mount ============ */
+document.querySelectorAll('[data-dg]').forEach(function(host){
+  var sp;
+  try{ sp=JSON.parse(host.getAttribute('data-dg')); }catch(e){ return; }
+  var fn=DG[sp.type]; if(!fn) return;
+  var svg=S('svg',{role:'img','aria-label':sp.alt||''});
+  var g=add(svg,S('g',{}));
+  var r;
+  try{ r=fn(g,sp); }catch(e){ return; }
+  r=r||{w:720,h:300};
+  var VW=Math.max(720,Math.ceil(r.w)+14);
+  g.setAttribute('transform','translate('+(((VW-r.w)/2)).toFixed(1)+',0)');
+  svg.setAttribute('viewBox','0 0 '+VW+' '+Math.ceil(r.h));
+  host.appendChild(svg);
+});
+
+/* ============ scrollspy ============ */
+var links=[].slice.call(document.querySelectorAll('.chips a'));
+var targets=links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+function spy(){
+  var best=0, top=120;
+  targets.forEach(function(t,i){
+    if(t && t.getBoundingClientRect().top<=top) best=i;
+  });
+  links.forEach(function(a,i){ a.classList.toggle('on', i===best); });
+}
+spy();
+window.addEventListener('scroll',spy,{passive:true});
+})();
+</script>
