@@ -86,6 +86,18 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
   font-size:27px; font-weight:600; line-height:1.24}
 .chip .cn{width:38px; height:38px; border-radius:50%; background:var(--fc); color:#fff;
   font-family:var(--mono); font-size:18px; font-weight:600; display:grid; place-items:center; flex:0 0 auto}
+.eqtail{display:inline-flex; align-items:center; gap:12px}
+
+/* ---------- 단계별 등장 (build) ---------- */
+.st{transition:opacity .34s ease}
+.chip,.eqtail{transition:opacity .34s ease, transform .34s ease}
+.st.pending,.chip.pending,.eqtail.pending{opacity:0}
+.chip.pending{transform:translateY(14px)}
+.eqtail.pending{transform:translateX(-10px)}
+@keyframes slidein{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+.slide.on{animation:slidein .3s ease both}
+#stage.noanim .st,#stage.noanim .chip,#stage.noanim .eqtail{transition:none}
+#stage.noanim .slide.on{animation:none}
 
 /* ---------- intro slide ---------- */
 .slide.intro{grid-template-rows:46px minmax(0,1fr)}
@@ -217,6 +229,7 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
   .slide{position:static; display:grid!important; width:1600px; height:900px;
     zoom:.62; break-after:page; border:1px solid #ddd}
   #bar,#chrome,#notes,#ov{display:none!important}
+  .st.pending,.chip.pending,.eqtail.pending{opacity:1!important; transform:none!important}
 }
 </style>
 
@@ -226,6 +239,7 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
   <button class="navbtn" id="next" aria-label="다음 슬라이드">›</button>
   <div id="tools">
     <span id="counter" aria-live="polite">1 / 26</span>
+    <button id="animbtn" aria-label="단계별 등장 켜기 끄기">단계별 등장</button>
     <button id="notebtn" aria-label="발표자 노트 열기">발표자 노트</button>
     <button id="ovbtn" aria-label="전체 슬라이드 보기">전체 보기</button>
     <button id="fsbtn" aria-label="전체 화면">전체 화면</button>
@@ -294,7 +308,20 @@ function el(tag,cls,parent){
 /* ============ SVG helpers ============ */
 var NS='http://www.w3.org/2000/svg';
 function S(tag,a){var e=document.createElementNS(NS,tag);for(var k in a){if(a[k]!==null&&a[k]!==undefined)e.setAttribute(k,a[k]);}return e;}
-function add(p,e){p.appendChild(e);return e;}
+/* --- 단계별 등장(build) : 루트에 붙는 요소를 단계 그룹으로 자동 분류 --- */
+var ROOT=null, SG=null, CST=0, CKEY='0';
+function beginSteps(root){ ROOT=root; SG={}; CST=0; CKEY='0'; }
+function st(n,k){ CST=n; CKEY=k? (n+'-'+k) : String(n); }
+function maxStep(){ var m=0; for(var k in SG){ var v=+SG[k].getAttribute('data-st'); if(v>m) m=v; } return m; }
+function grp(){
+  if(!SG[CKEY]){
+    var q=document.createElementNS(NS,'g');
+    q.setAttribute('class','st'); q.setAttribute('data-st',CST);
+    ROOT.appendChild(q); SG[CKEY]=q;
+  }
+  return SG[CKEY];
+}
+function add(p,e){ if(ROOT&&p===ROOT) p=grp(); p.appendChild(e); return e; }
 function T(p,x,y,s,o){
   o=o||{};
   var t=S('text',{x:x,y:y,'text-anchor':o.a||'middle','font-size':o.s||13,'font-weight':o.w||500,
@@ -344,7 +371,7 @@ function vDraw(p,cx,cy,v,s,cls){
 var uid=0;
 function arrowDef(g,cls){
   var id='ah'+(++uid);
-  var d=add(g,S('defs',{}));
+  var d=S('defs',{}); (ROOT||g).appendChild(d);
   var mk=add(d,S('marker',{id:id,viewBox:'0 0 10 10',refX:'8.5',refY:'5',markerWidth:'7',markerHeight:'7',orient:'auto'}));
   add(mk,S('path',{d:'M0,1 L9,5 L0,9 z','class':'mk-'+cls}));
   return 'url(#'+id+')';
@@ -377,6 +404,7 @@ DG.bars=function(g,sp){
   var per=sp.whole+(sp.numer>0?1:0);
   var gw=per*U;
   var yA=32;
+  st(1);
   T(g,0,16,sp.rowA,{a:'start',s:12.5,c:'dg-mut',w:600});
   var i,j,x;
   for(i=0;i<sp.count;i++){
@@ -389,6 +417,7 @@ DG.bars=function(g,sp){
   T(g,rowAW/2,yA+H+48,sp.noteA+' 만큼',{s:12.5,c:'dg-mut'});
 
   var yBt=yA+H+72, yB=yBt+14;
+  st(2);
   T(g,0,yBt,sp.rowB,{a:'start',s:12.5,c:'dg-mut',w:600});
   var blue=sp.count*sp.whole, pieces=sp.count*sp.numer;
   var full=Math.floor(pieces/sp.denom), rem=pieces%sp.denom;
@@ -400,6 +429,7 @@ DG.bars=function(g,sp){
   var totW=blue+full;
   var res={w:totW||undefined,n:rem||undefined,d:rem?sp.denom:undefined,t:rem?undefined:String(totW),u:sp.unit};
   var rx=rowBW+26, resW=vW(res,17)+22;
+  st(3);
   T(g,rx,yB+H/2+6,'=',{a:'start',s:18,c:'dg-i2',w:600});
   vDraw(g,rx+22+vW(res,17)/2,yB+H/2,res,17,'dg-fc');
   if(rem){
@@ -424,14 +454,19 @@ DG.numberline=function(g,sp){
   var ppu=W/(sp.max-sp.min);
   if(sp.mode==='partition'){
     var yBar=52, hBar=44;
+    st(1);
     T(g,0,20,sp.title,{a:'start',s:12.5,c:'dg-mut',w:600});
     var pw=W/sp.parts, i;
-    for(i=0;i<sp.parts;i++){
-      add(g,S('rect',{x:x0+i*pw,y:yBar,width:pw,height:hBar,'class':i<sp.fill?'f-c':'f-n'}));
-    }
+    for(i=0;i<sp.parts;i++) add(g,S('rect',{x:x0+i*pw,y:yBar,width:pw,height:hBar,'class':'f-n'}));
+    st(2);
+    for(i=0;i<sp.fill;i++) add(g,S('rect',{x:x0+i*pw,y:yBar,width:pw,height:hBar,'class':'f-c'}));
+    st(1,'top');
     for(i=1;i<sp.parts;i++) add(g,S('line',{x1:x0+i*pw,y1:yBar,x2:x0+i*pw,y2:yBar+hBar,'class':'dg-grid'}));
     add(g,S('rect',{x:x0,y:yBar,width:W,height:hBar,'class':'dg-frame'}));
-    for(i=0;i<sp.parts;i++) T(g,x0+(i+0.5)*pw,yBar+hBar/2+5,sp.partLabel,{s:14,w:600,c:i<sp.fill?'dg-fc':'dg-mut'});
+    for(i=sp.fill;i<sp.parts;i++) T(g,x0+(i+0.5)*pw,yBar+hBar/2+5,sp.partLabel,{s:14,w:600,c:'dg-mut'});
+    st(2,'top');
+    for(i=0;i<sp.fill;i++) T(g,x0+(i+0.5)*pw,yBar+hBar/2+5,sp.partLabel,{s:14,w:600,c:'dg-fc'});
+    st(1,'top');
     var yAx=yBar+hBar+22;
     add(g,S('line',{x1:x0,y1:yAx,x2:x1,y2:yAx,'class':'dgs-i2'}));
     for(i=0;i<=sp.parts;i++){
@@ -440,14 +475,17 @@ DG.numberline=function(g,sp){
       T(g,xx,yAx+24,String(sp.min+(sp.max-sp.min)*i/sp.parts),{s:12.5,c:'dg-i2',m:true});
     }
     T(g,x1+2,yAx+24,sp.unit,{a:'start',s:12,c:'dg-mut'});
+    st(3);
     bracket(g,x0,x0+sp.fill*pw,yBar-10,-1,'dgs-fc');
     T(g,x0+sp.fill*pw/2,yBar-20,sp.fill+'묶음 = '+(sp.fill*parseFloat(sp.partLabel))+' '+sp.unit,{s:13,w:600,c:'dg-fc'});
+    st(1,'top');
     bracket(g,x0,x1,yAx+38,1,'dgs-mut');
     T(g,(x0+x1)/2,yAx+58,'전체 '+sp.max+' '+sp.unit+' — '+sp.parts+'묶음으로 똑같이 나누기',{s:12.5,c:'dg-mut'});
     return {w:720,h:yAx+72};
   }
   /* hops */
   var yAx=178;
+  st(1);
   T(g,0,20,sp.title,{a:'start',s:12.5,c:'dg-mut',w:600});
   var hop=sp.hop.w+sp.hop.n/sp.hop.d;
   var aA=arrowDef(g,'fa'), aB=arrowDef(g,'fb');
@@ -462,6 +500,7 @@ DG.numberline=function(g,sp){
   T(g,x1+16,yAx+27,sp.unit,{a:'start',s:12,c:'dg-mut'});
   var spacing=hop*ppu;
   for(i=0;i<sp.count;i++){
+    st(2);
     var xa=x0+i*spacing, xb=x0+(i+1)*spacing;
     var lift=Math.min(52,20+spacing*0.22);
     var cls=(i%2===0)?'dgs-fa':'dgs-fb';
@@ -469,6 +508,7 @@ DG.numberline=function(g,sp){
       'class':cls,'stroke-width':1.9,'marker-end':(i%2===0)?aA:aB}));
     vDraw(g,(xa+xb)/2,yAx-16-lift,{w:sp.hop.w||undefined,n:sp.hop.n,d:sp.hop.d},12.5,(i%2===0)?'dg-fa':'dg-fb');
     /* cumulative label under axis */
+    st(3);
     var cn=(i+1)*(sp.hop.w*sp.hop.d+sp.hop.n), cd=sp.hop.d;
     var gg=gcd(cn,cd)||1; cn/=gg; cd/=gg;
     var cw=Math.floor(cn/cd), crem=cn-cw*cd;
@@ -481,6 +521,7 @@ DG.numberline=function(g,sp){
       add(g,S('line',{x1:xb,y1:yAx-8,x2:xb,y2:yAx+34,'class':'dgs-fc','stroke-dasharray':'4 3'}));
     }
   }
+  st(3);
   T(g,x0,yAx+78,sp.count+'번 뛴 자리가 답입니다.',{a:'start',s:12.5,c:'dg-mut'});
   return {w:720,h:yAx+92};
 };
@@ -489,39 +530,56 @@ DG.numberline=function(g,sp){
 DG.partwhole=function(g,sp){
   if(sp.mode==='strip'){
     var x0=40,x1=660,W=x1-x0,y=64,h=58,pw=W/sp.groups,i;
+    st(1);
     T(g,x0,26,sp.wholeLabel,{a:'start',s:13,c:'dg-i2',w:600});
     bracket(g,x0,x1,42,-1,'dgs-mut');
-    for(i=0;i<sp.groups;i++)
-      add(g,S('rect',{x:x0+i*pw,y:y,width:pw,height:h,'class':i<sp.fill?'f-c':'f-n'}));
+    for(i=0;i<sp.groups;i++) add(g,S('rect',{x:x0+i*pw,y:y,width:pw,height:h,'class':'f-n'}));
+    st(2);
+    for(i=0;i<sp.fill;i++) add(g,S('rect',{x:x0+i*pw,y:y,width:pw,height:h,'class':'f-c'}));
+    st(1,'top');
     for(i=1;i<sp.groups;i++) add(g,S('line',{x1:x0+i*pw,y1:y,x2:x0+i*pw,y2:y+h,'class':'dg-grid'}));
     add(g,S('rect',{x:x0,y:y,width:W,height:h,'class':'dg-frame'}));
-    for(i=0;i<sp.groups;i++) T(g,x0+(i+0.5)*pw,y+h/2+5,sp.cellText,{s:14,w:600,c:i<sp.fill?'dg-fc':'dg-mut'});
+    for(i=sp.fill;i<sp.groups;i++) T(g,x0+(i+0.5)*pw,y+h/2+5,sp.cellText,{s:14,w:600,c:'dg-mut'});
+    T(g,x0,y+h+90,'분모 '+sp.groups+' → '+sp.groups+'등분 · 분자 '+sp.fill+' → '+sp.fill+'칸 가져오기',{a:'start',s:12.5,c:'dg-mut'});
+    st(2,'top');
+    for(i=0;i<sp.fill;i++) T(g,x0+(i+0.5)*pw,y+h/2+5,sp.cellText,{s:14,w:600,c:'dg-fc'});
+    st(3);
     bracket(g,x0,x0+sp.fill*pw,y+h+14,1,'dgs-fc');
     T(g,x0+sp.fill*pw/2,y+h+38,sp.fillLabel,{s:13.5,w:600,c:'dg-fc'});
     T(g,x0+sp.fill*pw/2,y+h+58,'= '+(sp.total/sp.groups*sp.fill).toLocaleString('ko-KR')+' '+sp.unit,{s:15,w:700,c:'dg-fc'});
-    T(g,x0,y+h+90,'분모 '+sp.groups+' → '+sp.groups+'등분 · 분자 '+sp.fill+' → '+sp.fill+'칸 가져오기',{a:'start',s:12.5,c:'dg-mut'});
     return {w:720,h:y+h+104};
   }
   /* grid */
   var it=42, gap=9, cols=sp.cols, gx=118, gy=44, i, r, c;
+  st(1);
   T(g,gx,26,sp.wholeLabel,{a:'start',s:13,c:'dg-i2',w:600});
-  for(r=0;r<sp.groups;r++){
-    for(c=0;c<cols;c++){
-      add(g,S('rect',{x:gx+c*(it+gap),y:gy+r*(it+gap),width:it,height:it,rx:5,
-        'class':r<sp.fill?'f-c':'f-n'}));
-      add(g,S('rect',{x:gx+c*(it+gap),y:gy+r*(it+gap),width:it,height:it,rx:5,
-        fill:'none',stroke:r<sp.fill?'var(--fc)':'var(--rule-strong)','stroke-width':1.4}));
-    }
-    T(g,gx-14,gy+r*(it+gap)+it/2+5,'1묶음 = '+(sp.total/sp.groups)+sp.unit,
-      {a:'end',s:12.5,c:r<sp.fill?'dg-fc':'dg-mut',w:r<sp.fill?600:400});
+  function cellsAt(rows,cls,strokeVar){
+    rows.forEach(function(r){
+      for(var c=0;c<cols;c++){
+        add(g,S('rect',{x:gx+c*(it+gap),y:gy+r*(it+gap),width:it,height:it,rx:5,'class':cls}));
+        add(g,S('rect',{x:gx+c*(it+gap),y:gy+r*(it+gap),width:it,height:it,rx:5,
+          fill:'none',stroke:strokeVar,'stroke-width':1.4}));
+      }
+    });
   }
+  var allRows=[], fillRows=[];
+  for(r=0;r<sp.groups;r++){ allRows.push(r); if(r<sp.fill) fillRows.push(r); }
+  cellsAt(allRows,'f-n','var(--rule-strong)');
+  for(r=sp.fill;r<sp.groups;r++)
+    T(g,gx-14,gy+r*(it+gap)+it/2+5,'1묶음 = '+(sp.total/sp.groups)+sp.unit,{a:'end',s:12.5,c:'dg-mut'});
+  st(2);
+  cellsAt(fillRows,'f-c','var(--fc)');
+  for(r=0;r<sp.fill;r++)
+    T(g,gx-14,gy+r*(it+gap)+it/2+5,'1묶음 = '+(sp.total/sp.groups)+sp.unit,{a:'end',s:12.5,c:'dg-fc',w:600});
   var gw=cols*it+(cols-1)*gap, gh=sp.groups*it+(sp.groups-1)*gap;
   var bx=gx+gw+16;
+  st(1,'top');
+  T(g,gx,gy+gh+30,'분모 '+sp.groups+' → '+sp.groups+'묶음으로 똑같이 나누기 · 분자 '+sp.fill+' → '+sp.fill+'묶음 가져오기',
+    {a:'start',s:12.5,c:'dg-mut'});
+  st(3);
   add(g,S('path',{d:'M'+bx+' '+gy+' L'+(bx+8)+' '+gy+' L'+(bx+8)+' '+(gy+sp.fill*(it+gap)-gap)+' L'+bx+' '+(gy+sp.fill*(it+gap)-gap),'class':'dgs-fc'}));
   T(g,bx+18,gy+(sp.fill*(it+gap)-gap)/2-2,sp.fill+'묶음',{a:'start',s:13.5,w:600,c:'dg-fc'});
   T(g,bx+18,gy+(sp.fill*(it+gap)-gap)/2+18,'= '+(sp.total/sp.groups*sp.fill)+sp.unit,{a:'start',s:15,w:700,c:'dg-fc'});
-  T(g,gx,gy+gh+30,'분모 '+sp.groups+' → '+sp.groups+'묶음으로 똑같이 나누기 · 분자 '+sp.fill+' → '+sp.fill+'묶음 가져오기',
-    {a:'start',s:12.5,c:'dg-mut'});
   return {w:bx+150,h:gy+gh+44};
 };
 
@@ -529,6 +587,7 @@ DG.partwhole=function(g,sp){
 DG.compare=function(g,sp){
   var cw=88, ch=48, x0=26, yA=44, yB=140;
   var i;
+  st(1);
   T(g,x0,26,sp.baseLabel,{a:'start',s:13,c:'dg-fa',w:600});
   for(i=0;i<sp.baseCells;i++){
     add(g,S('rect',{x:x0+i*cw,y:yA,width:cw,height:ch,'class':'f-a'}));
@@ -537,6 +596,7 @@ DG.compare=function(g,sp){
   }
   add(g,S('rect',{x:x0,y:yA,width:sp.baseCells*cw,height:ch,'class':'dg-frame'}));
 
+  st(2);
   T(g,x0,yB-18,sp.compLabel,{a:'start',s:13,c:'dg-fc',w:600});
   for(i=0;i<sp.compCells;i++){
     add(g,S('rect',{x:x0+i*cw,y:yB,width:cw,height:ch,'class':i<sp.baseCells?'f-a':'f-b'}));
@@ -548,9 +608,9 @@ DG.compare=function(g,sp){
   /* guide line showing the extra piece */
   add(g,S('line',{x1:x0+sp.baseCells*cw,y1:yA,x2:x0+sp.baseCells*cw,y2:yB+ch+10,'class':'dg-dash'}));
 
+  st(3);
   bracket(g,x0,x0+sp.baseCells*cw,yB+ch+14,1,'dgs-fa');
-  var eqA=document.createElementNS(NS,'g'); add(g,eqA);
-  T(g,x0+sp.baseCells*cw/2,yB+ch+36,sp.braceA.replace(/_/,' ').replace(/\//,'/'),{s:13,w:600,c:'dg-fa'});
+  T(g,x0+sp.baseCells*cw/2,yB+ch+36,sp.braceA.replace(/_/,' '),{s:13,w:600,c:'dg-fa'});
   bracket(g,x0+sp.baseCells*cw,x0+sp.compCells*cw,yB+ch+14,1,'dgs-fb');
   T(g,x0+(sp.baseCells+sp.compCells)*cw/2,yB+ch+36,sp.braceB.replace(/_/,' '),{s:13,w:600,c:'dg-fb'});
 
@@ -563,29 +623,36 @@ DG.compare=function(g,sp){
 DG.area=function(g,sp){
   var Sq=286, x=86, y=52;
   var cw=Sq/sp.cols, rh=Sq/sp.rows;
+  st(1);
   add(g,S('rect',{x:x,y:y,width:Sq,height:Sq,'class':'f-n'}));
+  st(2);
   add(g,S('rect',{x:x,y:y,width:sp.colsFill*cw,height:Sq,'class':'f-a'}));
   add(g,S('rect',{x:x,y:y,width:Sq,height:sp.rowsFill*rh,'class':'f-b'}));
+  st(3);
   add(g,S('rect',{x:x,y:y,width:sp.colsFill*cw,height:sp.rowsFill*rh,'class':'f-c'}));
   add(g,S('rect',{x:x,y:y,width:sp.colsFill*cw,height:sp.rowsFill*rh,fill:'none',stroke:'var(--fc)','stroke-width':2.4}));
   var i;
+  st(1,'top');
   for(i=1;i<sp.cols;i++) add(g,S('line',{x1:x+i*cw,y1:y,x2:x+i*cw,y2:y+Sq,'class':'dg-grid'}));
   for(i=1;i<sp.rows;i++) add(g,S('line',{x1:x,y1:y+i*rh,x2:x+Sq,y2:y+i*rh,'class':'dg-grid'}));
   add(g,S('rect',{x:x,y:y,width:Sq,height:Sq,'class':'dg-frame'}));
 
+  st(2,'top');
   bracket(g,x,x+sp.colsFill*cw,y-12,-1,'dgs-fa');
   vDraw(g,x+sp.colsFill*cw/2,y-30,{n:sp.topFrac.n,d:sp.topFrac.d},14,'dg-fa');
   var bx2=x-14, by2=y+sp.rowsFill*rh;
   add(g,S('path',{d:'M'+(bx2-6)+' '+y+' L'+bx2+' '+y+' L'+bx2+' '+by2+' L'+(bx2-6)+' '+by2,'class':'dgs-fb'}));
   vDraw(g,x-44,y+sp.rowsFill*rh/2,{n:sp.leftFrac.n,d:sp.leftFrac.d},14,'dg-fb');
+  st(1,'top');
   if(sp.wholeLabel) T(g,x+Sq/2,y+Sq+26,sp.wholeLabel,{s:12.5,c:'dg-mut'});
   if(sp.sideLabel) T(g,x+Sq+10,y+Sq+26,sp.sideLabel,{a:'start',s:12.5,c:'dg-mut'});
 
   var px=x+Sq+44, py=y+34;
   sp.lines.forEach(function(ln,i){
-    var m=/^(.*?)(\d+)\/(\d+)(.*)$/.exec(ln);
-    T(g,px,py+i*30,ln.replace('/','/'),{a:'start',s:13.5,c:i===2?'dg-fc':'dg-i2',w:i===2?600:400});
+    st(i===2?3:2,i===2?null:'top');
+    T(g,px,py+i*30,ln,{a:'start',s:13.5,c:i===2?'dg-fc':'dg-i2',w:i===2?600:400});
   });
+  st(3);
   var ry=py+3*30+22;
   T(g,px,ry,'답',{a:'start',s:12,c:'dg-mut',m:true});
   var rw=vW({n:sp.result.n,d:sp.result.d},19);
@@ -612,16 +679,23 @@ DG.areamixed=function(g,sp){
     {x:x,y:sy,w:sp.aw*ux,h:H-sp.bw*uy,cls:'f-b',no:'3'},
     {x:sx,y:sy,w:W-sp.aw*ux,h:H-sp.bw*uy,cls:'f-c',no:'4'}
   ];
+  st(1);
+  add(g,S('rect',{x:x,y:y,width:W,height:H,'class':'f-n'}));
+  st(2);
   regions.forEach(function(r){
     add(g,S('rect',{x:r.x,y:r.y,width:r.w,height:r.h,'class':r.cls}));
-    add(g,S('circle',{cx:r.x+r.w/2,cy:r.y+r.h/2,r:13,fill:'var(--surface)',stroke:'var(--ink-2)','stroke-width':1.3}));
-    T(g,r.x+r.w/2,r.y+r.h/2+5,r.no,{s:13.5,w:700,c:'dg-ink',m:true});
   });
   var i;
+  st(1,'top');
   for(i=1;i<=sp.aw;i++) add(g,S('line',{x1:x+i*ux,y1:y,x2:x+i*ux,y2:y+H,'class':'dg-grid'}));
   for(i=1;i<=sp.bw;i++) add(g,S('line',{x1:x,y1:y+i*uy,x2:x+W,y2:y+i*uy,'class':'dg-grid'}));
   add(g,S('rect',{x:x,y:y,width:W,height:H,'class':'dg-frame'}));
-
+  st(2,'top');
+  regions.forEach(function(r){
+    add(g,S('circle',{cx:r.x+r.w/2,cy:r.y+r.h/2,r:13,fill:'var(--surface)',stroke:'var(--ink-2)','stroke-width':1.3}));
+    T(g,r.x+r.w/2,r.y+r.h/2+5,r.no,{s:13.5,w:700,c:'dg-ink',m:true});
+  });
+  st(1,'top');
   bracket(g,x,sx,y-12,-1,'dgs-fa');
   T(g,(x+sx)/2,y-22,String(sp.aw),{s:14,w:700,c:'dg-fa'});
   bracket(g,sx,x+W,y-12,-1,'dgs-fb');
@@ -643,6 +717,7 @@ DG.areamixed=function(g,sp){
     {no:'4',txt:an+'/'+ad+' × '+bn+'/'+bd,v:red(an*bn,ad*bd)}
   ];
   function red(n,d){var q=gcd(n,d)||1;n/=q;d/=q;return d===1?{t:String(n)}:{n:n,d:d};}
+  st(2,'top');
   items.forEach(function(it,i){
     var yy=ly+i*38;
     add(g,S('circle',{cx:lx+11,cy:yy+2,r:11,fill:'var(--surface-2)',stroke:'var(--ink-2)','stroke-width':1.2}));
@@ -654,6 +729,7 @@ DG.areamixed=function(g,sp){
   var q=gcd(sn,sd)||1; sn/=q; sd/=q;
   var wpart=Math.floor(sn/sd), rpart=sn-wpart*sd;
   var sy2=ly+4*38+16;
+  st(3);
   add(g,S('line',{x1:lx,y1:sy2-8,x2:lx+188,y2:sy2-8,'class':'dgs-mut'}));
   T(g,lx,sy2+16,'네 조각의 합',{a:'start',s:12.5,c:'dg-mut'});
   vDraw(g,lx+34,sy2+48,{n:sn,d:sd},19,'dg-fc');
@@ -666,6 +742,7 @@ DG.areamixed=function(g,sp){
 DG.tape=function(g,sp){
   var x=34, W=628, h=38, rows=[24,102,180,258], i, j;
   /* row 1 whole */
+  st(1);
   T(g,x,rows[0]-8,sp.labels[0],{a:'start',s:12.5,c:'dg-mut',w:600});
   add(g,S('rect',{x:x,y:rows[0],width:W,height:h,'class':'f-n'}));
   add(g,S('rect',{x:x,y:rows[0],width:W,height:h,'class':'dg-frame'}));
@@ -677,6 +754,7 @@ DG.tape=function(g,sp){
   add(g,S('rect',{x:x,y:rows[1],width:W,height:h,'class':'dg-frame'}));
   T(g,x+sp.n1*p1/2,rows[1]+h/2+5,sp.n1+'/'+sp.d1,{s:14,w:700,c:'dg-fa'});
   /* connectors */
+  st(2);
   add(g,S('line',{x1:x,y1:rows[1]+h,x2:x,y2:rows[2],'class':'dg-dash'}));
   add(g,S('line',{x1:x+sp.n1*p1,y1:rows[1]+h,x2:x+sp.n1*p1,y2:rows[2],'class':'dg-dash'}));
   /* row 3: zoom into the shaded part */
@@ -687,6 +765,7 @@ DG.tape=function(g,sp){
   add(g,S('rect',{x:x,y:rows[2],width:Z,height:h,'class':'dg-frame'}));
   T(g,x+sp.n2*p2/2,rows[2]+h/2+5,sp.n2+'/'+sp.d2,{s:14,w:700,c:'dg-fc'});
   /* row 4: back to the whole, d1*d2 parts */
+  st(3);
   T(g,x,rows[3]-8,sp.labels[3],{a:'start',s:12.5,c:'dg-i2',w:600});
   var D=sp.d1*sp.d2, p3=W/D;
   add(g,S('rect',{x:x,y:rows[3],width:sp.n1*sp.n2*p3,height:h,'class':'f-c'}));
@@ -707,8 +786,7 @@ DG.tape=function(g,sp){
 DG.rate=function(g,sp){
   var bw=124, bh=68, x0=40, y=62, i, j;
   var used=sp.wholes+sp.numer/sp.denom;
-  bracket(g,x0,x0+used*bw,y-16,-1,'dgs-fc');
-  T(g,x0+used*bw/2,y-26,sp.totalLabel,{s:15,w:700,c:'dg-fc'});
+  st(1);
   for(i=0;i<sp.wholes;i++){
     var bx=x0+i*bw;
     add(g,S('rect',{x:bx,y:y,width:bw,height:bh,'class':'f-a'}));
@@ -718,6 +796,7 @@ DG.rate=function(g,sp){
     vDraw(g,bx+bw/2,y+bh-16,sp.blockLabel,13,'dg-fa');
   }
   var px=x0+sp.wholes*bw;
+  st(2);
   add(g,S('rect',{x:px,y:y,width:bw*sp.numer/sp.denom,height:bh,'class':'f-b'}));
   for(i=1;i<sp.denom;i++) add(g,S('line',{x1:px+i*bw/sp.denom,y1:y,x2:px+i*bw/sp.denom,y2:y+bh,'class':'dg-grid'}));
   add(g,S('rect',{x:px,y:y,width:bw,height:bh,'class':'dg-frame'}));
@@ -725,6 +804,7 @@ DG.rate=function(g,sp){
   vDraw(g,px+bw*sp.numer/sp.denom/2,y+bh-16,sp.partialLabel,13,'dg-fb');
 
   var yAx=y+bh+26;
+  st(1,'ax');
   add(g,S('line',{x1:x0,y1:yAx,x2:x0+(sp.wholes+1)*bw+14,y2:yAx,'class':'dgs-i2','marker-end':arrowDef(g,'ink')}));
   for(i=0;i<=sp.wholes+1;i++){
     var xx=x0+i*bw;
@@ -733,6 +813,9 @@ DG.rate=function(g,sp){
   }
   T(g,x0+(sp.wholes+1)*bw+22,yAx+24,sp.axisName,{a:'start',s:12,c:'dg-mut'});
   var mx=x0+used*bw;
+  st(3);
+  bracket(g,x0,x0+used*bw,y-16,-1,'dgs-fc');
+  T(g,x0+used*bw/2,y-26,sp.totalLabel,{s:15,w:700,c:'dg-fc'});
   add(g,S('path',{d:'M'+mx+' '+(yAx-9)+' l-7,-11 l14,0 z',fill:'var(--fc)'}));
   add(g,S('line',{x1:mx,y1:y,x2:mx,y2:yAx-9,'class':'dgs-fc','stroke-dasharray':'4 3'}));
   vDraw(g,mx,yAx+48,sp.markLabel,13.5,'dg-fc');
@@ -742,6 +825,7 @@ DG.rate=function(g,sp){
 /* --- double number line --- */
 DG.dnl=function(g,sp){
   var x0=112, x1=684, W=x1-x0, yT=104, yB=176;
+  st(1);
   T(g,0,yT+5,sp.topName,{a:'start',s:12.5,c:'dg-mut',w:600});
   T(g,0,yB+5,sp.botName,{a:'start',s:12.5,c:'dg-mut',w:600});
   var aI=arrowDef(g,'ink');
@@ -750,12 +834,14 @@ DG.dnl=function(g,sp){
   sp.ticks.forEach(function(tk){
     var xx=x0+tk.p*W;
     var hi=!!tk.hi;
+    st(hi?3:2);
     add(g,S('line',{x1:xx,y1:yT,x2:xx,y2:yB,'class':hi?'dgs-fc':'dg-dash','stroke-width':hi?2:1.1}));
     add(g,S('line',{x1:xx,y1:yT-7,x2:xx,y2:yT+7,'class':hi?'dgs-fc':'dgs-i2'}));
     add(g,S('line',{x1:xx,y1:yB-7,x2:xx,y2:yB+7,'class':hi?'dgs-fc':'dgs-i2'}));
     vDraw(g,xx,yT-26,tk.t,hi?14:12.5,hi?'dg-fc':'dg-i2');
     vDraw(g,xx,yB+30,tk.b,hi?14:12.5,hi?'dg-fc':'dg-i2');
   });
+  st(1);
   T(g,x0,44,'위·아래 눈금은 항상 짝을 이루어 함께 늘어납니다.',{a:'start',s:12.5,c:'dg-mut'});
   return {w:720,h:yB+66};
 };
@@ -763,15 +849,19 @@ DG.dnl=function(g,sp){
 
 /* ============ mount one diagram ============ */
 function mountDG(host,sp){
-  var fn=DG[sp.type]; if(!fn) return;
+  var fn=DG[sp.type]; if(!fn) return 0;
   var svg=S('svg',{role:'img','aria-label':sp.alt||''});
   var g=svg.appendChild(S('g',{}));
-  var r; try{ r=fn(g,sp); }catch(e){ return; }
+  var r, ms=0;
+  try{ beginSteps(g); r=fn(g,sp); ms=maxStep(); }
+  catch(e){ ROOT=null; return 0; }
+  ROOT=null;
   r=r||{w:720,h:300};
   var VW=Math.max(720,Math.ceil(r.w)+14);
   g.setAttribute('transform','translate('+((VW-r.w)/2).toFixed(1)+',0)');
   svg.setAttribute('viewBox','0 0 '+VW+' '+Math.ceil(r.h));
   host.appendChild(svg);
+  return ms;
 }
 
 /* ============ 개념 흐름도 ============ */
@@ -1146,7 +1236,7 @@ var L=[
 
 /* ============ build ============ */
 var stage=document.getElementById('stage');
-var nodes=[];
+var nodes=[], MAXST=[];
 
 function head(sl,slide){
   var h=el('header','sl-head',slide);
@@ -1170,10 +1260,10 @@ L.forEach(function(sl,i){
     ['6개 차시','18개 상황맥락','그림 중심 26장','발표자 노트 포함'].forEach(function(x){
       el('span',null,f).textContent=x; });
     var kk=el('div','keys',slide);
-    kk.innerHTML='<span><kbd>←</kbd><kbd>→</kbd>화면 넘기기</span>'+
-      '<span><kbd>N</kbd>발표자 노트</span><span><kbd>O</kbd>전체 보기</span>'+
-      '<span><kbd>1</kbd>~<kbd>6</kbd>차시로 바로 이동</span>'+
-      '<span>터치 화면에서는 좌우로 밀어 넘길 수 있습니다</span>';
+    kk.innerHTML='<span><kbd>→</kbd>그림을 한 단계씩 쌓고, 다 쌓이면 다음 화면</span>'+
+      '<span><kbd>N</kbd>발표자 노트</span><span><kbd>A</kbd>단계별 등장 끄기</span>'+
+      '<span><kbd>O</kbd>전체 보기</span><span><kbd>1</kbd>~<kbd>6</kbd>차시로 이동</span>'+
+      '<span>터치 화면에서는 좌우로 밀어 넘깁니다</span>';
     nodes.push(slide); return;
   }
 
@@ -1201,22 +1291,33 @@ L.forEach(function(sl,i){
     nodes.push(slide); return;
   }
 
-  /* ctx : 키워드 한 줄 + 식 + 큰 그림 + 키워드 칩 3개 */
+  /* ctx : 키워드 한 줄 + 식 + 큰 그림 + 키워드 칩 3개
+     식은 "= 답" 부분을 마지막 단계까지 감춰 아이들이 답을 먼저 보지 않게 한다 */
   var kr=el('div','keyrow',slide);
   md(sl.key,el('p','keyline',kr));
   var eb=el('div','eqbig',kr);
-  eb.appendChild(eqEl(sl.eq));
-  if(sl.unit){ el('span','unit',eb).textContent=sl.unit; }
+  var seg=sl.eq.split(' = ');
+  eb.appendChild(eqEl(seg[0]));
+  var eqTail=null;
+  if(seg.length>1){
+    eqTail=el('span','eqtail',eb);
+    eqTail.appendChild(eqEl('= '+seg.slice(1).join(' = ')));
+    if(sl.unit) el('span','unit',eqTail).textContent=sl.unit;
+  } else if(sl.unit){ el('span','unit',eb).textContent=sl.unit; }
 
   var fg=el('figure','figbig',slide);
-  mountDG(el('div','dg-canvas',fg),sl.dg);
+  var dgSteps=mountDG(el('div','dg-canvas',fg),sl.dg);
+  var mb=Math.max(dgSteps,3);
+  if(eqTail) eqTail.setAttribute('data-st',String(mb));
 
   var c3=el('div','chips3',slide);
   sl.chips.forEach(function(t,j){
     var ch=el('div','chip',c3);
+    ch.setAttribute('data-st',String(Math.min(j+1,mb)));
     el('span','cn',ch).textContent=String(j+1);
     md(t,el('span',null,ch));
   });
+  MAXST[i]=mb;
   nodes.push(slide);
 });
 
@@ -1246,21 +1347,51 @@ function renderNotes(i){
 }
 
 /* ============ navigation ============ */
-var cur=0, notesOn=false;
-function show(i,push){
+var cur=0, notesOn=false, bstep=0, anim=true;
+
+/* 현재 화면에서 bstep 단계까지만 보이게 한다 */
+function applyBuild(){
+  var lim = anim ? bstep : 99;
+  [].forEach.call(nodes[cur].querySelectorAll('[data-st]'),function(e){
+    e.classList.toggle('pending', (+e.getAttribute('data-st')) > lim);
+  });
+  var m=MAXST[cur]||0, dots='';
+  if(anim && m>0){ for(var i=1;i<=m;i++) dots += (i<=bstep?'●':'○'); }
+  document.getElementById('counter').textContent=(cur+1)+' / '+L.length+(dots?'   '+dots:'');
+  document.getElementById('prev').disabled=(cur===0 && bstep===0);
+  document.getElementById('next').disabled=(cur===L.length-1 && (!anim || bstep>=m));
+}
+function show(i,push,atEnd){
   i=Math.max(0,Math.min(L.length-1,i));
   if(nodes[cur]){ nodes[cur].classList.remove('on'); nodes[cur].setAttribute('aria-hidden','true'); }
   cur=i;
   nodes[cur].classList.add('on'); nodes[cur].setAttribute('aria-hidden','false');
+  bstep = atEnd ? (MAXST[i]||0) : 0;
+  applyBuild();
   document.querySelector('#bar i').style.width=((i+1)/L.length*100)+'%';
-  document.getElementById('counter').textContent=(i+1)+' / '+L.length;
-  document.getElementById('prev').disabled=(i===0);
-  document.getElementById('next').disabled=(i===L.length-1);
   if(notesOn) renderNotes(i);
   if(push!==false){ try{ history.replaceState(null,'','#s'+(i+1)); }catch(e){} }
   [].forEach.call(document.querySelectorAll('.ovcard'),function(c,j){ c.classList.toggle('here',j===i); });
 }
-function go(d){ show(cur+d); }
+function go(d){
+  var m=MAXST[cur]||0;
+  if(!anim){ if(cur+d>=0 && cur+d<L.length) show(cur+d); return; }
+  if(d>0){
+    if(bstep<m){ bstep++; applyBuild(); return; }
+    if(cur<L.length-1) show(cur+1);
+  } else {
+    if(bstep>0){ bstep--; applyBuild(); return; }
+    if(cur>0) show(cur-1,true,true);
+  }
+}
+function setAnim(on){
+  anim=on;
+  stage.classList.toggle('noanim',!on);
+  document.getElementById('animbtn').classList.toggle('act',on);
+  bstep = on ? 0 : (MAXST[cur]||0);
+  applyBuild();
+  try{ localStorage.setItem('fmAnim',on?'1':'0'); }catch(e){}
+}
 function toggleNotes(on){
   notesOn=on;
   notesBox.classList.toggle('on',on);
@@ -1271,6 +1402,7 @@ function toggleNotes(on){
 document.getElementById('prev').addEventListener('click',function(){go(-1);});
 document.getElementById('next').addEventListener('click',function(){go(1);});
 document.getElementById('notebtn').addEventListener('click',function(){ toggleNotes(!notesOn); });
+document.getElementById('animbtn').addEventListener('click',function(){ setAnim(!anim); });
 
 var LESSON_START=[2,6,10,14,18,22];
 
@@ -1280,6 +1412,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){ if(ovOn) toggleOv(false); else if(notesOn) toggleNotes(false); else return; e.preventDefault(); return; }
   if(e.key==='o'||e.key==='O'){ toggleOv(!ovOn); e.preventDefault(); return; }
   if(e.key==='n'||e.key==='N'){ toggleNotes(!notesOn); e.preventDefault(); return; }
+  if(e.key==='a'||e.key==='A'){ setAnim(!anim); e.preventDefault(); return; }
   if(ovOn) return;
   if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '||e.key==='Enter'){ go(1); e.preventDefault(); }
   else if(e.key==='ArrowLeft'||e.key==='PageUp'||e.key==='Backspace'){ go(-1); e.preventDefault(); }
@@ -1357,14 +1490,27 @@ function fit(){
 window.addEventListener('resize',fit);
 fit();
 
+/* 애니메이션 기본값 : 저장된 설정 > 시스템의 "동작 줄이기" 설정 */
+var animInit=true;
+try{
+  var saved=localStorage.getItem('fmAnim');
+  if(saved!==null) animInit=(saved==='1');
+  else if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) animInit=false;
+}catch(e){}
+anim=animInit;
+stage.classList.toggle('noanim',!anim);
+document.getElementById('animbtn').classList.toggle('act',anim);
+
 var hm=/^#s(\d+)$/.exec(location.hash);
 show(hm? (+hm[1]-1) : 0, false);
 
 try{
   if(window.claude && window.claude.hot){
-    window.claude.hot.snapshot(function(){ return {i:cur,n:notesOn}; });
+    window.claude.hot.snapshot(function(){ return {i:cur,n:notesOn,b:bstep,a:anim}; });
     if(window.claude.hot.ready) window.claude.hot.ready(function(d){
+      if(d&&typeof d.a==='boolean') setAnim(d.a);
       if(d&&typeof d.i==='number') show(d.i);
+      if(d&&typeof d.b==='number'){ bstep=d.b; applyBuild(); }
       if(d&&d.n) toggleNotes(true);
     });
   }
