@@ -1,0 +1,1282 @@
+<title>분수의 곱셈 수업 슬라이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --paper:#F4F6F3; --surface:#FFFFFF; --surface-2:#EAEFE9; --surface-3:#E1E8E0;
+  --ink:#16211C; --ink-2:#3B4A42; --muted:#6C7A72;
+  --rule:#DCE3DC; --rule-strong:#B4C0B7;
+  --fa:#1B6C9E; --fa-soft:#D3E5F1;
+  --fb:#A96F12; --fb-soft:#F6E6C4;
+  --fc:#26775A; --fc-soft:#C7E2D5;
+  --warn:#A8442F; --warn-soft:#F6E1DA;
+  --stage-bg:#DDE3DC;
+  --serif:'Gowun Batang','Nanum Myeongjo',serif;
+  --sans:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1411; --surface:#161D19; --surface-2:#1D2622; --surface-3:#25302B;
+    --ink:#E6EDE7; --ink-2:#BECABF; --muted:#8A998F;
+    --rule:#2A3530; --rule-strong:#3E4C45;
+    --fa:#7CBBE2; --fa-soft:#1B3A4C;
+    --fb:#E5B45F; --fb-soft:#463516;
+    --fc:#6BC69A; --fc-soft:#1B3F30;
+    --warn:#E58F77; --warn-soft:#3B241D;
+    --stage-bg:#080B09;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1411; --surface:#161D19; --surface-2:#1D2622; --surface-3:#25302B;
+  --ink:#E6EDE7; --ink-2:#BECABF; --muted:#8A998F;
+  --rule:#2A3530; --rule-strong:#3E4C45;
+  --fa:#7CBBE2; --fa-soft:#1B3A4C;
+  --fb:#E5B45F; --fb-soft:#463516;
+  --fc:#6BC69A; --fc-soft:#1B3F30;
+  --warn:#E58F77; --warn-soft:#3B241D;
+  --stage-bg:#080B09;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0; background:var(--stage-bg); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.6; overflow:hidden;
+  -webkit-font-smoothing:antialiased; -webkit-tap-highlight-color:transparent}
+
+/* ---------- stage ---------- */
+#viewport{position:fixed; inset:0; overflow:hidden}
+#stage{position:absolute; top:0; left:0; width:1600px; height:900px;
+  transform-origin:top left; background:var(--paper)}
+.slide{position:absolute; inset:0; display:none; padding:30px 44px 26px;
+  grid-template-rows:52px auto auto minmax(0,1fr) auto; gap:16px; background:var(--paper)}
+.slide.on{display:grid}
+
+/* ---------- fractions ---------- */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.02; margin:0 .12em}
+.fr .n{font-size:.64em; padding:0 .22em}
+.fr .d{font-size:.64em; padding:0 .22em; border-top:.08em solid currentColor; margin-top:.06em}
+.mx{display:inline-flex; align-items:center; vertical-align:middle; gap:.1em; white-space:nowrap}
+.eq{font-variant-numeric:tabular-nums; white-space:nowrap}
+.eq .op{color:var(--muted); padding:0 .2em}
+
+/* ---------- slide header ---------- */
+.sl-head{display:flex; align-items:center; gap:16px; min-width:0}
+.badge{font-family:var(--mono); font-size:20px; font-weight:600; letter-spacing:.04em;
+  color:#fff; background:var(--ink); border-radius:9px; padding:6px 14px; white-space:nowrap}
+.sl-head h2{font-family:var(--serif); font-weight:700; font-size:36px; margin:0; letter-spacing:-.01em; white-space:nowrap}
+.pill{font-size:22px; font-weight:600; color:var(--fc); background:var(--fc-soft); border-radius:8px; padding:5px 16px; white-space:nowrap}
+.sl-head .sp{flex:1}
+.sl-head .num{font-family:var(--mono); font-size:19px; color:var(--muted); white-space:nowrap}
+.sl-head .pages{font-family:var(--mono); font-size:18px; color:var(--muted); white-space:nowrap}
+
+/* ---------- context slide ---------- */
+.story{font-size:36px; line-height:1.44; margin:0; color:var(--ink); font-weight:400}
+.story b{font-weight:700}
+.eqband{display:flex; align-items:center; gap:18px; padding:12px 28px;
+  background:var(--surface-2); border-radius:14px; font-family:var(--serif); font-weight:700; font-size:56px}
+.eqband .lbl{font-family:var(--mono); font-size:19px; font-weight:600; letter-spacing:.12em; color:var(--muted)}
+.eqband .unit{font-size:40px}
+.main{display:grid; grid-template-columns:900px minmax(0,1fr); gap:34px; min-height:0}
+.fig{margin:0; display:flex; align-items:center; justify-content:center; min-height:0}
+.fig .dg-canvas{width:100%}
+.fig svg{display:block; width:100%; height:auto; max-height:498px}
+.steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; justify-content:center; gap:14px; min-height:0}
+.steps li{display:grid; grid-template-columns:40px 1fr; gap:14px; align-items:start}
+.sn{width:40px; height:40px; border-radius:50%; background:var(--fc); color:#fff;
+  font-family:var(--mono); font-size:19px; font-weight:600; display:grid; place-items:center}
+.steps h4{margin:0 0 3px; font-size:25px; font-weight:600; line-height:1.32}
+.steps p{margin:0; font-size:22px; line-height:1.5; color:var(--ink-2)}
+.steps .calc{display:block; margin-top:8px; padding:9px 14px; background:var(--surface-2);
+  border-radius:9px; font-size:26px; color:var(--ink); font-weight:500}
+.cap{margin:0; font-size:22px; line-height:1.45; color:var(--ink-2);
+  border-top:1px solid var(--rule); padding-top:12px; padding-right:96px}
+.cap b{color:var(--ink); font-weight:600}
+#counter{position:fixed; left:50%; transform:translateX(-50%); bottom:28px; z-index:32;
+  font-family:var(--mono); font-size:18px; color:var(--ink-2); background:rgba(255,255,255,.72);
+  border:1px solid rgba(128,140,132,.35); border-radius:999px; padding:6px 18px; backdrop-filter:blur(6px)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) #counter{background:rgba(28,36,31,.8); color:#C8D4CB; border-color:rgba(150,165,155,.3)}
+}
+:root[data-theme="dark"] #counter{background:rgba(28,36,31,.8); color:#C8D4CB; border-color:rgba(150,165,155,.3)}
+
+/* ---------- intro slide ---------- */
+.slide.intro{grid-template-rows:52px minmax(0,1fr)}
+.intro-body{display:flex; flex-direction:column; justify-content:center; gap:30px; min-height:0}
+.read{padding:32px 36px; background:var(--surface); border-radius:16px;
+  border-left:8px solid var(--fc); font-size:35px; line-height:1.5}
+.read .sub{display:block; margin-top:16px; font-size:25px; color:var(--muted); line-height:1.55}
+.read b{font-weight:700}
+.notes2{display:grid; grid-template-columns:1fr 1fr; gap:26px}
+.card{padding:28px 32px; border-radius:16px; font-size:25px; line-height:1.56}
+.card h4{margin:0 0 12px; font-family:var(--mono); font-size:19px; letter-spacing:.1em; font-weight:600}
+.card p{margin:0; color:var(--ink-2)}
+.card.point{background:var(--surface-2)} .card.point h4{color:var(--fc)}
+.card.trap{background:var(--warn-soft)} .card.trap h4{color:var(--warn)}
+.mark-x{color:var(--warn); font-weight:600; background:color-mix(in srgb,var(--warn) 13%,transparent); border-radius:6px; padding:1px 8px}
+.mark-x::before{content:'✗ '; font-weight:700}
+.mark-o{color:var(--fc); font-weight:600; background:color-mix(in srgb,var(--fc) 13%,transparent); border-radius:6px; padding:1px 8px}
+.mark-o::before{content:'✓ '; font-weight:700}
+
+/* ---------- cover & map ---------- */
+.slide.cover{grid-template-rows:1fr auto; align-content:center; padding:80px 90px}
+.cover-in{display:flex; flex-direction:column; justify-content:center}
+.cover .eyebrow{font-family:var(--mono); font-size:24px; letter-spacing:.2em; color:var(--fc); font-weight:600}
+.cover h1{font-family:var(--serif); font-weight:700; font-size:92px; line-height:1.1; margin:.2em 0 .18em; letter-spacing:-.02em}
+.cover .lede{font-size:29px; color:var(--ink-2); max-width:34ch; margin:0; line-height:1.6}
+.cover .facts{display:flex; gap:12px; margin-top:34px; flex-wrap:wrap}
+.cover .facts span{font-family:var(--mono); font-size:20px; color:var(--muted);
+  border:1px solid var(--rule-strong); border-radius:999px; padding:7px 18px; background:var(--surface)}
+.cover .keys{display:flex; gap:26px; font-size:21px; color:var(--muted); align-items:center; flex-wrap:wrap}
+.cover .keys kbd{font-family:var(--mono); font-size:18px; background:var(--surface); border:1px solid var(--rule-strong);
+  border-bottom-width:3px; border-radius:7px; padding:3px 10px; margin-right:7px; color:var(--ink-2)}
+.slide.map{grid-template-rows:52px minmax(0,1fr) auto}
+.map-fig{margin:0; display:flex; align-items:center; justify-content:center; min-height:0}
+.map-fig svg{width:100%; height:auto; max-height:560px}
+.legend{display:flex; gap:44px; justify-content:center; font-size:22px; color:var(--ink-2); flex-wrap:wrap}
+.legend div{display:flex; align-items:center; gap:12px}
+.sw{width:22px; height:22px; border-radius:5px; border:2px solid var(--rule-strong)}
+.sw.a{background:var(--fa-soft); border-color:var(--fa)}
+.sw.b{background:var(--fb-soft); border-color:var(--fb)}
+.sw.c{background:var(--fc-soft); border-color:var(--fc)}
+
+/* ---------- deck chrome ---------- */
+#bar{position:fixed; left:0; right:0; bottom:0; height:5px; background:rgba(128,140,132,.24); z-index:30}
+#bar i{display:block; height:100%; background:var(--fc); transition:width .18s ease}
+.navbtn{position:fixed; bottom:26px; z-index:32; width:66px; height:66px; border-radius:50%;
+  border:1px solid rgba(128,140,132,.4); background:rgba(255,255,255,.78); color:#16211C;
+  font-size:30px; line-height:1; cursor:pointer; display:grid; place-items:center;
+  backdrop-filter:blur(6px); transition:opacity .15s}
+.navbtn:hover{background:#fff}
+.navbtn:focus-visible{outline:3px solid var(--fc); outline-offset:3px}
+.navbtn[disabled]{opacity:.25; cursor:default}
+#prev{left:26px} #next{right:26px}
+#tools{position:fixed; top:22px; right:26px; z-index:32; display:flex; gap:10px}
+#tools button{font-family:var(--sans); font-size:17px; font-weight:500; padding:9px 16px; border-radius:10px;
+  border:1px solid rgba(128,140,132,.4); background:rgba(255,255,255,.78); color:#16211C; cursor:pointer;
+  backdrop-filter:blur(6px)}
+#tools button:hover{background:#fff}
+#tools button:focus-visible{outline:3px solid var(--fc); outline-offset:2px}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .navbtn,
+  :root:not([data-theme="light"]) #tools button{background:rgba(28,36,31,.82); color:#E6EDE7; border-color:rgba(150,165,155,.35)}
+  :root:not([data-theme="light"]) .navbtn:hover,
+  :root:not([data-theme="light"]) #tools button:hover{background:rgba(36,46,40,.95)}
+}
+:root[data-theme="dark"] .navbtn, :root[data-theme="dark"] #tools button{background:rgba(28,36,31,.82); color:#E6EDE7; border-color:rgba(150,165,155,.35)}
+
+/* ---------- overview ---------- */
+#ov{position:fixed; inset:0; z-index:40; background:var(--paper); overflow-y:auto; padding:34px 40px 60px; display:none}
+#ov.on{display:block}
+#ov h2{font-family:var(--serif); font-size:32px; margin:0 0 6px}
+#ov .hint{margin:0 0 26px; color:var(--muted); font-size:17px}
+.ovgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(232px,1fr)); gap:14px}
+.ovcard{text-align:left; cursor:pointer; padding:15px 17px; border-radius:13px; background:var(--surface);
+  border:1.5px solid var(--rule); font-family:var(--sans); color:var(--ink); display:flex; flex-direction:column; gap:6px}
+.ovcard:hover{border-color:var(--fc)}
+.ovcard:focus-visible{outline:3px solid var(--fc); outline-offset:2px}
+.ovcard.here{border-color:var(--fc); background:var(--fc-soft)}
+.ovcard .k{font-family:var(--mono); font-size:13px; color:var(--muted); letter-spacing:.06em}
+.ovcard .t{font-size:16px; font-weight:600; line-height:1.35}
+.ovcard .e{font-size:18px; color:var(--ink-2)}
+.ovsec{grid-column:1/-1; margin:20px 0 2px; font-family:var(--mono); font-size:14px; letter-spacing:.12em;
+  color:var(--fc); font-weight:600}
+.ovsec:first-child{margin-top:0}
+
+/* ---------- diagram svg classes ---------- */
+.dg-t{font-family:var(--sans); font-variant-numeric:tabular-nums}
+.dg-m{font-family:var(--mono)}
+.dg-ink{fill:var(--ink)} .dg-i2{fill:var(--ink-2)} .dg-mut{fill:var(--muted)}
+.dg-fa{fill:var(--fa)} .dg-fb{fill:var(--fb)} .dg-fc{fill:var(--fc)} .dg-warn{fill:var(--warn)}
+.dgs-ink{stroke:var(--ink);stroke-width:1.3;fill:none}
+.dgs-i2{stroke:var(--ink-2);stroke-width:1.3;fill:none}
+.dgs-mut{stroke:var(--rule-strong);stroke-width:1.2;fill:none}
+.dgs-fa{stroke:var(--fa);stroke-width:1.6;fill:none}
+.dgs-fb{stroke:var(--fb);stroke-width:1.6;fill:none}
+.dgs-fc{stroke:var(--fc);stroke-width:1.8;fill:none}
+.dg-frame{fill:none; stroke:var(--ink-2); stroke-width:1.6}
+.dg-grid{stroke:var(--rule-strong); stroke-width:1; fill:none}
+.dg-dash{stroke:var(--rule-strong); stroke-width:1.1; stroke-dasharray:4 4; fill:none}
+.f-a{fill:var(--fa-soft)} .f-b{fill:var(--fb-soft)} .f-c{fill:var(--fc-soft)}
+.f-n{fill:var(--surface-2)} .f-s{fill:var(--surface)} .f-none{fill:none}
+.f-dot-a{fill:var(--fa)} .f-dot-b{fill:var(--fb)} .f-dot-c{fill:var(--fc)}
+.s-rule{stroke:var(--rule-strong); stroke-width:1.2; fill:none}
+.s-fc-2{stroke:var(--fc); stroke-width:2.4; fill:none}
+.mk-fa{fill:var(--fa)} .mk-fb{fill:var(--fb)} .mk-fc{fill:var(--fc)} .mk-ink{fill:var(--ink-2)}
+
+@media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+@media print{
+  @page{size:A4 landscape; margin:6mm}
+  body{overflow:visible; background:#fff}
+  #viewport{position:static; overflow:visible}
+  #stage{position:static; transform:none!important; width:auto; height:auto}
+  .slide{position:static; display:grid!important; width:1600px; height:900px;
+    zoom:.62; break-after:page; border:1px solid #ddd}
+  #bar,#tools,#counter,.navbtn,#ov{display:none!important}
+}
+</style>
+
+<div id="viewport"><div id="stage"></div></div>
+<button class="navbtn" id="prev" aria-label="이전 슬라이드">‹</button>
+<button class="navbtn" id="next" aria-label="다음 슬라이드">›</button>
+<div id="tools">
+  <button id="ovbtn" aria-label="전체 슬라이드 보기">전체 보기</button>
+  <button id="fsbtn" aria-label="전체 화면">전체 화면</button>
+</div>
+<div id="counter" aria-live="polite">1 / 26</div>
+<div id="bar"><i></i></div>
+<div id="ov" role="dialog" aria-label="전체 슬라이드">
+  <h2>전체 슬라이드</h2>
+  <p class="hint">칸을 누르면 그 화면으로 이동합니다. <b>Esc</b> 또는 <b>O</b> 키로 닫습니다.</p>
+  <div class="ovgrid" id="ovgrid"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============ inline markup ============ */
+var NSH='http://www.w3.org/1999/xhtml';
+function frEl(n,d){
+  var s=document.createElement('span'); s.className='fr';
+  var a=document.createElement('span'); a.className='n'; a.textContent=n;
+  var b=document.createElement('span'); b.className='d'; b.textContent=d;
+  s.appendChild(a); s.appendChild(b); return s;
+}
+function mixEl(w,n,d){
+  var s=document.createElement('span'); s.className='mx';
+  var t=document.createElement('span'); t.textContent=w; s.appendChild(t);
+  s.appendChild(frEl(n,d)); return s;
+}
+/* [3/4] fraction · [1_3/4] mixed · *bold* · {accent} */
+function md(str,host){
+  host.textContent='';
+  var re=/\[(\d+)_(\d+)\/(\d+)\]|\[(\d+)\/(\d+)\]|\*([^*]+)\*|\{([^}]+)\}/g, last=0, m;
+  while((m=re.exec(str))){
+    if(m.index>last) host.appendChild(document.createTextNode(str.slice(last,m.index)));
+    if(m[1]) host.appendChild(mixEl(m[1],m[2],m[3]));
+    else if(m[4]) host.appendChild(frEl(m[4],m[5]));
+    else if(m[6]){ var b=document.createElement('b'); b.textContent=m[6]; host.appendChild(b); }
+    else { var k=document.createElement('span'); k.className=/^✗/.test(m[7])?'mark-x':'mark-o';
+           md(m[7].replace(/^[✗✓]\s*/,''),k); host.appendChild(k); }
+    last=re.lastIndex;
+  }
+  if(last<str.length) host.appendChild(document.createTextNode(str.slice(last)));
+  return host;
+}
+/* "2/5 × 6 = 12/5 = 2_2/5" */
+function eqEl(src){
+  var host=document.createElement('span'); host.className='eq';
+  src.trim().split(/\s+/).forEach(function(tok,i){
+    if(i) host.appendChild(document.createTextNode(' '));
+    var m=/^(\d+)_(\d+)\/(\d+)$/.exec(tok);
+    if(m){ host.appendChild(mixEl(m[1],m[2],m[3])); return; }
+    m=/^(\d+)\/(\d+)$/.exec(tok);
+    if(m){ host.appendChild(frEl(m[1],m[2])); return; }
+    var s=document.createElement('span');
+    if('×=+÷−-'.indexOf(tok)>=0) s.className='op';
+    s.textContent=tok; host.appendChild(s);
+  });
+  return host;
+}
+function el(tag,cls,parent){
+  var e=document.createElement(tag); if(cls) e.className=cls;
+  if(parent) parent.appendChild(e); return e;
+}
+/* ============ SVG helpers ============ */
+var NS='http://www.w3.org/2000/svg';
+function S(tag,a){var e=document.createElementNS(NS,tag);for(var k in a){if(a[k]!==null&&a[k]!==undefined)e.setAttribute(k,a[k]);}return e;}
+function add(p,e){p.appendChild(e);return e;}
+function T(p,x,y,s,o){
+  o=o||{};
+  var t=S('text',{x:x,y:y,'text-anchor':o.a||'middle','font-size':o.s||13,'font-weight':o.w||500,
+    'class':'dg-t '+(o.m?'dg-m ':'')+(o.c||'dg-ink')});
+  t.textContent=s; return add(p,t);
+}
+function tw(str,s){
+  var w=0; str=String(str);
+  for(var i=0;i<str.length;i++){
+    var c=str.charCodeAt(i), ch=str[i];
+    if(c>0x1100&&c<0xD7FF) w+=s*0.98;
+    else if(ch>='0'&&ch<='9') w+=s*0.58;
+    else if(ch===' ') w+=s*0.3;
+    else w+=s*0.55;
+  }
+  return w;
+}
+/* value = {t:"6",u:"g"} or {w:2,n:3,d:4,u:"m"} */
+function vW(v,s){
+  if(!v) return 0;
+  var w=0;
+  if(v.n!==undefined){
+    if(v.w) w+=tw(v.w,s*1.1)+3;
+    w+=Math.max(tw(v.n,s*0.86),tw(v.d,s*0.86))+8;
+  } else w+=tw(v.t,s);
+  if(v.u) w+=tw(v.u,s*0.9)+4;
+  return w;
+}
+function vDraw(p,cx,cy,v,s,cls){
+  cls=cls||'dg-ink';
+  var scls=cls.replace('dg-','dgs-');
+  var total=vW(v,s), x=cx-total/2;
+  if(v.n!==undefined){
+    if(v.w){ var ww=tw(v.w,s*1.1); T(p,x+ww/2,cy+s*0.38,v.w,{s:s*1.1,w:600,c:cls}); x+=ww+3; }
+    var fw=Math.max(tw(v.n,s*0.86),tw(v.d,s*0.86))+8;
+    var fx=x+fw/2;
+    T(p,fx,cy-3.5,v.n,{s:s*0.86,w:600,c:cls});
+    add(p,S('line',{x1:fx-fw/2+2,y1:cy,x2:fx+fw/2-2,y2:cy,'class':scls,'stroke-width':1.3}));
+    T(p,fx,cy+s*0.92,v.d,{s:s*0.86,w:600,c:cls});
+    x+=fw;
+  } else {
+    var tW=tw(v.t,s);
+    T(p,x+tW/2,cy+s*0.36,v.t,{s:s,w:600,c:cls}); x+=tW;
+  }
+  if(v.u){ var uw=tw(v.u,s*0.9); T(p,x+4+uw/2,cy+s*0.36,v.u,{s:s*0.9,w:500,c:cls}); }
+}
+var uid=0;
+function arrowDef(g,cls){
+  var id='ah'+(++uid);
+  var d=add(g,S('defs',{}));
+  var mk=add(d,S('marker',{id:id,viewBox:'0 0 10 10',refX:'8.5',refY:'5',markerWidth:'7',markerHeight:'7',orient:'auto'}));
+  add(mk,S('path',{d:'M0,1 L9,5 L0,9 z','class':'mk-'+cls}));
+  return 'url(#'+id+')';
+}
+/* denom cells inside a box, numer filled */
+function cells(g,x,y,w,h,d,n,vert,fill){
+  if(n>0){
+    if(vert){ var ch=h/d; add(g,S('rect',{x:x,y:y+h-n*ch,width:w,height:n*ch,'class':fill})); }
+    else { var cw=w/d; add(g,S('rect',{x:x,y:y,width:n*cw,height:h,'class':fill})); }
+  }
+  for(var i=1;i<d;i++){
+    if(vert){ var yy=y+h*i/d; add(g,S('line',{x1:x,y1:yy,x2:x+w,y2:yy,'class':'dg-grid'})); }
+    else { var xx=x+w*i/d; add(g,S('line',{x1:xx,y1:y,x2:xx,y2:y+h,'class':'dg-grid'})); }
+  }
+  add(g,S('rect',{x:x,y:y,width:w,height:h,'class':'dg-frame'}));
+}
+function bracket(g,x1,x2,y,dir,cls){
+  var t=6*dir;
+  add(g,S('path',{d:'M'+x1+' '+(y+t)+' L'+x1+' '+y+' L'+x2+' '+y+' L'+x2+' '+(y+t),'class':cls||'dgs-mut'}));
+}
+function gcd(a,b){return b?gcd(b,a%b):a;}
+
+/* ============ renderers ============ */
+var DG={};
+
+/* --- bars: n groups of (whole + numer/denom) --- */
+DG.bars=function(g,sp){
+  var vert=sp.orient==='v';
+  var U=vert?48:58, H=vert?106:50, GAP=vert?20:16, SG=5;
+  var per=sp.whole+(sp.numer>0?1:0);
+  var gw=per*U;
+  var yA=32;
+  T(g,0,16,sp.rowA,{a:'start',s:12.5,c:'dg-mut',w:600});
+  var i,j,x;
+  for(i=0;i<sp.count;i++){
+    x=i*(gw+GAP);
+    for(j=0;j<sp.whole;j++) cells(g,x+j*U,yA,U,H,1,1,vert,'f-a');
+    if(sp.numer>0) cells(g,x+sp.whole*U,yA,U,H,sp.denom,sp.numer,vert,'f-b');
+    vDraw(g,x+gw/2,yA+H+18,{w:sp.whole||undefined,n:sp.numer,d:sp.denom,u:sp.unit},11.5,'dg-i2');
+  }
+  var rowAW=sp.count*gw+(sp.count-1)*GAP;
+  T(g,rowAW/2,yA+H+48,sp.noteA+' 만큼',{s:12.5,c:'dg-mut'});
+
+  var yBt=yA+H+72, yB=yBt+14;
+  T(g,0,yBt,sp.rowB,{a:'start',s:12.5,c:'dg-mut',w:600});
+  var blue=sp.count*sp.whole, pieces=sp.count*sp.numer;
+  var full=Math.floor(pieces/sp.denom), rem=pieces%sp.denom;
+  var nsq=blue+full+(rem?1:0), k=0;
+  for(i=0;i<blue;i++){ cells(g,k*(U+SG),yB,U,H,1,1,vert,'f-a'); k++; }
+  for(i=0;i<full;i++){ cells(g,k*(U+SG),yB,U,H,sp.denom,sp.denom,vert,'f-c'); k++; }
+  if(rem){ cells(g,k*(U+SG),yB,U,H,sp.denom,rem,vert,'f-c'); k++; }
+  var rowBW=nsq*U+(nsq-1)*SG;
+  var totW=blue+full;
+  var res={w:totW||undefined,n:rem||undefined,d:rem?sp.denom:undefined,t:rem?undefined:String(totW),u:sp.unit};
+  var rx=rowBW+26, resW=vW(res,17)+22;
+  T(g,rx,yB+H/2+6,'=',{a:'start',s:18,c:'dg-i2',w:600});
+  vDraw(g,rx+22+vW(res,17)/2,yB+H/2,res,17,'dg-fc');
+  if(rem){
+    var q2=gcd(rem,sp.denom)||1;
+    if(q2>1){
+      var res2={w:totW||undefined,n:rem/q2,d:sp.denom/q2,u:sp.unit};
+      var rx2=rx+22+vW(res,17)+16;
+      T(g,rx2,yB+H/2+6,'=',{a:'start',s:18,c:'dg-i2',w:600});
+      vDraw(g,rx2+22+vW(res2,17)/2,yB+H/2,res2,17,'dg-fc');
+      resW+=16+22+vW(res2,17);
+    }
+  }
+  if(rem) T(g,rowBW/2,yB+H+24,'1/'+sp.denom+' 조각 '+pieces+'개 = '+totW+'개와 '+rem+'조각',{s:12,c:'dg-mut'});
+  else T(g,rowBW/2,yB+H+24,'1/'+sp.denom+' 조각 '+pieces+'개 = '+full+'개',{s:12,c:'dg-mut'});
+
+  return {w:Math.max(rowAW,rowBW+resW), h:yB+H+40};
+};
+
+/* --- numberline: hops | partition --- */
+DG.numberline=function(g,sp){
+  var x0=54, x1=676, W=x1-x0;
+  var ppu=W/(sp.max-sp.min);
+  if(sp.mode==='partition'){
+    var yBar=52, hBar=44;
+    T(g,0,20,sp.title,{a:'start',s:12.5,c:'dg-mut',w:600});
+    var pw=W/sp.parts, i;
+    for(i=0;i<sp.parts;i++){
+      add(g,S('rect',{x:x0+i*pw,y:yBar,width:pw,height:hBar,'class':i<sp.fill?'f-c':'f-n'}));
+    }
+    for(i=1;i<sp.parts;i++) add(g,S('line',{x1:x0+i*pw,y1:yBar,x2:x0+i*pw,y2:yBar+hBar,'class':'dg-grid'}));
+    add(g,S('rect',{x:x0,y:yBar,width:W,height:hBar,'class':'dg-frame'}));
+    for(i=0;i<sp.parts;i++) T(g,x0+(i+0.5)*pw,yBar+hBar/2+5,sp.partLabel,{s:14,w:600,c:i<sp.fill?'dg-fc':'dg-mut'});
+    var yAx=yBar+hBar+22;
+    add(g,S('line',{x1:x0,y1:yAx,x2:x1,y2:yAx,'class':'dgs-i2'}));
+    for(i=0;i<=sp.parts;i++){
+      var xx=x0+i*pw;
+      add(g,S('line',{x1:xx,y1:yAx-6,x2:xx,y2:yAx+6,'class':'dgs-i2'}));
+      T(g,xx,yAx+24,String(sp.min+(sp.max-sp.min)*i/sp.parts),{s:12.5,c:'dg-i2',m:true});
+    }
+    T(g,x1+2,yAx+24,sp.unit,{a:'start',s:12,c:'dg-mut'});
+    bracket(g,x0,x0+sp.fill*pw,yBar-10,-1,'dgs-fc');
+    T(g,x0+sp.fill*pw/2,yBar-20,sp.fill+'묶음 = '+(sp.fill*parseFloat(sp.partLabel))+' '+sp.unit,{s:13,w:600,c:'dg-fc'});
+    bracket(g,x0,x1,yAx+38,1,'dgs-mut');
+    T(g,(x0+x1)/2,yAx+58,'전체 '+sp.max+' '+sp.unit+' — '+sp.parts+'묶음으로 똑같이 나누기',{s:12.5,c:'dg-mut'});
+    return {w:720,h:yAx+72};
+  }
+  /* hops */
+  var yAx=178;
+  T(g,0,20,sp.title,{a:'start',s:12.5,c:'dg-mut',w:600});
+  var hop=sp.hop.w+sp.hop.n/sp.hop.d;
+  var aA=arrowDef(g,'fa'), aB=arrowDef(g,'fb');
+  add(g,S('line',{x1:x0,y1:yAx,x2:x1+10,y2:yAx,'class':'dgs-i2'}));
+  var total=(sp.max-sp.min)*sp.denom, i, xx;
+  for(i=0;i<=total;i++){
+    xx=x0+i*(W/total);
+    var major=(i%sp.denom===0);
+    add(g,S('line',{x1:xx,y1:yAx-(major?9:5),x2:xx,y2:yAx+(major?9:5),'class':major?'dgs-i2':'dgs-mut'}));
+    if(major) T(g,xx,yAx+27,String(sp.min+i/sp.denom),{s:13,w:600,c:'dg-i2',m:true});
+  }
+  T(g,x1+16,yAx+27,sp.unit,{a:'start',s:12,c:'dg-mut'});
+  var spacing=hop*ppu;
+  for(i=0;i<sp.count;i++){
+    var xa=x0+i*spacing, xb=x0+(i+1)*spacing;
+    var lift=Math.min(52,20+spacing*0.22);
+    var cls=(i%2===0)?'dgs-fa':'dgs-fb';
+    add(g,S('path',{d:'M'+xa+' '+(yAx-6)+' Q '+((xa+xb)/2)+' '+(yAx-6-lift*2)+' '+xb+' '+(yAx-6),
+      'class':cls,'stroke-width':1.9,'marker-end':(i%2===0)?aA:aB}));
+    vDraw(g,(xa+xb)/2,yAx-16-lift,{w:sp.hop.w||undefined,n:sp.hop.n,d:sp.hop.d},12.5,(i%2===0)?'dg-fa':'dg-fb');
+    /* cumulative label under axis */
+    var cn=(i+1)*(sp.hop.w*sp.hop.d+sp.hop.n), cd=sp.hop.d;
+    var gg=gcd(cn,cd)||1; cn/=gg; cd/=gg;
+    var cw=Math.floor(cn/cd), crem=cn-cw*cd;
+    var last=(i===sp.count-1);
+    if(spacing>=54){
+      vDraw(g,xb,yAx+50,{w:cw||undefined,n:crem||undefined,d:crem?cd:undefined,t:crem?undefined:String(cw)},
+        last?13:10.5,last?'dg-fc':'dg-mut');
+    }
+    if(last){
+      add(g,S('line',{x1:xb,y1:yAx-8,x2:xb,y2:yAx+34,'class':'dgs-fc','stroke-dasharray':'4 3'}));
+    }
+  }
+  T(g,x0,yAx+78,sp.count+'번 뛴 자리가 답입니다.',{a:'start',s:12.5,c:'dg-mut'});
+  return {w:720,h:yAx+92};
+};
+
+/* --- partwhole: grid | strip --- */
+DG.partwhole=function(g,sp){
+  if(sp.mode==='strip'){
+    var x0=40,x1=660,W=x1-x0,y=64,h=58,pw=W/sp.groups,i;
+    T(g,x0,26,sp.wholeLabel,{a:'start',s:13,c:'dg-i2',w:600});
+    bracket(g,x0,x1,42,-1,'dgs-mut');
+    for(i=0;i<sp.groups;i++)
+      add(g,S('rect',{x:x0+i*pw,y:y,width:pw,height:h,'class':i<sp.fill?'f-c':'f-n'}));
+    for(i=1;i<sp.groups;i++) add(g,S('line',{x1:x0+i*pw,y1:y,x2:x0+i*pw,y2:y+h,'class':'dg-grid'}));
+    add(g,S('rect',{x:x0,y:y,width:W,height:h,'class':'dg-frame'}));
+    for(i=0;i<sp.groups;i++) T(g,x0+(i+0.5)*pw,y+h/2+5,sp.cellText,{s:14,w:600,c:i<sp.fill?'dg-fc':'dg-mut'});
+    bracket(g,x0,x0+sp.fill*pw,y+h+14,1,'dgs-fc');
+    T(g,x0+sp.fill*pw/2,y+h+38,sp.fillLabel,{s:13.5,w:600,c:'dg-fc'});
+    T(g,x0+sp.fill*pw/2,y+h+58,'= '+(sp.total/sp.groups*sp.fill).toLocaleString('ko-KR')+' '+sp.unit,{s:15,w:700,c:'dg-fc'});
+    T(g,x0,y+h+90,'분모 '+sp.groups+' → '+sp.groups+'등분 · 분자 '+sp.fill+' → '+sp.fill+'칸 가져오기',{a:'start',s:12.5,c:'dg-mut'});
+    return {w:720,h:y+h+104};
+  }
+  /* grid */
+  var it=42, gap=9, cols=sp.cols, gx=118, gy=44, i, r, c;
+  T(g,gx,26,sp.wholeLabel,{a:'start',s:13,c:'dg-i2',w:600});
+  for(r=0;r<sp.groups;r++){
+    for(c=0;c<cols;c++){
+      add(g,S('rect',{x:gx+c*(it+gap),y:gy+r*(it+gap),width:it,height:it,rx:5,
+        'class':r<sp.fill?'f-c':'f-n'}));
+      add(g,S('rect',{x:gx+c*(it+gap),y:gy+r*(it+gap),width:it,height:it,rx:5,
+        fill:'none',stroke:r<sp.fill?'var(--fc)':'var(--rule-strong)','stroke-width':1.4}));
+    }
+    T(g,gx-14,gy+r*(it+gap)+it/2+5,'1묶음 = '+(sp.total/sp.groups)+sp.unit,
+      {a:'end',s:12.5,c:r<sp.fill?'dg-fc':'dg-mut',w:r<sp.fill?600:400});
+  }
+  var gw=cols*it+(cols-1)*gap, gh=sp.groups*it+(sp.groups-1)*gap;
+  var bx=gx+gw+16;
+  add(g,S('path',{d:'M'+bx+' '+gy+' L'+(bx+8)+' '+gy+' L'+(bx+8)+' '+(gy+sp.fill*(it+gap)-gap)+' L'+bx+' '+(gy+sp.fill*(it+gap)-gap),'class':'dgs-fc'}));
+  T(g,bx+18,gy+(sp.fill*(it+gap)-gap)/2-2,sp.fill+'묶음',{a:'start',s:13.5,w:600,c:'dg-fc'});
+  T(g,bx+18,gy+(sp.fill*(it+gap)-gap)/2+18,'= '+(sp.total/sp.groups*sp.fill)+sp.unit,{a:'start',s:15,w:700,c:'dg-fc'});
+  T(g,gx,gy+gh+30,'분모 '+sp.groups+' → '+sp.groups+'묶음으로 똑같이 나누기 · 분자 '+sp.fill+' → '+sp.fill+'묶음 가져오기',
+    {a:'start',s:12.5,c:'dg-mut'});
+  return {w:bx+150,h:gy+gh+44};
+};
+
+/* --- compare bars (배 모델) --- */
+DG.compare=function(g,sp){
+  var cw=88, ch=48, x0=26, yA=44, yB=140;
+  var i;
+  T(g,x0,26,sp.baseLabel,{a:'start',s:13,c:'dg-fa',w:600});
+  for(i=0;i<sp.baseCells;i++){
+    add(g,S('rect',{x:x0+i*cw,y:yA,width:cw,height:ch,'class':'f-a'}));
+    add(g,S('line',{x1:x0+i*cw,y1:yA,x2:x0+i*cw,y2:yA+ch,'class':'dg-grid'}));
+    vDraw(g,x0+(i+0.5)*cw,yA+ch/2,sp.cell,12.5,'dg-fa');
+  }
+  add(g,S('rect',{x:x0,y:yA,width:sp.baseCells*cw,height:ch,'class':'dg-frame'}));
+
+  T(g,x0,yB-18,sp.compLabel,{a:'start',s:13,c:'dg-fc',w:600});
+  for(i=0;i<sp.compCells;i++){
+    add(g,S('rect',{x:x0+i*cw,y:yB,width:cw,height:ch,'class':i<sp.baseCells?'f-a':'f-b'}));
+    add(g,S('line',{x1:x0+i*cw,y1:yB,x2:x0+i*cw,y2:yB+ch,'class':'dg-grid'}));
+    vDraw(g,x0+(i+0.5)*cw,yB+ch/2,sp.cell,12.5,i<sp.baseCells?'dg-fa':'dg-fb');
+  }
+  add(g,S('rect',{x:x0,y:yB,width:sp.compCells*cw,height:ch,'class':'dg-frame'}));
+
+  /* guide line showing the extra piece */
+  add(g,S('line',{x1:x0+sp.baseCells*cw,y1:yA,x2:x0+sp.baseCells*cw,y2:yB+ch+10,'class':'dg-dash'}));
+
+  bracket(g,x0,x0+sp.baseCells*cw,yB+ch+14,1,'dgs-fa');
+  var eqA=document.createElementNS(NS,'g'); add(g,eqA);
+  T(g,x0+sp.baseCells*cw/2,yB+ch+36,sp.braceA.replace(/_/,' ').replace(/\//,'/'),{s:13,w:600,c:'dg-fa'});
+  bracket(g,x0+sp.baseCells*cw,x0+sp.compCells*cw,yB+ch+14,1,'dgs-fb');
+  T(g,x0+(sp.baseCells+sp.compCells)*cw/2,yB+ch+36,sp.braceB.replace(/_/,' '),{s:13,w:600,c:'dg-fb'});
+
+  var rx=x0+sp.compCells*cw+22;
+  T(g,rx,yB+ch/2+7,sp.totalLabel,{a:'start',s:19,w:700,c:'dg-fc'});
+  return {w:rx+tw(sp.totalLabel,19)+16, h:yB+ch+56};
+};
+
+/* --- area model (unit square) --- */
+DG.area=function(g,sp){
+  var Sq=286, x=86, y=52;
+  var cw=Sq/sp.cols, rh=Sq/sp.rows;
+  add(g,S('rect',{x:x,y:y,width:Sq,height:Sq,'class':'f-n'}));
+  add(g,S('rect',{x:x,y:y,width:sp.colsFill*cw,height:Sq,'class':'f-a'}));
+  add(g,S('rect',{x:x,y:y,width:Sq,height:sp.rowsFill*rh,'class':'f-b'}));
+  add(g,S('rect',{x:x,y:y,width:sp.colsFill*cw,height:sp.rowsFill*rh,'class':'f-c'}));
+  add(g,S('rect',{x:x,y:y,width:sp.colsFill*cw,height:sp.rowsFill*rh,fill:'none',stroke:'var(--fc)','stroke-width':2.4}));
+  var i;
+  for(i=1;i<sp.cols;i++) add(g,S('line',{x1:x+i*cw,y1:y,x2:x+i*cw,y2:y+Sq,'class':'dg-grid'}));
+  for(i=1;i<sp.rows;i++) add(g,S('line',{x1:x,y1:y+i*rh,x2:x+Sq,y2:y+i*rh,'class':'dg-grid'}));
+  add(g,S('rect',{x:x,y:y,width:Sq,height:Sq,'class':'dg-frame'}));
+
+  bracket(g,x,x+sp.colsFill*cw,y-12,-1,'dgs-fa');
+  vDraw(g,x+sp.colsFill*cw/2,y-30,{n:sp.topFrac.n,d:sp.topFrac.d},14,'dg-fa');
+  var bx2=x-14, by2=y+sp.rowsFill*rh;
+  add(g,S('path',{d:'M'+(bx2-6)+' '+y+' L'+bx2+' '+y+' L'+bx2+' '+by2+' L'+(bx2-6)+' '+by2,'class':'dgs-fb'}));
+  vDraw(g,x-44,y+sp.rowsFill*rh/2,{n:sp.leftFrac.n,d:sp.leftFrac.d},14,'dg-fb');
+  if(sp.wholeLabel) T(g,x+Sq/2,y+Sq+26,sp.wholeLabel,{s:12.5,c:'dg-mut'});
+  if(sp.sideLabel) T(g,x+Sq+10,y+Sq+26,sp.sideLabel,{a:'start',s:12.5,c:'dg-mut'});
+
+  var px=x+Sq+44, py=y+34;
+  sp.lines.forEach(function(ln,i){
+    var m=/^(.*?)(\d+)\/(\d+)(.*)$/.exec(ln);
+    T(g,px,py+i*30,ln.replace('/','/'),{a:'start',s:13.5,c:i===2?'dg-fc':'dg-i2',w:i===2?600:400});
+  });
+  var ry=py+3*30+22;
+  T(g,px,ry,'답',{a:'start',s:12,c:'dg-mut',m:true});
+  var rw=vW({n:sp.result.n,d:sp.result.d},19);
+  vDraw(g,px+rw/2,ry+26,{n:sp.result.n,d:sp.result.d},19,'dg-fc');
+  var nx=px+rw+10;
+  if(sp.result2){
+    T(g,nx,ry+32,'=',{a:'start',s:17,c:'dg-i2',w:600});
+    var r2w=vW({n:sp.result2.n,d:sp.result2.d},19);
+    vDraw(g,nx+20+r2w/2,ry+26,{n:sp.result2.n,d:sp.result2.d},19,'dg-fc');
+    nx=nx+20+r2w;
+  }
+  if(sp.unit) T(g,nx+8,ry+32,sp.unit,{a:'start',s:15,c:'dg-fc',w:600});
+  return {w:px+230,h:y+Sq+44};
+};
+
+/* --- mixed × mixed area (partial products) --- */
+DG.areamixed=function(g,sp){
+  var ux=104, uy=88, x=88, y=56;
+  var aTot=sp.aw+sp.an/sp.ad, bTot=sp.bw+sp.bn/sp.bd;
+  var W=aTot*ux, H=bTot*uy, sx=x+sp.aw*ux, sy=y+sp.bw*uy;
+  var regions=[
+    {x:x,y:y,w:sp.aw*ux,h:sp.bw*uy,cls:'f-a',no:'1'},
+    {x:sx,y:y,w:W-sp.aw*ux,h:sp.bw*uy,cls:'f-b',no:'2'},
+    {x:x,y:sy,w:sp.aw*ux,h:H-sp.bw*uy,cls:'f-b',no:'3'},
+    {x:sx,y:sy,w:W-sp.aw*ux,h:H-sp.bw*uy,cls:'f-c',no:'4'}
+  ];
+  regions.forEach(function(r){
+    add(g,S('rect',{x:r.x,y:r.y,width:r.w,height:r.h,'class':r.cls}));
+    add(g,S('circle',{cx:r.x+r.w/2,cy:r.y+r.h/2,r:13,fill:'var(--surface)',stroke:'var(--ink-2)','stroke-width':1.3}));
+    T(g,r.x+r.w/2,r.y+r.h/2+5,r.no,{s:13.5,w:700,c:'dg-ink',m:true});
+  });
+  var i;
+  for(i=1;i<=sp.aw;i++) add(g,S('line',{x1:x+i*ux,y1:y,x2:x+i*ux,y2:y+H,'class':'dg-grid'}));
+  for(i=1;i<=sp.bw;i++) add(g,S('line',{x1:x,y1:y+i*uy,x2:x+W,y2:y+i*uy,'class':'dg-grid'}));
+  add(g,S('rect',{x:x,y:y,width:W,height:H,'class':'dg-frame'}));
+
+  bracket(g,x,sx,y-12,-1,'dgs-fa');
+  T(g,(x+sx)/2,y-22,String(sp.aw),{s:14,w:700,c:'dg-fa'});
+  bracket(g,sx,x+W,y-12,-1,'dgs-fb');
+  vDraw(g,(sx+x+W)/2,y-30,{n:sp.an,d:sp.ad},12.5,'dg-fb');
+  T(g,x+W/2,y-44,'가로 '+sp.aw+' + '+sp.an+'/'+sp.ad+' = '+(sp.aw*sp.ad+sp.an)+'/'+sp.ad+' '+sp.unit,{s:12.5,c:'dg-mut'});
+
+  add(g,S('path',{d:'M'+(x-14)+' '+y+' L'+(x-20)+' '+y+' L'+(x-20)+' '+sy+' L'+(x-14)+' '+sy,'class':'dgs-fa'}));
+  T(g,x-32,(y+sy)/2+5,String(sp.bw),{s:14,w:700,c:'dg-fa'});
+  add(g,S('path',{d:'M'+(x-14)+' '+sy+' L'+(x-20)+' '+sy+' L'+(x-20)+' '+(y+H)+' L'+(x-14)+' '+(y+H),'class':'dgs-fb'}));
+  vDraw(g,x-36,(sy+y+H)/2,{n:sp.bn,d:sp.bd},12.5,'dg-fb');
+
+  /* legend */
+  var lx=x+W+48, ly=y+6;
+  var an=sp.an, ad=sp.ad, bn=sp.bn, bd=sp.bd;
+  var items=[
+    {no:'1',txt:sp.aw+' × '+sp.bw,v:{t:String(sp.aw*sp.bw)}},
+    {no:'2',txt:an+'/'+ad+' × '+sp.bw,v:red(an*sp.bw,ad)},
+    {no:'3',txt:sp.aw+' × '+bn+'/'+bd,v:red(sp.aw*bn,bd)},
+    {no:'4',txt:an+'/'+ad+' × '+bn+'/'+bd,v:red(an*bn,ad*bd)}
+  ];
+  function red(n,d){var q=gcd(n,d)||1;n/=q;d/=q;return d===1?{t:String(n)}:{n:n,d:d};}
+  items.forEach(function(it,i){
+    var yy=ly+i*38;
+    add(g,S('circle',{cx:lx+11,cy:yy+2,r:11,fill:'var(--surface-2)',stroke:'var(--ink-2)','stroke-width':1.2}));
+    T(g,lx+11,yy+7,it.no,{s:12.5,w:700,c:'dg-ink',m:true});
+    T(g,lx+30,yy+7,it.txt+'  =',{a:'start',s:13.5,c:'dg-i2'});
+    vDraw(g,lx+30+tw(it.txt+'  =',13.5)+14,yy+2,it.v,14,'dg-ink');
+  });
+  var sn=(sp.aw*sp.ad+sp.an)*(sp.bw*sp.bd+sp.bn), sd=sp.ad*sp.bd;
+  var q=gcd(sn,sd)||1; sn/=q; sd/=q;
+  var wpart=Math.floor(sn/sd), rpart=sn-wpart*sd;
+  var sy2=ly+4*38+16;
+  add(g,S('line',{x1:lx,y1:sy2-8,x2:lx+188,y2:sy2-8,'class':'dgs-mut'}));
+  T(g,lx,sy2+16,'네 조각의 합',{a:'start',s:12.5,c:'dg-mut'});
+  vDraw(g,lx+34,sy2+48,{n:sn,d:sd},19,'dg-fc');
+  T(g,lx+62,sy2+54,'=',{a:'start',s:17,c:'dg-i2',w:600});
+  vDraw(g,lx+112,sy2+48,{w:wpart,n:rpart,d:sd,u:sp.unit+'²'},19,'dg-fc');
+  return {w:lx+230,h:Math.max(y+H+40,sy2+76)};
+};
+
+/* --- tape: part of a part --- */
+DG.tape=function(g,sp){
+  var x=34, W=628, h=38, rows=[24,102,180,258], i, j;
+  /* row 1 whole */
+  T(g,x,rows[0]-8,sp.labels[0],{a:'start',s:12.5,c:'dg-mut',w:600});
+  add(g,S('rect',{x:x,y:rows[0],width:W,height:h,'class':'f-n'}));
+  add(g,S('rect',{x:x,y:rows[0],width:W,height:h,'class':'dg-frame'}));
+  /* row 2: d1 parts, n1 filled */
+  T(g,x,rows[1]-8,sp.labels[1],{a:'start',s:12.5,c:'dg-fa',w:600});
+  var p1=W/sp.d1;
+  add(g,S('rect',{x:x,y:rows[1],width:sp.n1*p1,height:h,'class':'f-a'}));
+  for(i=1;i<sp.d1;i++) add(g,S('line',{x1:x+i*p1,y1:rows[1],x2:x+i*p1,y2:rows[1]+h,'class':'dg-grid'}));
+  add(g,S('rect',{x:x,y:rows[1],width:W,height:h,'class':'dg-frame'}));
+  T(g,x+sp.n1*p1/2,rows[1]+h/2+5,sp.n1+'/'+sp.d1,{s:14,w:700,c:'dg-fa'});
+  /* connectors */
+  add(g,S('line',{x1:x,y1:rows[1]+h,x2:x,y2:rows[2],'class':'dg-dash'}));
+  add(g,S('line',{x1:x+sp.n1*p1,y1:rows[1]+h,x2:x+sp.n1*p1,y2:rows[2],'class':'dg-dash'}));
+  /* row 3: zoom into the shaded part */
+  T(g,x,rows[2]-8,sp.labels[2],{a:'start',s:12.5,c:'dg-fc',w:600});
+  var Z=sp.n1*p1, p2=Z/sp.d2;
+  add(g,S('rect',{x:x,y:rows[2],width:sp.n2*p2,height:h,'class':'f-c'}));
+  for(i=1;i<sp.d2;i++) add(g,S('line',{x1:x+i*p2,y1:rows[2],x2:x+i*p2,y2:rows[2]+h,'class':'dg-grid'}));
+  add(g,S('rect',{x:x,y:rows[2],width:Z,height:h,'class':'dg-frame'}));
+  T(g,x+sp.n2*p2/2,rows[2]+h/2+5,sp.n2+'/'+sp.d2,{s:14,w:700,c:'dg-fc'});
+  /* row 4: back to the whole, d1*d2 parts */
+  T(g,x,rows[3]-8,sp.labels[3],{a:'start',s:12.5,c:'dg-i2',w:600});
+  var D=sp.d1*sp.d2, p3=W/D;
+  add(g,S('rect',{x:x,y:rows[3],width:sp.n1*sp.n2*p3,height:h,'class':'f-c'}));
+  for(i=1;i<D;i++) add(g,S('line',{x1:x+i*p3,y1:rows[3],x2:x+i*p3,y2:rows[3]+h,'class':'dg-grid'}));
+  add(g,S('rect',{x:x,y:rows[3],width:W,height:h,'class':'dg-frame'}));
+  T(g,x+sp.n1*sp.n2*p3/2,rows[3]+h/2+5,(sp.n1*sp.n2)+'/'+D,{s:14,w:700,c:'dg-fc'});
+  var rn=sp.n1*sp.n2, rd=D, q=gcd(rn,rd)||1;
+  var ry=rows[3]+h+30;
+  T(g,x,ry,'전체를 '+D+'칸으로 보면 '+rn+'칸',{a:'start',s:13,c:'dg-mut'});
+  var bx=x+W-150;
+  vDraw(g,bx,ry-6,{n:rn,d:rd},18,'dg-fc');
+  T(g,bx+26,ry,'=',{a:'start',s:17,c:'dg-i2',w:600});
+  vDraw(g,bx+72,ry-6,{n:rn/q,d:rd/q},18,'dg-fc');
+  return {w:720,h:ry+24};
+};
+
+/* --- rate blocks --- */
+DG.rate=function(g,sp){
+  var bw=124, bh=68, x0=40, y=62, i, j;
+  var used=sp.wholes+sp.numer/sp.denom;
+  bracket(g,x0,x0+used*bw,y-16,-1,'dgs-fc');
+  T(g,x0+used*bw/2,y-26,sp.totalLabel,{s:15,w:700,c:'dg-fc'});
+  for(i=0;i<sp.wholes;i++){
+    var bx=x0+i*bw;
+    add(g,S('rect',{x:bx,y:y,width:bw,height:bh,'class':'f-a'}));
+    add(g,S('rect',{x:bx,y:y,width:bw,height:bh,'class':'dg-frame'}));
+    if(sp.dots) for(j=0;j<sp.dots;j++)
+      add(g,S('circle',{cx:bx+bw/2+(j-(sp.dots-1)/2)*24,cy:y+24,r:8,fill:'var(--fa)'}));
+    vDraw(g,bx+bw/2,y+bh-16,sp.blockLabel,13,'dg-fa');
+  }
+  var px=x0+sp.wholes*bw;
+  add(g,S('rect',{x:px,y:y,width:bw*sp.numer/sp.denom,height:bh,'class':'f-b'}));
+  for(i=1;i<sp.denom;i++) add(g,S('line',{x1:px+i*bw/sp.denom,y1:y,x2:px+i*bw/sp.denom,y2:y+bh,'class':'dg-grid'}));
+  add(g,S('rect',{x:px,y:y,width:bw,height:bh,'class':'dg-frame'}));
+  add(g,S('circle',{cx:px+bw*sp.numer/sp.denom/2,cy:y+24,r:8,fill:'var(--fb)'}));
+  vDraw(g,px+bw*sp.numer/sp.denom/2,y+bh-16,sp.partialLabel,13,'dg-fb');
+
+  var yAx=y+bh+26;
+  add(g,S('line',{x1:x0,y1:yAx,x2:x0+(sp.wholes+1)*bw+14,y2:yAx,'class':'dgs-i2','marker-end':arrowDef(g,'ink')}));
+  for(i=0;i<=sp.wholes+1;i++){
+    var xx=x0+i*bw;
+    add(g,S('line',{x1:xx,y1:yAx-6,x2:xx,y2:yAx+6,'class':'dgs-i2'}));
+    T(g,xx,yAx+24,String(i),{s:13,w:600,c:'dg-i2',m:true});
+  }
+  T(g,x0+(sp.wholes+1)*bw+22,yAx+24,sp.axisName,{a:'start',s:12,c:'dg-mut'});
+  var mx=x0+used*bw;
+  add(g,S('path',{d:'M'+mx+' '+(yAx-9)+' l-7,-11 l14,0 z',fill:'var(--fc)'}));
+  add(g,S('line',{x1:mx,y1:y,x2:mx,y2:yAx-9,'class':'dgs-fc','stroke-dasharray':'4 3'}));
+  vDraw(g,mx,yAx+48,sp.markLabel,13.5,'dg-fc');
+  return {w:x0+(sp.wholes+1)*bw+80,h:yAx+70};
+};
+
+/* --- double number line --- */
+DG.dnl=function(g,sp){
+  var x0=112, x1=684, W=x1-x0, yT=104, yB=176;
+  T(g,0,yT+5,sp.topName,{a:'start',s:12.5,c:'dg-mut',w:600});
+  T(g,0,yB+5,sp.botName,{a:'start',s:12.5,c:'dg-mut',w:600});
+  var aI=arrowDef(g,'ink');
+  add(g,S('line',{x1:x0,y1:yT,x2:x1+14,y2:yT,'class':'dgs-i2','marker-end':aI}));
+  add(g,S('line',{x1:x0,y1:yB,x2:x1+14,y2:yB,'class':'dgs-i2','marker-end':arrowDef(g,'ink')}));
+  sp.ticks.forEach(function(tk){
+    var xx=x0+tk.p*W;
+    var hi=!!tk.hi;
+    add(g,S('line',{x1:xx,y1:yT,x2:xx,y2:yB,'class':hi?'dgs-fc':'dg-dash','stroke-width':hi?2:1.1}));
+    add(g,S('line',{x1:xx,y1:yT-7,x2:xx,y2:yT+7,'class':hi?'dgs-fc':'dgs-i2'}));
+    add(g,S('line',{x1:xx,y1:yB-7,x2:xx,y2:yB+7,'class':hi?'dgs-fc':'dgs-i2'}));
+    vDraw(g,xx,yT-26,tk.t,hi?14:12.5,hi?'dg-fc':'dg-i2');
+    vDraw(g,xx,yB+30,tk.b,hi?14:12.5,hi?'dg-fc':'dg-i2');
+  });
+  T(g,x0,44,'위·아래 눈금은 항상 짝을 이루어 함께 늘어납니다.',{a:'start',s:12.5,c:'dg-mut'});
+  return {w:720,h:yB+66};
+};
+
+
+/* ============ mount one diagram ============ */
+function mountDG(host,sp){
+  var fn=DG[sp.type]; if(!fn) return;
+  var svg=S('svg',{role:'img','aria-label':sp.alt||''});
+  var g=svg.appendChild(S('g',{}));
+  var r; try{ r=fn(g,sp); }catch(e){ return; }
+  r=r||{w:720,h:300};
+  var VW=Math.max(720,Math.ceil(r.w)+14);
+  g.setAttribute('transform','translate('+((VW-r.w)/2).toFixed(1)+',0)');
+  svg.setAttribute('viewBox','0 0 '+VW+' '+Math.ceil(r.h));
+  host.appendChild(svg);
+}
+
+/* ============ 개념 흐름도 ============ */
+var MAP_SVG='<svg viewBox="0 0 1000 322" role="img" aria-label="2차시부터 8차시까지의 개념 흐름도">'+
+'<rect x="10" y="14" width="270" height="214" rx="12" class="f-n"/>'+
+'<text class="dg-t dg-fa" x="145" y="38" text-anchor="middle" font-size="14" font-weight="600">몇 개 만큼</text>'+
+'<text class="dg-t dg-mut" x="145" y="55" text-anchor="middle" font-size="11.5">곱하는 수가 자연수</text>'+
+'<rect x="30" y="66" width="230" height="52" rx="9" class="f-s s-rule"/>'+
+'<text class="dg-t dg-mut dg-m" x="45" y="86" font-size="11">2차시</text>'+
+'<text class="dg-t dg-ink" x="45" y="105" font-size="15" font-weight="600">(진분수) × (자연수)</text>'+
+'<rect x="30" y="130" width="230" height="52" rx="9" class="f-s s-rule"/>'+
+'<text class="dg-t dg-mut dg-m" x="45" y="150" font-size="11">3차시</text>'+
+'<text class="dg-t dg-ink" x="45" y="169" font-size="15" font-weight="600">(대분수) × (자연수)</text>'+
+'<text class="dg-t dg-i2" x="145" y="204" text-anchor="middle" font-size="12.5">똑같은 양을 여러 번 더하기</text>'+
+'<text class="dg-t dg-fc" x="145" y="221" text-anchor="middle" font-size="12.5" font-weight="600">결과는 반드시 커진다</text>'+
+'<rect x="365" y="14" width="270" height="214" rx="12" class="f-n"/>'+
+'<text class="dg-t dg-fb" x="500" y="38" text-anchor="middle" font-size="14" font-weight="600">~의 얼마만큼 · 몇 배</text>'+
+'<text class="dg-t dg-mut" x="500" y="55" text-anchor="middle" font-size="11.5">곱하는 수가 분수</text>'+
+'<rect x="385" y="66" width="230" height="52" rx="9" class="f-s s-rule"/>'+
+'<text class="dg-t dg-mut dg-m" x="400" y="86" font-size="11">4차시</text>'+
+'<text class="dg-t dg-ink" x="400" y="105" font-size="15" font-weight="600">(자연수) × (진분수)</text>'+
+'<rect x="385" y="130" width="230" height="52" rx="9" class="f-s s-rule"/>'+
+'<text class="dg-t dg-mut dg-m" x="400" y="150" font-size="11">5차시</text>'+
+'<text class="dg-t dg-ink" x="400" y="169" font-size="15" font-weight="600">(자연수) × (대분수)</text>'+
+'<text class="dg-t dg-i2" x="500" y="204" text-anchor="middle" font-size="12.5">전체를 똑같이 나눈 것의 일부</text>'+
+'<text class="dg-t dg-warn" x="500" y="221" text-anchor="middle" font-size="12.5" font-weight="600">진분수배는 작아진다</text>'+
+'<rect x="720" y="14" width="270" height="214" rx="12" class="f-n"/>'+
+'<text class="dg-t dg-fc" x="855" y="38" text-anchor="middle" font-size="14" font-weight="600">부분의 부분 · 넓이</text>'+
+'<text class="dg-t dg-mut" x="855" y="55" text-anchor="middle" font-size="11.5">두 수 모두 분수</text>'+
+'<rect x="740" y="66" width="230" height="52" rx="9" class="f-s s-rule"/>'+
+'<text class="dg-t dg-mut dg-m" x="755" y="86" font-size="11">6·7차시</text>'+
+'<text class="dg-t dg-ink" x="755" y="105" font-size="15" font-weight="600">(진분수) × (진분수)</text>'+
+'<rect x="740" y="130" width="230" height="52" rx="9" class="f-s s-rule"/>'+
+'<text class="dg-t dg-mut dg-m" x="755" y="150" font-size="11">8차시</text>'+
+'<text class="dg-t dg-ink" x="755" y="169" font-size="15" font-weight="600">(대분수) × (대분수)</text>'+
+'<text class="dg-t dg-i2" x="855" y="204" text-anchor="middle" font-size="12.5">가로 × 세로로 겹치는 칸</text>'+
+'<text class="dg-t dg-fc" x="855" y="221" text-anchor="middle" font-size="12.5" font-weight="600">직사각형 넓이가 모범 모델</text>'+
+'<defs><marker id="mapAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">'+
+'<path d="M0,1 L9,5 L0,9 z" class="mk-ink"/></marker></defs>'+
+'<line x1="288" y1="124" x2="357" y2="124" class="dgs-i2" marker-end="url(#mapAr)"/>'+
+'<text class="dg-t dg-ink" x="322" y="100" text-anchor="middle" font-size="11.5" font-weight="600">곱하는 수가</text>'+
+'<text class="dg-t dg-ink" x="322" y="114" text-anchor="middle" font-size="11.5" font-weight="600">분수로</text>'+
+'<line x1="643" y1="124" x2="712" y2="124" class="dgs-i2" marker-end="url(#mapAr)"/>'+
+'<text class="dg-t dg-ink" x="677" y="100" text-anchor="middle" font-size="11.5" font-weight="600">곱해지는 수도</text>'+
+'<text class="dg-t dg-ink" x="677" y="114" text-anchor="middle" font-size="11.5" font-weight="600">분수로</text>'+
+'<line x1="200" y1="278" x2="800" y2="278" class="dgs-mut"/>'+
+'<line x1="500" y1="266" x2="500" y2="290" class="dgs-ink"/>'+
+'<text class="dg-t dg-ink dg-m" x="500" y="309" text-anchor="middle" font-size="13" font-weight="600">1</text>'+
+'<path d="M340,278 L212,278" class="dgs-mut" marker-end="url(#mapAr)"/>'+
+'<path d="M660,278 L788,278" class="dgs-mut" marker-end="url(#mapAr)"/>'+
+'<text class="dg-t dg-i2" x="345" y="261" text-anchor="middle" font-size="12.5">1보다 작은 수를 곱하면 <tspan class="dg-warn" font-weight="600">작아진다</tspan></text>'+
+'<text class="dg-t dg-i2" x="655" y="261" text-anchor="middle" font-size="12.5">1보다 큰 수를 곱하면 <tspan class="dg-fc" font-weight="600">커진다</tspan></text>'+
+'</svg>';
+
+/* ============ slides ============ */
+var L=[
+{k:'cover'},
+{k:'map'},
+
+/* ---------------- 2차시 ---------------- */
+{k:'intro',chasi:'2차시',title:'(진분수) × (자연수)',pages:'수 36–37p · 수익 26–27p',
+ read:'[2/5] × 6 은 *[2/5] 씩 6묶음*, 곧 [2/5]을 6번 더한 것입니다.',
+ sub:'자연수의 곱셈에서 배운 *동수누가*가 그대로 이어집니다. 달라진 것은 “하나”의 크기가 분수라는 점뿐입니다.',
+ point:'분자에만 곱하는 이유를 *조각의 크기는 그대로, 개수만 늘어나기 때문*이라고 그림을 보며 말하게 합니다. 규칙을 먼저 알려 주면 3차시에서 자연수 부분을 빠뜨립니다.',
+ trap:'분모에도 곱하는 실수 — {✗ [2/5] × 6 = [12/30]} → {✓ [12/5]}. “칸을 더 잘게 나눈 적이 있느냐”고 물으면 스스로 찾아냅니다.'},
+
+{k:'ctx',chasi:'2차시',title:'(진분수) × (자연수)',model:'묶음 · 반복덧셈 모델',
+ story:'딸기우유 한 팩에 우유가 [2/5] L 들어 있습니다. 이 우유 *6팩*에 들어 있는 우유는 모두 몇 L일까요?',
+ eq:'2/5 × 6 = 12/5 = 2_2/5',unit:'L',
+ dg:{type:'bars',count:6,whole:0,numer:2,denom:5,orient:'h',unit:'L',
+  rowA:'① 한 팩씩 그리기 — 1 L를 5칸으로 나눈 것 중 2칸',rowB:'② 색칠한 칸만 모으기',noteA:'6팩',
+  alt:'5칸 중 2칸이 칠해진 우유팩 6개를 모으면 1L짜리 2개와 5분의 2가 된다'},
+ cap:'[1/5] L 조각이 *2개씩 6묶음 = 12개*. 5조각이 모이면 1 L가 되므로 2 L와 [2/5] L.',
+ steps:[
+  {h:'무엇이 1인지 정한다',p:'1 L짜리 통 하나가 “1”. 한 팩은 그 통의 5칸 중 2칸입니다.'},
+  {h:'조각의 개수만 센다',p:'크기 [1/5]는 그대로, 개수만 6배가 됩니다.',c:'2/5 × 6 = ( 2 × 6 ) / 5 = 12/5'},
+  {h:'대분수로 바꿔 어림한다',p:'[12/5] = [2_2/5] L. 한 팩이 반 컵쯤이니 6팩이면 2 L를 조금 넘습니다.'}]},
+
+{k:'ctx',chasi:'2차시',title:'(진분수) × (자연수)',model:'수직선 · 측정 모델',
+ story:'리본 한 도막의 길이가 [3/4] m입니다. 이 리본 *5도막*을 겹치지 않게 이어 붙이면 전체 길이는 몇 m일까요?',
+ eq:'3/4 × 5 = 15/4 = 3_3/4',unit:'m',
+ dg:{type:'numberline',mode:'hops',min:0,max:4,denom:4,hop:{w:0,n:3,d:4},count:5,unit:'m',
+  title:'0에서 출발해 4분의 3 m씩 다섯 번 뛰기',
+  alt:'0부터 4까지의 수직선에서 4분의 3씩 다섯 번 뛰면 3과 4분의 3에 도착한다'},
+ cap:'같은 크기의 뜀뛰기를 *이어 붙이는* 그림입니다. 도착점의 눈금이 [15/4], 곧 [3_3/4] m.',
+ steps:[
+  {h:'눈금 한 칸을 정한다',p:'1 m를 4칸으로 나누어 한 칸을 [1/4] m로. 리본 한 도막은 *3칸*.'},
+  {h:'뜀뛰기를 5번 이어 붙인다',p:'3칸씩 5번이므로 칸 수는 15칸.',c:'3/4 × 5 = ( 3 × 5 ) / 4 = 15/4'},
+  {h:'4칸씩 묶어 1 m를 만든다',p:'15칸이면 3 m와 3칸 → *[3_3/4] m*. 5 m보다 작아야 맞습니다.'}]},
+
+{k:'ctx',chasi:'2차시',title:'(진분수) × (자연수)',model:'비율 · 단위량 모델',
+ story:'수도꼭지에서 물이 *1분에 [5/6] L씩* 일정하게 나옵니다. 이 수도로 *4분* 동안 물을 받으면 몇 L를 받을 수 있을까요?',
+ eq:'5/6 × 4 = 20/6 = 10/3 = 3_1/3',unit:'L',
+ dg:{type:'bars',count:4,whole:0,numer:5,denom:6,orient:'v',unit:'L',
+  rowA:'① 1분마다 받은 물 — 1 L 통의 6칸 중 5칸',rowB:'② 받은 물을 모아 통에 다시 채우기',noteA:'4분',
+  alt:'6칸 중 5칸이 찬 물통 4개의 물을 모으면 가득 찬 통 3개와 6분의 2가 된다'},
+ cap:'1분치를 통 하나로 보지 말고 *[1/6] L 조각 5개*로 봅니다. 4분이면 조각 20개.',
+ steps:[
+  {h:'단위량을 확인한다',p:'“1분에 [5/6] L”가 기준. 시간이 곱하는 수 자리에 옵니다.'},
+  {h:'조각 수를 세어 계산한다',p:'[1/6] 조각이 5개씩 4묶음 = 20개.',c:'5/6 × 4 = ( 5 × 4 ) / 6 = 20/6 = 10/3'},
+  {h:'약분하고 어림한다',p:'[10/3] = [3_1/3] L. 1분에 1 L가 조금 못 되니 4 L보다 작아야 맞습니다.'}]},
+
+/* ---------------- 3차시 ---------------- */
+{k:'intro',chasi:'3차시',title:'(대분수) × (자연수)',pages:'수 38–39p · 수익 28–29p',
+ read:'2차시와 의미는 똑같이 *몇 묶음*입니다. 다만 한 묶음이 [1_3/4]처럼 *1보다 커졌습니다*.',
+ sub:'그래서 계산이 두 갈래로 갈립니다. ① 가분수로 바꾸어 한 번에 곱하기 ② 자연수 부분과 분수 부분을 따로 곱해 더하기.',
+ point:'두 방법 중 하나를 강요하지 않습니다. 자연수 부분이 크면 나누어 곱하기가, 분모가 크면 가분수가 편하다는 것을 아이들이 직접 비교하게 합니다.',
+ trap:'자연수 부분을 잊는 실수 — {✗ [1_3/4] × 4 = 3}. 그림에서 *파란 칸 4개가 사라졌다*고 짚어 주면 즉시 알아챕니다.'},
+
+{k:'ctx',chasi:'3차시',title:'(대분수) × (자연수)',model:'묶음 · 반복덧셈 모델',
+ story:'사과 한 상자의 무게가 [1_3/4] kg입니다. 똑같은 사과 *4상자*의 무게는 모두 몇 kg일까요?',
+ eq:'1_3/4 × 4 = 7',unit:'kg',
+ dg:{type:'bars',count:4,whole:1,numer:3,denom:4,orient:'h',unit:'kg',
+  rowA:'① 한 상자씩 그리기 — 1 kg 한 개와 4분의 3',rowB:'② 자연수 부분끼리, 분수 부분끼리 모으기',noteA:'4상자',
+  alt:'1과 4분의 3 묶음 4개를 모으면 1kg 4개와 4분의 3 조각 4개가 되어 모두 7kg이 된다'},
+ cap:'*파란 칸 4개(=4 kg)*와 *노란 [3/4] 조각 4개*. 조각 4개는 12조각이므로 다시 3 kg.',
+ steps:[
+  {h:'방법 ① 가분수로 곱한다',p:'[1_3/4] = [7/4]로 고친 뒤 2차시와 똑같이.',c:'7/4 × 4 = 28/4 = 7'},
+  {h:'방법 ② 두 부분을 따로 곱한다',p:'그림의 파란 칸과 노란 조각을 따로 세는 방법.',c:'( 1 × 4 ) + ( 3/4 × 4 ) = 4 + 3 = 7'},
+  {h:'두 답이 같은지 맞춰 본다',p:'둘 다 *7 kg*. 한 상자가 2 kg이 안 되니 8 kg보다 작습니다.'}]},
+
+{k:'ctx',chasi:'3차시',title:'(대분수) × (자연수)',model:'수직선 · 측정 모델',
+ story:'물통 하나에 물이 [1_2/3] L씩 들어 있습니다. 똑같은 물통 *3개*에 담긴 물은 모두 몇 L일까요?',
+ eq:'1_2/3 × 3 = 5',unit:'L',
+ dg:{type:'numberline',mode:'hops',min:0,max:5,denom:3,hop:{w:1,n:2,d:3},count:3,unit:'L',
+  title:'1과 3분의 2 L씩 세 번 뛰기',
+  alt:'0부터 5까지의 수직선에서 1과 3분의 2씩 세 번 뛰면 정확히 5에 도착한다'},
+ cap:'한 번의 뜀뛰기가 *1보다 큽니다*. 그래서 눈금 1을 지나치고, 세 번 만에 딱 5 L.',
+ steps:[
+  {h:'한 칸을 [1/3] L로 잡는다',p:'물통 하나는 *5칸*([5/3] L). 가분수는 그림에서 “칸 수 세기”입니다.'},
+  {h:'칸 수를 3배 한다',p:'5칸씩 3번이므로 15칸.',c:'5/3 × 3 = 15/3 = 5'},
+  {h:'부분으로 나눠 검산한다',p:'[( 1 × 3 ) + ( 2/3 × 3 ) = 5]. 답이 자연수로 딱 떨어지기도 합니다.'}]},
+
+{k:'ctx',chasi:'3차시',title:'(대분수) × (자연수)',model:'비율 · 단위량 모델',
+ story:'지훈이는 한 시간에 [2_1/2] km를 걷습니다. 같은 빠르기로 *3시간* 동안 걸으면 몇 km를 갈 수 있을까요?',
+ eq:'2_1/2 × 3 = 15/2 = 7_1/2',unit:'km',
+ dg:{type:'dnl',topName:'시간',botName:'거리 (km)',ticks:[
+   {p:0,t:{t:'0'},b:{t:'0'}},{p:0.3333,t:{t:'1'},b:{w:2,n:1,d:2}},
+   {p:0.6667,t:{t:'2'},b:{t:'5'}},{p:1,t:{t:'3'},b:{w:7,n:1,d:2},hi:true}],
+  alt:'시간과 거리를 짝지은 이중 수직선. 1시간에 2와 2분의 1 km, 3시간에 7과 2분의 1 km'},
+ cap:'*이중 수직선*은 두 양이 같은 비율로 함께 늘어남을 보여 줍니다. 시간이 3배면 거리도 3배.',
+ steps:[
+  {h:'1시간 자리에 [2_1/2]를 적는다',p:'위는 시간, 아래는 거리. 짝지어진 두 눈금이 함께 움직입니다.'},
+  {h:'가분수로 바꿔 곱한다',p:'[2_1/2] = [5/2]로 고쳐 계산합니다.',c:'5/2 × 3 = 15/2'},
+  {h:'답의 단위를 확인한다',p:'*[7_1/2] km*. 시간에 거리를 곱한 게 아니라 1시간당 거리를 곱한 것.'}]},
+
+/* ---------------- 4차시 ---------------- */
+{k:'intro',chasi:'4차시',title:'(자연수) × (진분수)',pages:'수 40–41p · 수익 30–31p',
+ read:'[12] × [2/3] 은 “12를 [2/3]번 더한다”가 아니라 *12의 [2/3]만큼*입니다.',
+ sub:'이 단원에서 가장 큰 개념 전환입니다. 곱하는 수가 1보다 작으므로 *결과가 원래 수보다 작아집니다*.',
+ point:'“*~의*”라는 말이 곧 곱셈 기호입니다. 문장에서 “의”를 찾아 ×로 바꾸는 연습이 문장제 해결의 열쇠입니다.',
+ trap:'*“곱하면 항상 커진다”* — 4차시는 이 믿음이 깨지는 차시입니다. 계산으로 반박하지 말고, 색종이 8장이 12장보다 눈에 보이게 적다는 그림으로 반박하게 하세요.'},
+
+{k:'ctx',chasi:'4차시',title:'(자연수) × (진분수)',model:'부분–전체 · 분할 모델',
+ story:'색종이가 *12장* 있습니다. 그중 [2/3]을 종이접기에 썼습니다. 종이접기에 쓴 색종이는 몇 장일까요?',
+ eq:'12 × 2/3 = 24/3 = 8',unit:'장',
+ dg:{type:'partwhole',mode:'grid',total:12,groups:3,fill:2,cols:4,unit:'장',wholeLabel:'색종이 전체 12장',
+  alt:'색종이 12장을 4장씩 3묶음으로 나누고 그중 2묶음 8장을 색칠한 그림'},
+ cap:'“[2/3]”은 *3묶음으로 똑같이 나눈 것 중 2묶음*. 나누기와 곱하기가 한 식에 들어 있습니다.',
+ steps:[
+  {h:'분모만큼 똑같이 나눈다',p:'분모 3 → 12장을 *3묶음*으로. 한 묶음은 4장.'},
+  {h:'분자만큼 가져온다',p:'분자 2 → *2묶음*이니 8장.',c:'12 × 2/3 = ( 12 × 2 ) / 3 = 8'},
+  {h:'커졌는지 작아졌는지 말한다',p:'8장은 처음 12장보다 *작습니다*. [2/3]이 1보다 작기 때문.'}]},
+
+{k:'ctx',chasi:'4차시',title:'(자연수) × (진분수)',model:'수직선 · 측정 모델',
+ story:'길이가 *10 m*인 끈이 있습니다. 이 끈의 [3/5]만큼을 잘라서 썼습니다. 사용한 끈의 길이는 몇 m일까요?',
+ eq:'10 × 3/5 = 30/5 = 6',unit:'m',
+ dg:{type:'numberline',mode:'partition',min:0,max:10,parts:5,fill:3,unit:'m',partLabel:'2 m',
+  title:'10 m를 5묶음으로 나누고 그중 3묶음 쓰기',
+  alt:'0부터 10까지의 수직선을 5등분해 각 2미터로 만들고 앞의 3칸 6미터를 색칠한 그림'},
+ cap:'길이 같은 연속량에서도 방법은 같습니다. *분모 수만큼 나누고 분자 수만큼 가져오기*.',
+ steps:[
+  {h:'전체를 5등분한다',p:'10 m ÷ 5 = *2 m*가 한 칸. 눈금이 2 m 간격이 됩니다.'},
+  {h:'3칸을 색칠한다',p:'2 m씩 3칸이므로 6 m.',c:'10 × 3/5 = ( 10 × 3 ) / 5 = 6'},
+  {h:'남은 양도 함께 읽는다',p:'쓴 것 6 m, 남은 것 [10 × 2/5 = 4] m. 더하면 10 m인지 확인시킵니다.'}]},
+
+{k:'ctx',chasi:'4차시',title:'(자연수) × (진분수)',model:'배 · 비교 모델',
+ story:'형은 *8000원*을 가지고 있습니다. 내가 가진 돈은 형이 가진 돈의 [3/4]배입니다. 내가 가진 돈은 얼마일까요?',
+ eq:'8000 × 3/4 = 6000',unit:'원',
+ dg:{type:'partwhole',mode:'strip',total:8000,groups:4,fill:3,unit:'원',cellText:'2000원',
+  wholeLabel:'형의 돈 8000원 (기준 1배)',fillLabel:'나의 돈 = 8000원의 3/4배',
+  alt:'8000원을 나타내는 띠를 4등분해 각 2000원으로 만들고 앞의 3칸 6000원을 색칠한 그림'},
+ cap:'“[3/4]배”는 *기준의 일부*라는 뜻. 5차시의 “[1_1/3]배”와 나란히 두면 차이가 보입니다.',
+ steps:[
+  {h:'기준이 무엇인지 찾는다',p:'“*형이 가진 돈의*” → 기준(1배)은 형의 8000원. 먼저 띠로 그립니다.'},
+  {h:'4등분하고 3칸을 가져온다',p:'한 칸 2000원 × 3칸.',c:'8000 × 3/4 = ( 8000 × 3 ) / 4 = 6000'},
+  {h:'“배”의 뜻을 말로 정리한다',p:'*1배보다 작은 배*라서 내 돈이 형보다 적습니다.'}]},
+
+/* ---------------- 5차시 ---------------- */
+{k:'intro',chasi:'5차시',title:'(자연수) × (대분수)',pages:'수 42–43p · 수익 32–33p',
+ read:'4차시와 똑같이 *~의 얼마만큼 · 몇 배*입니다. 다만 곱하는 수가 *1보다 크므로* 결과가 원래 수보다 커집니다.',
+ sub:'“1배 하고도 얼마만큼 더”로 읽는 순간, 자연수 부분과 분수 부분을 나누어 곱하는 계산이 그림에서 저절로 나옵니다.',
+ point:'4차시([3/4]배 → 작아짐)와 5차시([1_1/3]배 → 커짐)를 *같은 칠판에 나란히* 그리세요. “곱하는 수가 1보다 큰가 작은가” 하나로 두 차시가 묶입니다.',
+ trap:'자연수 부분에만 곱하기 {✗ 45 × [1_1/3] = 45}, 대분수를 잘못 고치기 {✗ [1_1/3] = [3/4]}. 올바른 변환 {✓ [1_1/3] = [4/3]}을 그림의 *칸 4개*로 확인시킵니다.'},
+
+{k:'ctx',chasi:'5차시',title:'(자연수) × (대분수)',model:'배 · Scaling 모델',
+ story:'내 몸무게는 *45 kg*입니다. 우리 형의 몸무게는 내 몸무게의 [1_1/3]배(1배 하고도 [1/3]배 더)입니다. 형의 몸무게는 몇 kg일까요?',
+ eq:'45 × 1_1/3 = 60',unit:'kg',
+ dg:{type:'compare',cell:{t:'15',u:'kg'},baseCells:3,compCells:4,
+  baseLabel:'나 — 45 kg (기준 1배)',compLabel:'형 — 45 kg의 1과 3분의 1배',
+  braceA:'1배 = 45 kg',braceB:'1/3배 = 15 kg',totalLabel:'= 60 kg',
+  alt:'45kg을 15kg짜리 세 칸으로 나눈 기준 막대와 한 칸 더 긴 60kg 막대를 비교한 그림'},
+ cap:'기준 막대를 *분모 수(3)만큼* 나누어 두면 “[1/3]배 더”가 *한 칸 더*로 보입니다.',
+ steps:[
+  {h:'기준을 3등분한다',p:'분모가 3이므로 45 kg을 3칸으로. 한 칸은 15 kg.'},
+  {h:'1배 + [1/3]배로 나누어 곱한다',p:'그림의 파란 칸과 노란 칸을 따로 셉니다.',c:'( 45 × 1 ) + ( 45 × 1/3 ) = 45 + 15 = 60'},
+  {h:'가분수로도 확인한다',p:'[45 × 4/3 = 60] → *60 kg*. 4칸 × 15 kg으로 그림에서도 읽힙니다.'}]},
+
+{k:'ctx',chasi:'5차시',title:'(자연수) × (대분수)',model:'수직선 · 측정 모델',
+ story:'철사 *1 m*의 무게가 *6 g*입니다. 이 철사 [2_3/4] m의 무게는 몇 g일까요?',
+ eq:'6 × 2_3/4 = 33/2 = 16_1/2',unit:'g',
+ dg:{type:'dnl',topName:'길이 (m)',botName:'무게 (g)',ticks:[
+   {p:0,t:{t:'0'},b:{t:'0'}},{p:0.3333,t:{t:'1'},b:{t:'6'}},{p:0.6667,t:{t:'2'},b:{t:'12'}},
+   {p:0.9167,t:{w:2,n:3,d:4},b:{w:16,n:1,d:2},hi:true},{p:1,t:{t:'3'},b:{t:'18'}}],
+  alt:'길이와 무게를 짝지은 이중 수직선. 1미터에 6그램, 2와 4분의 3미터에 16과 2분의 1그램'},
+ cap:'1 m(6 g)짜리가 *2개* 있고, 나머지 [3/4]개만큼(4.5 g)이 더 있는 상황입니다.',
+ steps:[
+  {h:'1 m의 무게를 고정한다',p:'단위량 6 g. 길이가 곱하는 수 자리에 옵니다.'},
+  {h:'2 m분과 [3/4] m분을 따로 구한다',p:'온전한 2 m와 남는 [3/4] m로 나눕니다.',c:'( 6 × 2 ) + ( 6 × 3/4 ) = 12 + 4_1/2'},
+  {h:'합해서 답을 쓴다',p:'*[16_1/2] g*. 3 m가 18 g이니 그보다 조금 작아야 맞습니다.'}]},
+
+{k:'ctx',chasi:'5차시',title:'(자연수) × (대분수)',model:'비율 · Rate 모델',
+ story:'1시간에 일을 *2번* 완수할 수 있는 숙련공이 있습니다. 이 사람이 [3_1/2]시간 동안 쉬지 않고 일하면 총 몇 번의 일을 완수할까요?',
+ eq:'2 × 3_1/2 = 7',unit:'번',
+ dg:{type:'rate',wholes:3,numer:1,denom:2,dots:2,axisName:'시간',
+  blockLabel:{t:'2',u:'번'},partialLabel:{t:'1',u:'번'},totalLabel:'모두 7번',
+  markLabel:{w:3,n:1,d:2,u:'시간'},
+  alt:'1시간마다 일 2번을 나타내는 블록 3개와 반 시간짜리 블록 1개를 이어 모두 7번이 되는 그림'},
+ cap:'시간이라는 *연속적인 흐름* 속에 대분수가 들어가는 대표 상황. 반 시간 칸에는 일이 1번만.',
+ steps:[
+  {h:'1시간 블록을 만든다',p:'블록 하나 = 1시간 = 일 2번. 시간축을 먼저 그립니다.'},
+  {h:'3시간분과 [1/2]시간분을 나눈다',p:'온전한 3시간과 남는 반 시간으로.',c:'( 2 × 3 ) + ( 2 × 1/2 ) = 6 + 1 = 7'},
+  {h:'가분수로 검산한다',p:'[2 × 7/2 = 7] → *7번*. 3시간 6번, 4시간 8번 사이입니다.'}]},
+
+/* ---------------- 6·7차시 ---------------- */
+{k:'intro',chasi:'6·7차시',title:'(진분수) × (진분수)',pages:'수 44–47p · 수익 34–35p',
+ read:'*부분의 부분*입니다. [3/4] × [2/5] 은 “[3/4]의 [2/5]만큼”.',
+ sub:'한 방향으로만 자르던 것을 *가로·세로 두 방향으로* 자르면, 겹친 칸의 수가 곧 분자의 곱, 전체 칸의 수가 분모의 곱이 됩니다.',
+ point:'약분은 *곱한 뒤*에도, *곱하기 전*에도 됩니다. [3/4] × [2/5]에서 2와 4를 미리 약분하면 [3/2] × [1/5] = [3/10]. 두 길이 같은 답에 닿는 것을 한 번은 직접 확인시키세요.',
+ trap:'분모끼리 더하기 — {✗ [3/4] × [2/5] = [6/9]}. 덧셈의 통분과 뒤섞인 경우입니다. 격자에서 전체 칸이 20개임을 세어 보면 {✓ 4 × 5 = 20}이 눈으로 확인됩니다.'},
+
+{k:'ctx',chasi:'6·7차시',title:'(진분수) × (진분수)',model:'넓이 모델 (기본형)',
+ story:'직사각형 모양의 작은 텃밭이 있습니다. 가로가 [3/4] m, 세로가 [2/5] m입니다. 이 텃밭의 넓이는 몇 m²일까요?',
+ eq:'3/4 × 2/5 = 6/20 = 3/10',unit:'m²',
+ dg:{type:'area',cols:4,colsFill:3,rows:5,rowsFill:2,topFrac:{n:3,d:4},leftFrac:{n:2,d:5},
+  wholeLabel:'한 변이 1 m인 정사각형 — 넓이 1 m²',sideLabel:'',
+  lines:['가로 3/4 → 세로선 4칸 중 3칸','세로 2/5 → 가로선 5칸 중 2칸','겹친 칸 6개 · 전체 20칸'],
+  result:{n:6,d:20},result2:{n:3,d:10},unit:'m²',
+  alt:'한 변이 1미터인 정사각형을 20칸으로 나누고 가로 3칸 세로 2칸이 겹친 6칸을 표시한 넓이 모델'},
+ cap:'전체 *20칸*은 분모의 곱 4 × 5, 겹친 *6칸*은 분자의 곱 3 × 2. 규칙이 그림에서 그대로 나옵니다.',
+ steps:[
+  {h:'한 변이 1 m인 정사각형을 그린다',p:'이 정사각형의 넓이가 *1 m²*. 모든 비교의 기준입니다.'},
+  {h:'가로와 세로를 각각 자른다',p:'가로 4등분 중 3칸(파랑), 세로 5등분 중 2칸(노랑). *겹친 칸*이 텃밭.'},
+  {h:'칸을 세어 식과 맞춘다',p:'답 [3/10] m²는 1 m²보다 작습니다.',c:'3/4 × 2/5 = ( 3 × 2 ) / ( 4 × 5 ) = 6/20 = 3/10'}]},
+
+{k:'ctx',chasi:'6·7차시',title:'(진분수) × (진분수)',model:'부분의 부분 · 띠 모델',
+ story:'피자 한 판의 [1/2]이 남아 있었습니다. 동생이 *남은 피자의 [2/3]*를 먹었습니다. 동생이 먹은 양은 피자 한 판의 얼마일까요?',
+ eq:'1/2 × 2/3 = 2/6 = 1/3',unit:'',
+ dg:{type:'tape',d1:2,n1:1,d2:3,n2:2,labels:[
+   '① 피자 한 판 전체 = 1','② 남아 있던 양 — 전체의 1/2',
+   '③ 동생이 먹은 양 — 그 1/2을 3등분한 것 중 2','④ 전체를 기준으로 다시 보기 — 6칸 중 2칸'],
+  alt:'띠를 절반으로 나누고 그 절반을 다시 3등분해 2칸을 칠한 뒤 전체 6칸 중 2칸임을 확인하는 그림'},
+ cap:'세 번째 줄의 “[2/3]”는 *전체가 아니라 남은 피자*를 기준으로 한 것. 네 줄에서 기준을 되돌립니다.',
+ steps:[
+  {h:'기준이 두 번 바뀐다',p:'처음 기준은 피자 한 판, 두 번째 기준은 *남은 피자*. 가장 헷갈리는 곳입니다.'},
+  {h:'남은 부분을 다시 3등분한다',p:'[1/2]을 3으로 나누면 한 칸이 [1/6]. 그중 2칸이므로 [2/6].'},
+  {h:'식으로 정리하고 약분한다',p:'답 [1/3]은 [1/2]보다도 작습니다.',c:'1/2 × 2/3 = ( 1 × 2 ) / ( 2 × 3 ) = 2/6 = 1/3'}]},
+
+{k:'ctx',chasi:'6·7차시',title:'(진분수) × (진분수)',model:'집합 · 비율 모델',
+ story:'우리 학교 5학년 학생의 [3/5]가 여학생입니다. 그리고 여학생의 [1/4]이 안경을 썼습니다. 안경을 쓴 여학생은 5학년 전체의 얼마일까요?',
+ eq:'3/5 × 1/4 = 3/20',unit:'',
+ dg:{type:'area',cols:5,colsFill:3,rows:4,rowsFill:1,topFrac:{n:3,d:5},leftFrac:{n:1,d:4},
+  wholeLabel:'5학년 전체',sideLabel:'',
+  lines:['세로줄 5칸 중 3칸 = 여학생 3/5','가로줄 4칸 중 1칸 = 그중 1/4','겹친 칸 3개 · 전체 20칸'],
+  result:{n:3,d:20},unit:'',
+  alt:'5학년 전체를 20칸 격자로 나타내고 여학생 3/5와 그중 1/4이 겹치는 3칸을 표시한 그림'},
+ cap:'사람 수를 몰라도 *비율만으로* 답할 수 있습니다. 격자 한 칸이 “전체의 [1/20]”이기 때문입니다.',
+ steps:[
+  {h:'전체를 세로로 5등분한다',p:'여학생 [3/5] → 세로줄 *3칸*을 파랑으로.'},
+  {h:'그 부분을 가로로 4등분한다',p:'여학생 중 [1/4] → 가로줄 *1칸*을 노랑으로. 겹친 칸이 답.'},
+  {h:'겹친 칸을 전체로 나눈다',p:'학생이 40명이면 [40 × 3/20 = 6]명으로 확장됩니다.',c:'3/5 × 1/4 = ( 3 × 1 ) / ( 5 × 4 ) = 3/20'}]},
+
+/* ---------------- 8차시 ---------------- */
+{k:'intro',chasi:'8차시',title:'(대분수) × (대분수)',pages:'수 48–49p · 수익 36–37p',
+ read:'6·7차시의 *넓이 모델 그대로*입니다. 다만 가로와 세로가 각각 1보다 크므로 직사각형이 *네 조각*으로 나뉩니다.',
+ sub:'이 네 조각을 다 세지 않으면 답이 모자랍니다. 대분수끼리는 *반드시 가분수로 고친 뒤* 곱하는 이유가 여기에 있습니다.',
+ point:'8차시의 넓이 그림은 *중학교 전개 (a+b)(c+d)로 이어지는 다리*입니다. 네 조각에 ①②③④ 번호를 붙여 놓고 “하나라도 빠지면 화단이 좁아진다”고 말하게 하면 오래 남습니다.',
+ trap:'자연수끼리·분수끼리 따로 곱하기 — {✗ [2_1/2] × [1_2/3] = [2_1/3]}. 네 조각 중 ②와 ③을 통째로 빠뜨린 값입니다. 빠진 넓이 [1_5/6]을 더하면 정답 {✓ [4_1/6]}.'},
+
+{k:'ctx',chasi:'8차시',title:'(대분수) × (대분수)',model:'넓이 모델 · 부분곱',
+ story:'학교 화단이 직사각형 모양입니다. 가로가 [2_1/2] m, 세로가 [1_2/3] m입니다. 이 화단의 넓이는 몇 m²일까요?',
+ eq:'2_1/2 × 1_2/3 = 5/2 × 5/3 = 25/6 = 4_1/6',unit:'m²',
+ dg:{type:'areamixed',aw:2,an:1,ad:2,bw:1,bn:2,bd:3,unit:'m',
+  alt:'가로 2와 2분의 1, 세로 1과 3분의 2인 직사각형을 네 부분으로 나누어 각 부분의 넓이를 구하는 그림'},
+ cap:'네 조각의 합 [2 + 4/3 + 1/2 + 1/3 = 4_1/6]. 가분수로 한 번에 곱한 [25/6]과 정확히 같습니다.',
+ steps:[
+  {h:'가로와 세로를 두 도막으로 나눈다',p:'가로 = 2 + [1/2], 세로 = 1 + [2/3]. 그래서 *네 조각*이 됩니다.'},
+  {h:'네 조각을 모두 더한다',p:'①과 ④만 세면 ②③이 빠집니다.',c:'2 + 4/3 + 1/2 + 1/3 = 4_1/6'},
+  {h:'가분수로 한 번에 곱한다',p:'실제 계산은 이 방법으로, *왜 맞는지*는 그림이 설명합니다.',c:'5/2 × 5/3 = 25/6 = 4_1/6'}]},
+
+{k:'ctx',chasi:'8차시',title:'(대분수) × (대분수)',model:'배 · Scaling 모델',
+ story:'냉장고에 주스가 [1_1/2] L 있습니다. 우유는 주스의 [1_1/3]배만큼 있습니다. 우유는 몇 L 있을까요?',
+ eq:'1_1/2 × 1_1/3 = 3/2 × 4/3 = 12/6 = 2',unit:'L',
+ dg:{type:'compare',cell:{n:1,d:2,u:'L'},baseCells:3,compCells:4,
+  baseLabel:'주스 — 1과 2분의 1 L (기준 1배)',compLabel:'우유 — 주스의 1과 3분의 1배',
+  braceA:'1배 = 1 1/2 L',braceB:'1/3배 = 1/2 L',totalLabel:'= 2 L',
+  alt:'2분의 1리터짜리 세 칸으로 된 주스 막대와 한 칸 더 긴 네 칸짜리 우유 막대를 비교한 그림'},
+ cap:'기준이 대분수여도 방법은 5차시와 같습니다. 기준을 *3등분*하면 한 칸이 [1/2] L.',
+ steps:[
+  {h:'기준을 분모 수만큼 나눈다',p:'“[1_1/3]배”의 분모가 3이므로 주스를 *3칸*으로. 한 칸 [1/2] L.'},
+  {h:'1배에 [1/3]배를 더한다',p:'그림에서는 *4칸 × [1/2] L = 2 L*.',c:'1_1/2 + 1/2 = 2'},
+  {h:'가분수 계산으로 확인한다',p:'[3/2 × 4/3 = 2] → *2 L*. 약분을 먼저 하면 더 간단합니다.'}]},
+
+{k:'ctx',chasi:'8차시',title:'(대분수) × (대분수)',model:'비율 · Rate 모델',
+ story:'등산로를 한 시간에 [3_1/3] km씩 걷는 사람이 있습니다. 같은 빠르기로 [2_1/4]시간 동안 걸으면 몇 km를 갈까요?',
+ eq:'3_1/3 × 2_1/4 = 10/3 × 9/4 = 15/2 = 7_1/2',unit:'km',
+ dg:{type:'dnl',topName:'시간',botName:'거리 (km)',ticks:[
+   {p:0,t:{t:'0'},b:{t:'0'}},{p:0.4,t:{t:'1'},b:{w:3,n:1,d:3}},
+   {p:0.8,t:{t:'2'},b:{w:6,n:2,d:3}},{p:0.9,t:{w:2,n:1,d:4},b:{w:7,n:1,d:2},hi:true}],
+  alt:'시간과 거리를 짝지은 이중 수직선. 1시간에 3과 3분의 1 km, 2와 4분의 1시간에 7과 2분의 1 km'},
+ cap:'두 수 모두 대분수여도 구조는 같습니다. 답이 *2시간분([6_2/3] km)보다 조금 크다*는 어림이 검산.',
+ steps:[
+  {h:'두 수를 모두 가분수로 고친다',p:'[3_1/3] = [10/3], [2_1/4] = [9/4]. 이 단계는 건너뛸 수 없습니다.'},
+  {h:'곱하기 전에 약분한다',p:'10과 4를 2로, 9와 3을 3으로 약분합니다.',c:'10/3 × 9/4 = ( 5 × 3 ) / ( 1 × 2 ) = 15/2'},
+  {h:'대분수로 답하고 어림과 맞춘다',p:'*[7_1/2] km*. 2시간 [6_2/3] km, 3시간 10 km 사이입니다.'}]}
+];
+
+/* ============ build ============ */
+var stage=document.getElementById('stage');
+var nodes=[];
+
+function head(sl,i,slide){
+  var h=el('header','sl-head',slide);
+  if(sl.chasi){ var b=el('span','badge',h); b.textContent=sl.chasi; }
+  if(sl.title){ var t=el('h2',null,h); t.textContent=sl.title; }
+  if(sl.model){ var p=el('span','pill',h); p.textContent=sl.model; }
+  if(sl.pages){ var g=el('span','pages',h); g.textContent=sl.pages; }
+  el('span','sp',h);
+}
+
+L.forEach(function(sl,i){
+  var slide=el('section','slide '+(sl.k==='ctx'?'ctx':sl.k),stage);
+  slide.id='s'+(i+1);
+  slide.setAttribute('aria-hidden','true');
+
+  if(sl.k==='cover'){
+    var c=el('div','cover-in',slide);
+    var e=el('div','eyebrow',c); e.textContent='초등 5학년 · 분수의 곱셈 · 2~8차시';
+    var h1=el('h1',null,c); h1.textContent='분수의 곱셈 상황맥락 지도';
+    md('차시마다 *배 · 측정(수직선) · 비율* 세 가지 맥락을 붙이고, 그 맥락이 그림에서 어떻게 계산으로 바뀌는지 한 화면씩 펼칩니다.',el('p','lede',c));
+    var f=el('div','facts',c);
+    ['6개 차시','18개 상황맥락','그림 18컷 · 단계별 풀이','전자칠판 최적화'].forEach(function(x){
+      var s=el('span',null,f); s.textContent=x; });
+    var k=el('div','keys',slide);
+    k.innerHTML='<span><kbd>←</kbd><kbd>→</kbd>화면 넘기기</span>'+
+      '<span><kbd>O</kbd>전체 보기</span><span><kbd>1</kbd>~<kbd>6</kbd>차시로 바로 이동</span>'+
+      '<span><kbd>Home</kbd>처음으로</span><span>터치 화면에서는 좌우로 밀어 넘길 수 있습니다</span>';
+    nodes.push(slide); return;
+  }
+
+  if(sl.k==='map'){
+    sl.chasi='개념 흐름'; sl.title='여섯 차시는 무엇이 달라지며 이어지는가';
+    head(sl,i,slide);
+    var fig=el('figure','map-fig',slide);
+    fig.innerHTML=MAP_SVG;
+    var lg=el('div','legend',slide);
+    [['a','첫째 인수 · 가로 방향 · 자연수 부분'],['b','둘째 인수 · 세로 방향 · 분수 부분'],
+     ['c','겹친 부분 = 곱한 값(답)']].forEach(function(x){
+      var d=el('div',null,lg); el('span','sw '+x[0],d);
+      var s=el('span',null,d); s.textContent=x[1]; });
+    nodes.push(slide); return;
+  }
+
+  head(sl,i,slide);
+
+  if(sl.k==='intro'){
+    var ib=el('div','intro-body',slide);
+    var r=el('div','read',ib);
+    md(sl.read,el('span',null,r));
+    md(sl.sub,el('span','sub',r));
+    var n2=el('div','notes2',ib);
+    var c1=el('div','card point',n2); el('h4',null,c1).textContent='지도 포인트';
+    md(sl.point,el('p',null,c1));
+    var c2=el('div','card trap',n2); el('h4',null,c2).textContent='자주 나오는 오개념';
+    md(sl.trap,el('p',null,c2));
+    nodes.push(slide); return;
+  }
+
+  /* ctx */
+  md(sl.story,el('p','story',slide));
+  var band=el('div','eqband',slide);
+  el('span','lbl',band).textContent='식';
+  band.appendChild(eqEl(sl.eq));
+  if(sl.unit){ el('span','unit',band).textContent=sl.unit; }
+  var main=el('div','main',slide);
+  var fg=el('figure','fig',main);
+  mountDG(el('div','dg-canvas',fg),sl.dg);
+  var ol=el('ol','steps',main);
+  sl.steps.forEach(function(st,j){
+    var li=el('li',null,ol);
+    el('span','sn',li).textContent=String(j+1);
+    var d=el('div',null,li);
+    md(st.h,el('h4',null,d));
+    var p=el('p',null,d);
+    md(st.p,el('span',null,p));
+    if(st.c){ var cc=el('span','calc',p); cc.appendChild(eqEl(st.c)); }
+  });
+  md(sl.cap,el('p','cap',slide));
+  nodes.push(slide);
+});
+
+/* ============ navigation ============ */
+var cur=0;
+function show(i,push){
+  i=Math.max(0,Math.min(L.length-1,i));
+  if(nodes[cur]){ nodes[cur].classList.remove('on'); nodes[cur].setAttribute('aria-hidden','true'); }
+  cur=i;
+  nodes[cur].classList.add('on'); nodes[cur].setAttribute('aria-hidden','false');
+  document.querySelector('#bar i').style.width=((i+1)/L.length*100)+'%';
+  document.getElementById('counter').textContent=(i+1)+' / '+L.length;
+  document.getElementById('prev').disabled=(i===0);
+  document.getElementById('next').disabled=(i===L.length-1);
+  if(push!==false){ try{ history.replaceState(null,'','#s'+(i+1)); }catch(e){} }
+  [].forEach.call(document.querySelectorAll('.ovcard'),function(c,j){ c.classList.toggle('here',j===i); });
+}
+function go(d){ show(cur+d); }
+
+document.getElementById('prev').addEventListener('click',function(){go(-1);});
+document.getElementById('next').addEventListener('click',function(){go(1);});
+
+/* 차시 첫 화면 인덱스 (표지·흐름도 다음부터 4장씩) */
+var LESSON_START=[2,6,10,14,18,22];
+
+document.addEventListener('keydown',function(e){
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  var ovOn=document.getElementById('ov').classList.contains('on');
+  if(e.key==='Escape'){ if(ovOn){ toggleOv(false); e.preventDefault(); } return; }
+  if(e.key==='o'||e.key==='O'){ toggleOv(!ovOn); e.preventDefault(); return; }
+  if(ovOn) return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '||e.key==='Enter'){ go(1); e.preventDefault(); }
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'||e.key==='Backspace'){ go(-1); e.preventDefault(); }
+  else if(e.key==='Home'){ show(0); e.preventDefault(); }
+  else if(e.key==='End'){ show(L.length-1); e.preventDefault(); }
+  else if(/^[1-6]$/.test(e.key)){ show(LESSON_START[+e.key-1]); e.preventDefault(); }
+});
+
+/* swipe */
+var sx=null,sy=null;
+var vp=document.getElementById('viewport');
+vp.addEventListener('pointerdown',function(e){ sx=e.clientX; sy=e.clientY; });
+vp.addEventListener('pointerup',function(e){
+  if(sx===null) return;
+  var dx=e.clientX-sx, dy=e.clientY-sy;
+  if(Math.abs(dx)>70 && Math.abs(dx)>Math.abs(dy)*1.6) go(dx<0?1:-1);
+  sx=null;
+});
+
+/* ============ overview ============ */
+var ovgrid=document.getElementById('ovgrid');
+var lastSec=null;
+L.forEach(function(sl,i){
+  var sec = sl.k==='cover'?'표지' : sl.k==='map'?'개념 흐름' : sl.chasi;
+  if(sec!==lastSec){ var h=el('div','ovsec',ovgrid); h.textContent=sec; lastSec=sec; }
+  var b=el('button','ovcard',ovgrid);
+  b.type='button';
+  var k=el('span','k',b);
+  k.textContent=(i+1)+(sl.k==='ctx'?' · '+sl.model.split(' ·')[0]:sl.k==='intro'?' · 읽는 법':'');
+  var t=el('span','t',b);
+  if(sl.k==='cover') t.textContent='분수의 곱셈 상황맥락 지도';
+  else if(sl.k==='map') t.textContent='여섯 차시는 무엇이 달라지며 이어지는가';
+  else if(sl.k==='intro') t.textContent=sl.title+' — 읽는 법과 오개념';
+  else { md(sl.story.replace(/\*/g,'').slice(0,34)+'…',t); }
+  if(sl.k==='ctx'){ var e2=el('span','e',b); e2.appendChild(eqEl(sl.eq.split(' = ')[0])); }
+  b.addEventListener('click',function(){ toggleOv(false); show(i); });
+});
+function toggleOv(on){
+  document.getElementById('ov').classList.toggle('on',on);
+  if(on) document.querySelectorAll('.ovcard')[cur].focus();
+}
+document.getElementById('ovbtn').addEventListener('click',function(){
+  toggleOv(!document.getElementById('ov').classList.contains('on'));
+});
+
+/* ============ fullscreen ============ */
+var fsbtn=document.getElementById('fsbtn');
+if(!document.documentElement.requestFullscreen) fsbtn.style.display='none';
+else fsbtn.addEventListener('click',function(){
+  try{
+    if(document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen();
+  }catch(e){}
+});
+
+/* ============ stage scaling ============ */
+function fit(){
+  var w=window.innerWidth, h=window.innerHeight;
+  var s=Math.min(w/1600,h/900);
+  stage.style.transform='translate('+((w-1600*s)/2)+'px,'+((h-900*s)/2)+'px) scale('+s+')';
+}
+window.addEventListener('resize',fit);
+fit();
+
+var m=/^#s(\d+)$/.exec(location.hash);
+show(m? (+m[1]-1) : 0, false);
+
+/* keep hot-reload state */
+try{
+  if(window.claude && window.claude.hot){
+    window.claude.hot.snapshot(function(){ return {i:cur}; });
+    if(window.claude.hot.ready) window.claude.hot.ready(function(d){ if(d&&typeof d.i==='number') show(d.i); });
+  }
+}catch(e){}
+})();
+</script>
