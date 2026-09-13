@@ -90,14 +90,37 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
 
 /* ---------- 단계별 등장 (build) ---------- */
 .st{transition:opacity .34s ease}
-.chip,.eqtail{transition:opacity .34s ease, transform .34s ease}
-.st.pending,.chip.pending,.eqtail.pending{opacity:0}
+.chip,.eqtail,.qans{transition:opacity .34s ease, transform .34s ease}
+[data-st].pending{opacity:0}
 .chip.pending{transform:translateY(14px)}
 .eqtail.pending{transform:translateX(-10px)}
+.qans.pending{transform:translateY(10px)}
 @keyframes slidein{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
 .slide.on{animation:slidein .3s ease both}
-#stage.noanim .st,#stage.noanim .chip,#stage.noanim .eqtail{transition:none}
+#stage.noanim .st,#stage.noanim .chip,#stage.noanim .eqtail,#stage.noanim .qans{transition:none}
 #stage.noanim .slide.on{animation:none}
+
+/* ---------- quiz slide ---------- */
+.slide.quiz{grid-template-rows:46px auto minmax(0,1fr)}
+.qhint{margin:0; font-size:25px; color:var(--muted)}
+.qhint b{color:var(--fc); font-family:var(--mono); font-size:27px}
+.qgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; min-height:0}
+.qcard{background:var(--surface); border:1.5px solid var(--rule); border-radius:18px;
+  padding:24px 26px 26px; display:flex; flex-direction:column; gap:16px; min-height:0}
+.qtop{display:flex; align-items:center; gap:12px}
+.qn{width:44px; height:44px; border-radius:50%; background:var(--ink); color:#fff;
+  font-family:var(--mono); font-size:21px; font-weight:600; display:grid; place-items:center; flex:0 0 auto}
+.qmodel{font-size:18px; font-weight:600; color:var(--fc); background:var(--fc-soft); border-radius:7px; padding:3px 12px}
+.qtext{margin:0; font-size:27px; line-height:1.5}
+.qslot{border:2px dashed var(--rule-strong); border-radius:14px; padding:18px 22px;
+  flex:1; min-height:132px; display:flex; flex-direction:column; justify-content:center}
+.qlab{font-family:var(--mono); font-size:17px; letter-spacing:.14em; color:var(--muted);
+  font-weight:600; margin-bottom:12px}
+.qans{display:flex; flex-direction:column; gap:10px}
+.qeq{font-size:25px; color:var(--ink-2); line-height:1.3}
+.qval{font-family:var(--serif); font-size:40px; font-weight:700; color:var(--fc);
+  display:flex; align-items:baseline; gap:8px; line-height:1.15}
+.qval .qu{font-size:28px}
 
 /* ---------- intro slide ---------- */
 .slide.intro{grid-template-rows:46px minmax(0,1fr)}
@@ -229,7 +252,7 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
   .slide{position:static; display:grid!important; width:1600px; height:900px;
     zoom:.62; break-after:page; border:1px solid #ddd}
   #bar,#chrome,#notes,#ov{display:none!important}
-  .st.pending,.chip.pending,.eqtail.pending{opacity:1!important; transform:none!important}
+  [data-st].pending{opacity:1!important; transform:none!important}
 }
 </style>
 
@@ -974,6 +997,18 @@ var L=[
   {h:'조각 수를 세어 계산한다',p:'[1/6] 조각이 5개씩 4묶음 = 20개.',c:'5/6 × 4 = 20/6 = 10/3'},
   {h:'약분하고 어림한다',p:'1분에 1 L가 조금 못 되니 4 L보다 작아야 맞습니다.',c:'10/3 = 3_1/3'}]},
 
+{k:'quiz',chasi:'2차시',title:'(진분수) × (자연수)',model:'연습 문제',
+ items:[
+  {model:'묶음',q:'주스를 한 컵에 [3/7] L씩 담았습니다. *5컵*이면 주스는 모두 몇 L일까요?',
+   eq:'3/7 × 5 = 15/7',a:'2_1/7',u:'L',
+   sol:'분모는 그대로, 분자에만 5를 곱해 [15/7]. 대분수로 고치면 [2_1/7] L.'},
+  {model:'측정',q:'색 테이프 한 도막이 [2/9] m입니다. *6도막*을 겹치지 않게 이으면 몇 m일까요?',
+   eq:'2/9 × 6 = 12/9',a:'1_1/3',u:'m',
+   sol:'[12/9]를 3으로 약분해 [4/3] = [1_1/3] m. 약분을 빠뜨리기 쉬운 문항입니다.'},
+  {model:'비율',q:'1분에 [3/8] L씩 나오는 수도가 있습니다. *4분* 동안 받으면 몇 L일까요?',
+   eq:'3/8 × 4 = 12/8',a:'1_1/2',u:'L',
+   sol:'곱하기 전에 8과 4를 약분하면 [3/2]로 바로 나옵니다. 답 [1_1/2] L.'}]},
+
 /* ---------------- 3차시 ---------------- */
 {k:'intro',chasi:'3차시',title:'(대분수) × (자연수)',pages:'수 38–39p · 수익 28–29p',
  read:'의미는 2차시와 똑같이 *몇 묶음*. 다만 한 묶음이 [1_3/4]처럼 *1보다 커졌다*',
@@ -1025,6 +1060,18 @@ var L=[
   {h:'가분수로 바꿔 곱한다',p:'[2_1/2] = [5/2]로 고쳐 계산합니다.',c:'5/2 × 3 = 15/2'},
   {h:'답의 단위를 확인한다',p:'시간에 거리를 곱한 게 아니라 1시간당 거리를 시간만큼 곱한 것입니다.'}]},
 
+{k:'quiz',chasi:'3차시',title:'(대분수) × (자연수)',model:'연습 문제',
+ items:[
+  {model:'묶음',q:'쌀 한 봉지의 무게가 [1_2/5] kg입니다. *4봉지*의 무게는 모두 몇 kg일까요?',
+   eq:'1_2/5 × 4 = 7/5 × 4 = 28/5',a:'5_3/5',u:'kg',
+   sol:'가분수 [7/5]로 고쳐 곱합니다. 나누어 풀면 [( 1 × 4 ) + ( 2/5 × 4 ) = 4 + 1_3/5].'},
+  {model:'측정',q:'물통 하나에 물이 [2_1/4] L씩 들어 있습니다. 똑같은 물통 *3통*이면 몇 L일까요?',
+   eq:'2_1/4 × 3 = 9/4 × 3 = 27/4',a:'6_3/4',u:'L',
+   sol:'한 통이 2 L보다 조금 많으니 3통은 6 L보다 조금 많아야 맞습니다.'},
+  {model:'비율',q:'한 시간에 [3_1/3] km를 걷습니다. 같은 빠르기로 *3시간* 걸으면 몇 km일까요?',
+   eq:'3_1/3 × 3 = 10/3 × 3 = 30/3',a:'10',u:'km',
+   sol:'답이 자연수로 딱 떨어집니다. [10/3]에 3을 곱하면 분모가 사라진다는 점을 짚어 주세요.'}]},
+
 /* ---------------- 4차시 ---------------- */
 {k:'intro',chasi:'4차시',title:'(자연수) × (진분수)',pages:'수 40–41p · 수익 30–31p',
  read:'[12] × [2/3] 은 “[2/3]번 더한다”가 아니라 *12의 [2/3]만큼*',
@@ -1073,6 +1120,18 @@ var L=[
   {h:'기준이 무엇인지 찾는다',p:'“형이 가진 돈의” → 기준(1배)은 형의 8000원. 먼저 띠로 그립니다.'},
   {h:'4등분하고 3칸을 가져온다',p:'한 칸 2000원 × 3칸.',c:'8000 × 3/4 = 6000'},
   {h:'“배”의 뜻을 말로 정리한다',p:'1배보다 작은 배라서 내 돈이 형보다 적습니다.'}]},
+
+{k:'quiz',chasi:'4차시',title:'(자연수) × (진분수)',model:'연습 문제',
+ items:[
+  {model:'부분–전체',q:'사탕 *24개*의 [5/6]을 친구들에게 나누어 주었습니다. 나누어 준 사탕은 몇 개일까요?',
+   eq:'24 × 5/6 = 120/6',a:'20',u:'개',
+   sol:'24개를 6묶음(4개씩)으로 나누고 그중 5묶음. 답 20개는 24개보다 *작습니다*.'},
+  {model:'측정',q:'길이가 *15 m*인 끈의 [2/3]만큼을 잘라 썼습니다. 자른 끈은 몇 m일까요?',
+   eq:'15 × 2/3 = 30/3',a:'10',u:'m',
+   sol:'15 ÷ 3 = 5 m가 한 칸, 2칸이니 10 m. 남은 끈 5 m와 더하면 15 m인지 확인시킵니다.'},
+  {model:'배',q:'형은 *12000원*을 가지고 있습니다. 내가 가진 돈은 형의 [3/8]배입니다. 내 돈은 얼마일까요?',
+   eq:'12000 × 3/8 = 36000/8',a:'4500',u:'원',
+   sol:'기준은 형의 돈. 8등분하면 1500원, 그중 3칸. 1배보다 작은 배라 형보다 적습니다.'}]},
 
 /* ---------------- 5차시 ---------------- */
 {k:'intro',chasi:'5차시',title:'(자연수) × (대분수)',pages:'수 42–43p · 수익 32–33p',
@@ -1126,6 +1185,18 @@ var L=[
   {h:'1시간 블록을 만든다',p:'블록 하나 = 1시간 = 일 2번. 시간축을 먼저 그립니다.'},
   {h:'3시간분과 [1/2]시간분을 나눈다',p:'온전한 3시간과 남는 반 시간으로.',c:'( 2 × 3 ) + ( 2 × 1/2 ) = 7'},
   {h:'가분수로 검산한다',p:'3시간이면 6번, 4시간이면 8번이니 그 사이 값입니다.',c:'2 × 7/2 = 14/2 = 7'}]},
+
+{k:'quiz',chasi:'5차시',title:'(자연수) × (대분수)',model:'연습 문제',
+ items:[
+  {model:'배',q:'동생의 몸무게는 *36 kg*입니다. 형의 몸무게는 동생의 [1_1/2]배입니다. 형은 몇 kg일까요?',
+   eq:'36 × 1_1/2 = 36 × 3/2 = 108/2',a:'54',u:'kg',
+   sol:'기준 36 kg을 2등분하면 18 kg. 1배(36) + [1/2]배(18) = 54 kg.'},
+  {model:'측정',q:'철사 *1 m*의 무게가 *8 g*입니다. 이 철사 [3_1/4] m의 무게는 몇 g일까요?',
+   eq:'8 × 3_1/4 = 8 × 13/4 = 104/4',a:'26',u:'g',
+   sol:'3 m분 24 g에 [1/4] m분 2 g을 더해 26 g. 4 m가 32 g이니 그보다 작아야 맞습니다.'},
+  {model:'비율',q:'1시간에 일을 *3번* 하는 사람이 [2_2/3]시간 동안 일하면 모두 몇 번 할까요?',
+   eq:'3 × 2_2/3 = 3 × 8/3 = 24/3',a:'8',u:'번',
+   sol:'2시간분 6번에 [2/3]시간분 2번을 더해 8번. 3과 [8/3]의 3이 약분됩니다.'}]},
 
 /* ---------------- 6·7차시 ---------------- */
 {k:'intro',chasi:'6·7차시',title:'(진분수) × (진분수)',pages:'수 44–47p · 수익 34–35p',
@@ -1182,6 +1253,18 @@ var L=[
   {h:'그 부분을 가로로 4등분한다',p:'여학생 중 [1/4] → 가로줄 1칸을 노랑으로. 겹친 칸이 답.'},
   {h:'겹친 칸을 전체로 나눈다',p:'학생이 40명이면 6명으로 확장해 볼 수 있습니다.',c:'3/5 × 1/4 = 3/20'}]},
 
+{k:'quiz',chasi:'6·7차시',title:'(진분수) × (진분수)',model:'연습 문제',
+ items:[
+  {model:'넓이',q:'직사각형의 가로가 [2/3] m, 세로가 [3/5] m입니다. 넓이는 몇 m²일까요?',
+   eq:'2/3 × 3/5 = 6/15',a:'2/5',u:'m²',
+   sol:'전체 15칸 중 겹친 6칸. 3으로 약분해 [2/5] m². 1 m²보다 작습니다.'},
+  {model:'부분의 부분',q:'케이크의 [3/4]이 남았습니다. 그중 [2/3]를 먹었다면 먹은 양은 한 판의 얼마일까요?',
+   eq:'3/4 × 2/3 = 6/12',a:'1/2',u:'',
+   sol:'기준이 “한 판”에서 “남은 케이크”로 바뀝니다. 답 [1/2]은 [3/4]보다 작습니다.'},
+  {model:'집합',q:'5학년의 [4/5]가 남학생이고, 그 남학생의 [1/2]이 축구를 좋아합니다. 전체의 얼마일까요?',
+   eq:'4/5 × 1/2 = 4/10',a:'2/5',u:'',
+   sol:'격자 10칸 중 4칸 → [2/5]. 사람 수를 몰라도 비율만으로 구할 수 있습니다.'}]},
+
 /* ---------------- 8차시 ---------------- */
 {k:'intro',chasi:'8차시',title:'(대분수) × (대분수)',pages:'수 48–49p · 수익 36–37p',
  read:'넓이 모델 그대로. 다만 가로·세로가 1보다 커서 *네 조각*으로 나뉜다',
@@ -1231,7 +1314,19 @@ var L=[
  steps:[
   {h:'두 수를 모두 가분수로 고친다',p:'[3_1/3] = [10/3], [2_1/4] = [9/4]. 이 단계는 건너뛸 수 없습니다.'},
   {h:'곱하기 전에 약분한다',p:'10과 4를 2로, 9와 3을 3으로 약분합니다.',c:'10/3 × 9/4 = ( 5 × 3 ) / ( 1 × 2 ) = 15/2'},
-  {h:'대분수로 답하고 어림과 맞춘다',p:'2시간 [6_2/3] km, 3시간 10 km 사이입니다.',c:'15/2 = 7_1/2'}]}
+  {h:'대분수로 답하고 어림과 맞춘다',p:'2시간 [6_2/3] km, 3시간 10 km 사이입니다.',c:'15/2 = 7_1/2'}]},
+
+{k:'quiz',chasi:'8차시',title:'(대분수) × (대분수)',model:'연습 문제',
+ items:[
+  {model:'넓이',q:'화단의 가로가 [1_1/2] m, 세로가 [2_2/3] m입니다. 넓이는 몇 m²일까요?',
+   eq:'1_1/2 × 2_2/3 = 3/2 × 8/3 = 24/6',a:'4',u:'m²',
+   sol:'네 조각으로 나눠 더해도 같습니다. [2 + 4/3 + 1 + 2/3 = 4]. 곱하기 전 약분하면 빠릅니다.'},
+  {model:'배',q:'주스가 [2_1/4] L 있습니다. 우유는 주스의 [1_1/3]배만큼 있습니다. 우유는 몇 L일까요?',
+   eq:'2_1/4 × 1_1/3 = 9/4 × 4/3 = 36/12',a:'3',u:'L',
+   sol:'기준 [2_1/4] L를 3등분하면 [3/4] L. 1배에 한 칸을 더해 3 L.'},
+  {model:'비율',q:'한 시간에 [2_1/2] km를 걷습니다. [2_1/5]시간 동안 걸으면 몇 km를 갈까요?',
+   eq:'2_1/2 × 2_1/5 = 5/2 × 11/5 = 55/10',a:'5_1/2',u:'km',
+   sol:'5와 5를 약분하면 [11/2]. 2시간분 5 km보다 조금 크다는 어림과 맞습니다.'}]}
 ];
 
 /* ============ build ============ */
@@ -1257,7 +1352,7 @@ L.forEach(function(sl,i){
     el('h1',null,c).textContent='분수의 곱셈 상황맥락 지도';
     md('차시마다 *배 · 측정(수직선) · 비율* 세 가지 맥락을 한 화면씩. 화면은 그림과 키워드만 두고, 설명은 선생님 몫입니다.',el('p','lede',c));
     var f=el('div','facts',c);
-    ['6개 차시','18개 상황맥락','그림 중심 26장','발표자 노트 포함'].forEach(function(x){
+    ['6개 차시','18개 상황맥락','연습 문제 18문항','그림 중심 32장'].forEach(function(x){
       el('span',null,f).textContent=x; });
     var kk=el('div','keys',slide);
     kk.innerHTML='<span><kbd>→</kbd>그림을 한 단계씩 쌓고, 다 쌓이면 다음 화면</span>'+
@@ -1288,6 +1383,28 @@ L.forEach(function(sl,i){
     el('div','lbl',tb).textContent='자주 나오는 오답';
     md(sl.trapKey,el('div','line',tb));
     el('div','sub2',tb).textContent=sl.trapSub;
+    nodes.push(slide); return;
+  }
+
+  if(sl.k==='quiz'){
+    md('공책에 풀어 보세요.  *→* 를 누르면 답이 하나씩 나옵니다.',el('p','qhint',slide));
+    var qg=el('div','qgrid',slide);
+    sl.items.forEach(function(it,j){
+      var card=el('div','qcard',qg);
+      var top=el('div','qtop',card);
+      el('span','qn',top).textContent=String(j+1);
+      el('span','qmodel',top).textContent=it.model;
+      md(it.q,el('p','qtext',card));
+      var slot=el('div','qslot',card);
+      el('div','qlab',slot).textContent='답';
+      var ans=el('div','qans',slot);
+      ans.setAttribute('data-st',String(j+1));
+      el('div','qeq',ans).appendChild(eqEl(it.eq));
+      var v=el('div','qval',ans);
+      v.appendChild(eqEl(it.a));
+      if(it.u){ el('span','qu',v).textContent=it.u; }
+    });
+    MAXST[i]=3;
     nodes.push(slide); return;
   }
 
@@ -1336,6 +1453,15 @@ function renderNotes(i){
       if(st.c){ var cc=el('span','ncalc',p); cc.appendChild(eqEl(st.c)); }
     });
     md('그림 읽는 법 — '+sl.cap,el('p','ncap',notesBox));
+  } else if(sl.k==='quiz'){
+    md('연습 문제 풀이 — 답을 공개하기 전에 아이들 풀이를 먼저 말하게 하세요.',el('p','nstory',notesBox));
+    var qg2=el('div','ngrid',notesBox);
+    sl.items.forEach(function(it,j){
+      var d=el('div','nstep',qg2);
+      md((j+1)+'. '+it.model,el('h4',null,d));
+      var p=el('p',null,d); md(it.sol,el('span',null,p));
+      el('span','ncalc',p).appendChild(eqEl(it.eq+' = '+it.a+(it.u?' '+it.u:'')));
+    });
   } else if(sl.k==='intro'){
     md(sl.sub,el('p','nstory',notesBox));
     md('지도 포인트 — '+sl.point,el('p','ncap',notesBox));
@@ -1404,7 +1530,7 @@ document.getElementById('next').addEventListener('click',function(){go(1);});
 document.getElementById('notebtn').addEventListener('click',function(){ toggleNotes(!notesOn); });
 document.getElementById('animbtn').addEventListener('click',function(){ setAnim(!anim); });
 
-var LESSON_START=[2,6,10,14,18,22];
+var LESSON_START=[2,7,12,17,22,27];
 
 document.addEventListener('keydown',function(e){
   if(e.metaKey||e.ctrlKey||e.altKey) return;
@@ -1444,6 +1570,7 @@ L.forEach(function(sl,i){
   if(sl.k==='cover') t.textContent='분수의 곱셈 상황맥락 지도';
   else if(sl.k==='map') t.textContent='여섯 차시는 무엇이 달라지며 이어지는가';
   else if(sl.k==='intro') t.textContent=sl.title+' — 읽는 법과 오답';
+  else if(sl.k==='quiz') t.textContent='연습 문제 3문항 — 묶음 · 측정 · 비율';
   else md(sl.key,t);
   if(sl.k==='ctx'){ el('span','e',b).appendChild(eqEl(sl.eq.split(' = ')[0])); }
   b.addEventListener('click',function(){ toggleOv(false); show(i); });
