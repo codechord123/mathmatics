@@ -72,7 +72,9 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
 
 /* ---------- context slide : 그림이 주인공 ---------- */
 .keyrow{display:flex; align-items:center; justify-content:space-between; gap:22px; flex-wrap:wrap}
-.keyline{margin:0; font-size:36px; font-weight:600; line-height:1.28; color:var(--ink)}
+.keyline{margin:0; font-size:36px; font-weight:600; line-height:1.28; color:var(--ink);
+  display:flex; align-items:center; gap:14px}
+.keyicon{font-size:44px; line-height:1; flex:0 0 auto}
 .keyline .q{color:var(--fc)}
 .eqbig{font-family:var(--serif); font-weight:700; font-size:52px; line-height:1.15; white-space:nowrap;
   background:var(--surface-2); border-radius:13px; padding:9px 24px; display:flex; align-items:center; gap:12px}
@@ -103,7 +105,7 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
 /* ---------- quiz slide ---------- */
 .slide.quiz{grid-template-rows:46px auto minmax(0,1fr)}
 .qhint{margin:0; font-size:25px; color:var(--muted)}
-.qhint b{color:var(--fc); font-family:var(--mono); font-size:27px}
+.qhint b{color:var(--fc); font-weight:700}
 .qgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; min-height:0}
 .qcard{background:var(--surface); border:1.5px solid var(--rule); border-radius:18px;
   padding:24px 26px 26px; display:flex; flex-direction:column; gap:16px; min-height:0}
@@ -116,11 +118,33 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
   flex:1; min-height:132px; display:flex; flex-direction:column; justify-content:center}
 .qlab{font-family:var(--mono); font-size:17px; letter-spacing:.14em; color:var(--muted);
   font-weight:600; margin-bottom:12px}
-.qans{display:flex; flex-direction:column; gap:10px}
-.qeq{font-size:25px; color:var(--ink-2); line-height:1.3}
-.qval{font-family:var(--serif); font-size:40px; font-weight:700; color:var(--fc);
-  display:flex; align-items:baseline; gap:8px; line-height:1.15}
-.qval .qu{font-size:28px}
+.qicon{font-size:30px; line-height:1}
+
+/* 답 입력 (자연수 · 분자 · 분모) */
+.fin{display:flex; align-items:center; gap:12px}
+.fin input{font-family:var(--serif); font-weight:700; text-align:center; padding:0;
+  border-radius:11px; border:2px solid var(--rule-strong); background:var(--paper); color:var(--ink)}
+.fin input::-webkit-outer-spin-button,.fin input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
+.fw{width:84px; height:72px; font-size:38px}
+.ffr{display:flex; flex-direction:column; align-items:center; gap:5px}
+.ffr input{width:78px; height:44px; font-size:27px}
+.fbar{width:86px; height:3px; background:var(--ink-2); border-radius:2px}
+.fu{font-size:25px; color:var(--ink-2); font-weight:600}
+.fin input:focus{outline:none; border-color:var(--fc); box-shadow:0 0 0 4px var(--fc-soft)}
+.qbtn{margin-top:16px; align-self:flex-start; font-family:var(--sans); font-size:21px; font-weight:600;
+  padding:11px 26px; border-radius:12px; border:none; background:var(--fc); color:#fff; cursor:pointer}
+.qbtn:focus-visible{outline:3px solid var(--ink); outline-offset:3px}
+.qfb{margin-top:12px; font-size:20px; line-height:1.4; min-height:28px; color:var(--muted)}
+.qcard.ok{border-color:var(--fc)}
+.qcard.ok .qslot{border-style:solid; border-color:var(--fc); background:var(--fc-soft)}
+.qcard.ok .qfb{color:var(--fc); font-weight:600}
+.qcard.ok .qbtn{display:none}
+.qcard.bad .qslot{border-color:var(--warn)}
+.qcard.bad .qfb{color:var(--warn); font-weight:600}
+.shake{animation:shake .32s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.qdone{font-size:23px; font-weight:600; color:var(--fc)}
+.qeq{font-size:24px; color:var(--ink-2); line-height:1.3; margin-top:4px}
 
 /* ---------- intro slide ---------- */
 .slide.intro{grid-template-rows:46px minmax(0,1fr)}
@@ -262,6 +286,7 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
   <button class="navbtn" id="next" aria-label="다음 슬라이드">›</button>
   <div id="tools">
     <span id="counter" aria-live="polite">1 / 26</span>
+    <button id="unlockbtn" aria-label="연습 문제 잠금 해제" style="display:none">잠금 해제</button>
     <button id="animbtn" aria-label="단계별 등장 켜기 끄기">단계별 등장</button>
     <button id="notebtn" aria-label="발표자 노트 열기">발표자 노트</button>
     <button id="ovbtn" aria-label="전체 슬라이드 보기">전체 보기</button>
@@ -426,12 +451,13 @@ DG.bars=function(g,sp){
   var U=vert?48:58, H=vert?106:50, GAP=vert?20:16, SG=5;
   var per=sp.whole+(sp.numer>0?1:0);
   var gw=per*U;
-  var yA=32;
+  var yA=sp.gicon?58:32;
   st(1);
   T(g,0,16,sp.rowA,{a:'start',s:12.5,c:'dg-mut',w:600});
   var i,j,x;
   for(i=0;i<sp.count;i++){
     x=i*(gw+GAP);
+    if(sp.gicon) T(g,x+gw/2,yA-10,sp.gicon,{s:22});
     for(j=0;j<sp.whole;j++) cells(g,x+j*U,yA,U,H,1,1,vert,'f-a');
     if(sp.numer>0) cells(g,x+sp.whole*U,yA,U,H,sp.denom,sp.numer,vert,'f-b');
     vDraw(g,x+gw/2,yA+H+18,{w:sp.whole||undefined,n:sp.numer,d:sp.denom,u:sp.unit},11.5,'dg-i2');
@@ -814,8 +840,11 @@ DG.rate=function(g,sp){
     var bx=x0+i*bw;
     add(g,S('rect',{x:bx,y:y,width:bw,height:bh,'class':'f-a'}));
     add(g,S('rect',{x:bx,y:y,width:bw,height:bh,'class':'dg-frame'}));
-    if(sp.dots) for(j=0;j<sp.dots;j++)
-      add(g,S('circle',{cx:bx+bw/2+(j-(sp.dots-1)/2)*24,cy:y+24,r:8,fill:'var(--fa)'}));
+    if(sp.dots) for(j=0;j<sp.dots;j++){
+      var dcx=bx+bw/2+(j-(sp.dots-1)/2)*28;
+      if(sp.dotChar) T(g,dcx,y+30,sp.dotChar,{s:22});
+      else add(g,S('circle',{cx:dcx,cy:y+24,r:8,fill:'var(--fa)'}));
+    }
     vDraw(g,bx+bw/2,y+bh-16,sp.blockLabel,13,'dg-fa');
   }
   var px=x0+sp.wholes*bw;
@@ -823,7 +852,8 @@ DG.rate=function(g,sp){
   add(g,S('rect',{x:px,y:y,width:bw*sp.numer/sp.denom,height:bh,'class':'f-b'}));
   for(i=1;i<sp.denom;i++) add(g,S('line',{x1:px+i*bw/sp.denom,y1:y,x2:px+i*bw/sp.denom,y2:y+bh,'class':'dg-grid'}));
   add(g,S('rect',{x:px,y:y,width:bw,height:bh,'class':'dg-frame'}));
-  add(g,S('circle',{cx:px+bw*sp.numer/sp.denom/2,cy:y+24,r:8,fill:'var(--fb)'}));
+  if(sp.dotChar) T(g,px+bw*sp.numer/sp.denom/2,y+30,sp.dotChar,{s:22});
+  else add(g,S('circle',{cx:px+bw*sp.numer/sp.denom/2,cy:y+24,r:8,fill:'var(--fb)'}));
   vDraw(g,px+bw*sp.numer/sp.denom/2,y+bh-16,sp.partialLabel,13,'dg-fb');
 
   var yAx=y+bh+26;
@@ -959,7 +989,7 @@ var L=[
  key:'우유 한 팩 [2/5] L — *6팩*이면?',
  eq:'2/5 × 6 = 12/5 = 2_2/5',unit:'L',
  chips:['1 L를 5칸으로','[1/5] 조각 12개','2 L와 [2/5] L'],
- dg:{type:'bars',count:6,whole:0,numer:2,denom:5,orient:'h',unit:'L',
+ dg:{type:'bars',count:6,whole:0,numer:2,denom:5,orient:'h',unit:'L',gicon:'🥛',
   rowA:'① 한 팩씩 그리기 — 1 L를 5칸으로 나눈 것 중 2칸',rowB:'② 색칠한 칸만 모으기',noteA:'6팩',
   alt:'5칸 중 2칸이 칠해진 우유팩 6개를 모으면 1L짜리 2개와 5분의 2가 된다'},
  story:'딸기우유 한 팩에 우유가 [2/5] L 들어 있습니다. 이 우유 6팩에 들어 있는 우유는 모두 몇 L일까요?',
@@ -987,7 +1017,7 @@ var L=[
  key:'1분에 [5/6] L — *4분* 동안 받으면?',
  eq:'5/6 × 4 = 20/6 = 10/3 = 3_1/3',unit:'L',
  chips:['단위량 = 1분에 [5/6] L','[1/6] 조각 20개','약분해서 [3_1/3] L'],
- dg:{type:'bars',count:4,whole:0,numer:5,denom:6,orient:'v',unit:'L',
+ dg:{type:'bars',count:4,whole:0,numer:5,denom:6,orient:'v',unit:'L',gicon:'🪣',
   rowA:'① 1분마다 받은 물 — 1 L 통의 6칸 중 5칸',rowB:'② 받은 물을 모아 통에 다시 채우기',noteA:'4분',
   alt:'6칸 중 5칸이 찬 물통 4개의 물을 모으면 가득 찬 통 3개와 6분의 2가 된다'},
  story:'수도꼭지에서 물이 1분에 [5/6] L씩 일정하게 나옵니다. 이 수도로 4분 동안 물을 받으면 몇 L를 받을 수 있을까요?',
@@ -1021,7 +1051,7 @@ var L=[
  key:'사과 한 상자 [1_3/4] kg — *4상자*면?',
  eq:'1_3/4 × 4 = 7',unit:'kg',
  chips:['가분수로 [7/4]','자연수 4 + 분수 3','두 방법이 같은 답'],
- dg:{type:'bars',count:4,whole:1,numer:3,denom:4,orient:'h',unit:'kg',
+ dg:{type:'bars',count:4,whole:1,numer:3,denom:4,orient:'h',unit:'kg',gicon:'🍎',
   rowA:'① 한 상자씩 그리기 — 1 kg 한 개와 4분의 3',rowB:'② 자연수 부분끼리, 분수 부분끼리 모으기',noteA:'4상자',
   alt:'1과 4분의 3 묶음 4개를 모으면 1kg 4개와 4분의 3 조각 4개가 되어 모두 7kg이 된다'},
  story:'사과 한 상자의 무게가 [1_3/4] kg입니다. 똑같은 사과 4상자의 무게는 모두 몇 kg일까요?',
@@ -1175,7 +1205,7 @@ var L=[
  key:'1시간에 일 *2번* — [3_1/2]시간이면?',
  eq:'2 × 3_1/2 = 7',unit:'번',
  chips:['블록 1개 = 2번','3시간 + 반 시간','6 + 1 = 7번'],
- dg:{type:'rate',wholes:3,numer:1,denom:2,dots:2,axisName:'시간',
+ dg:{type:'rate',wholes:3,numer:1,denom:2,dots:2,dotChar:'🔨',axisName:'시간',
   blockLabel:{t:'2',u:'번'},partialLabel:{t:'1',u:'번'},totalLabel:'모두 7번',
   markLabel:{w:3,n:1,d:2,u:'시간'},
   alt:'1시간마다 일 2번을 나타내는 블록 3개와 반 시간짜리 블록 1개를 이어 모두 7번이 되는 그림'},
@@ -1331,7 +1361,63 @@ var L=[
 
 /* ============ build ============ */
 var stage=document.getElementById('stage');
-var nodes=[], MAXST=[];
+var nodes=[], MAXST=[], UNLOCK=[];
+
+/* 맥락·문항마다 소재 아이콘 (등장 순서대로) */
+var CTX_ICONS=['🥛','🎀','🚰','🍎','🪣','🚶','🎨','🧶','💰','⚖️','🔗','🔨','🌱','🍕','👓','🌷','🥤','🥾'];
+var QUIZ_ICONS=[['🧃','🎀','🚰'],['🌾','🪣','🚶'],['🍬','🧶','💰'],
+                ['⚖️','🔗','🔨'],['🌱','🍰','⚽'],['🌷','🥤','🥾']];
+var ci=0, qi=0;
+
+/* ---- 답 채점 : 동치분수는 모두 정답 ---- */
+function parseAns(s){
+  var m=/^(\d+)_(\d+)\/(\d+)$/.exec(s); if(m) return [(+m[1])*(+m[3])+(+m[2]), +m[3]];
+  m=/^(\d+)\/(\d+)$/.exec(s); if(m) return [+m[1],+m[2]];
+  return [+s,1];
+}
+function readCard(card){
+  var v=card._inputs.map(function(x){ return x.value.replace(/\s/g,''); });
+  var w=v[0], n=v[1], d=v[2];
+  if(w===''&&n===''&&d==='') return null;
+  if(/\D/.test(w+n+d)) return 'bad';
+  if(n===''&&d==='') return [+w,1];
+  if(n===''||d==='') return 'bad';
+  var D=+d; if(D===0) return 'bad';
+  return [(w===''?0:+w)*D+(+n), D];
+}
+function flag(card,msg){
+  card.classList.add('bad');
+  card._fb.textContent=msg;
+  card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+}
+function checkCard(card,slideIdx){
+  if(card.classList.contains('ok')) return;
+  var v=readCard(card), fb=card._fb;
+  card.classList.remove('bad');
+  if(v===null){ fb.textContent='답을 먼저 써 주세요.'; return; }
+  if(v==='bad'){ flag(card,'숫자만 써 주세요. 분수는 분자와 분모를 모두 채웁니다.'); return; }
+  var a=card._ans;
+  if(v[0]*a[1]===a[0]*v[1]){
+    card.classList.add('ok');
+    card._inputs.forEach(function(x){ x.readOnly=true; });
+    fb.textContent='';
+    el('div','qdone',fb).textContent='정답입니다';
+    var eqline=el('div','qeq',fb);
+    eqline.appendChild(eqEl(card._eq));
+    if(card._unit) el('span',null,eqline).textContent=' '+card._unit;
+    if(slideIdx===cur) applyBuild();
+  } else {
+    card._tries++;
+    flag(card, card._tries>=2 ? '다시 한 번 — 식을 세워 보세요.' : '다시 한 번 생각해 볼까요?');
+    if(card._tries>=2) el('div','qeq',card._fb).appendChild(eqEl(card._eq.split(' = ')[0]));
+  }
+}
+function quizSolved(i){
+  var s=nodes[i]; if(!s) return true;
+  var cards=s.querySelectorAll('.qcard');
+  if(!cards.length) return true;
+  return [].every.call(cards,function(c){ return c.classList.contains('ok'); });
+}
 
 function head(sl,slide){
   var h=el('header','sl-head',slide);
@@ -1358,7 +1444,7 @@ L.forEach(function(sl,i){
     kk.innerHTML='<span><kbd>→</kbd>그림을 한 단계씩 쌓고, 다 쌓이면 다음 화면</span>'+
       '<span><kbd>N</kbd>발표자 노트</span><span><kbd>A</kbd>단계별 등장 끄기</span>'+
       '<span><kbd>O</kbd>전체 보기</span><span><kbd>1</kbd>~<kbd>6</kbd>차시로 이동</span>'+
-      '<span>터치 화면에서는 좌우로 밀어 넘깁니다</span>';
+      '<span>연습 문제는 세 문제를 맞혀야 넘어갑니다 — 교사용 <kbd>Shift</kbd><kbd>→</kbd>로 건너뛰기</span>';
     nodes.push(slide); return;
   }
 
@@ -1387,31 +1473,60 @@ L.forEach(function(sl,i){
   }
 
   if(sl.k==='quiz'){
-    md('공책에 풀어 보세요.  *→* 를 누르면 답이 하나씩 나옵니다.',el('p','qhint',slide));
+    md('답을 써 보세요. *세 문제를 모두 맞히면* 다음 화면으로 넘어갑니다.',el('p','qhint',slide));
     var qg=el('div','qgrid',slide);
+    var icons=QUIZ_ICONS[qi++]||[];
     sl.items.forEach(function(it,j){
       var card=el('div','qcard',qg);
+      card._ans=parseAns(it.a);
+      card._tries=0;
       var top=el('div','qtop',card);
       el('span','qn',top).textContent=String(j+1);
+      if(icons[j]) el('span','qicon',top).textContent=icons[j];
       el('span','qmodel',top).textContent=it.model;
       md(it.q,el('p','qtext',card));
+
       var slot=el('div','qslot',card);
       el('div','qlab',slot).textContent='답';
-      var ans=el('div','qans',slot);
-      ans.setAttribute('data-st',String(j+1));
-      el('div','qeq',ans).appendChild(eqEl(it.eq));
-      var v=el('div','qval',ans);
-      v.appendChild(eqEl(it.a));
-      if(it.u){ el('span','qu',v).textContent=it.u; }
+      var fin=el('div','fin',slot);
+      var wI=el('input','fw',fin);
+      var fr=el('div','ffr',fin);
+      var nI=el('input','fn',fr);
+      el('span','fbar',fr);
+      var dI=el('input','fd',fr);
+      if(it.u) el('span','fu',fin).textContent=it.u;
+      [[wI,'자연수 부분'],[nI,'분자'],[dI,'분모']].forEach(function(pair){
+        pair[0].type='text'; pair[0].inputMode='numeric'; pair[0].autocomplete='off';
+        pair[0].maxLength=6; pair[0].setAttribute('aria-label',pair[1]);
+        pair[0].id='q'+i+'_'+j+'_'+pair[1];
+      });
+      card._inputs=[wI,nI,dI];
+
+      var btn=el('button','qbtn',slot); btn.type='button'; btn.textContent='확인';
+      var fb=el('div','qfb',slot);
+      fb.textContent='자연수 칸 또는 분수 칸에 써 넣으세요.';
+      card._fb=fb; card._eq=it.eq+' = '+it.a; card._unit=it.u||'';
+
+      function check(){ checkCard(card,i); }
+      btn.addEventListener('click',check);
+      card._inputs.forEach(function(inp){
+        inp.addEventListener('keydown',function(e){
+          if(e.key==='Enter'){ e.preventDefault(); check(); }
+          else if(e.key==='Escape'){ inp.blur(); }
+        });
+      });
     });
-    MAXST[i]=3;
+    MAXST[i]=0;
     nodes.push(slide); return;
   }
 
   /* ctx : 키워드 한 줄 + 식 + 큰 그림 + 키워드 칩 3개
      식은 "= 답" 부분을 마지막 단계까지 감춰 아이들이 답을 먼저 보지 않게 한다 */
   var kr=el('div','keyrow',slide);
-  md(sl.key,el('p','keyline',kr));
+  var kl=el('p','keyline',kr);
+  var kic=CTX_ICONS[ci++];
+  if(kic) el('span','keyicon',kl).textContent=kic;
+  md(sl.key,el('span',null,kl));
   var eb=el('div','eqbig',kr);
   var seg=sl.eq.split(' = ');
   eb.appendChild(eqEl(seg[0]));
@@ -1482,10 +1597,18 @@ function applyBuild(){
     e.classList.toggle('pending', (+e.getAttribute('data-st')) > lim);
   });
   var m=MAXST[cur]||0, dots='';
-  if(anim && m>0){ for(var i=1;i<=m;i++) dots += (i<=bstep?'●':'○'); }
+  var isQuiz=(L[cur].k==='quiz');
+  if(isQuiz){
+    dots=[].map.call(nodes[cur].querySelectorAll('.qcard'),function(c){
+      return c.classList.contains('ok')?'✓':'○'; }).join('');
+  } else if(anim && m>0){ for(var i=1;i<=m;i++) dots += (i<=bstep?'●':'○'); }
   document.getElementById('counter').textContent=(cur+1)+' / '+L.length+(dots?'   '+dots:'');
   document.getElementById('prev').disabled=(cur===0 && bstep===0);
-  document.getElementById('next').disabled=(cur===L.length-1 && (!anim || bstep>=m));
+  var locked=isQuiz && !quizSolved(cur) && !UNLOCK[cur];
+  document.getElementById('next').disabled=locked || (cur===L.length-1 && (!anim || bstep>=m));
+  var ub=document.getElementById('unlockbtn');
+  ub.style.display=isQuiz?'':'none';
+  ub.classList.toggle('act',!!UNLOCK[cur]);
 }
 function show(i,push,atEnd){
   i=Math.max(0,Math.min(L.length-1,i));
@@ -1501,6 +1624,17 @@ function show(i,push,atEnd){
 }
 function go(d){
   var m=MAXST[cur]||0;
+  if(d>0 && L[cur].k==='quiz' && !quizSolved(cur) && !UNLOCK[cur]){
+    var cards=nodes[cur].querySelectorAll('.qcard');
+    for(var k=0;k<cards.length;k++){
+      if(!cards[k].classList.contains('ok')){
+        flag(cards[k],'이 문제를 맞혀야 다음 화면으로 넘어갑니다.');
+        try{ cards[k]._inputs[0].focus(); }catch(e){}
+        break;
+      }
+    }
+    return;
+  }
   if(!anim){ if(cur+d>=0 && cur+d<L.length) show(cur+d); return; }
   if(d>0){
     if(bstep<m){ bstep++; applyBuild(); return; }
@@ -1529,11 +1663,22 @@ document.getElementById('prev').addEventListener('click',function(){go(-1);});
 document.getElementById('next').addEventListener('click',function(){go(1);});
 document.getElementById('notebtn').addEventListener('click',function(){ toggleNotes(!notesOn); });
 document.getElementById('animbtn').addEventListener('click',function(){ setAnim(!anim); });
+document.getElementById('unlockbtn').addEventListener('click',function(){
+  UNLOCK[cur]=!UNLOCK[cur]; applyBuild();
+});
 
 var LESSON_START=[2,7,12,17,22,27];
 
 document.addEventListener('keydown',function(e){
   if(e.metaKey||e.ctrlKey||e.altKey) return;
+  /* 답을 입력하는 중에는 화면을 넘기지 않는다 */
+  var t=e.target;
+  if(t && (t.tagName==='INPUT'||t.tagName==='TEXTAREA')){
+    if(e.key==='Escape') t.blur();
+    return;
+  }
+  /* 교사용 : Shift + → 는 잠긴 연습 문제를 건너뛴다 */
+  if(e.shiftKey && e.key==='ArrowRight'){ UNLOCK[cur]=true; applyBuild(); go(1); e.preventDefault(); return; }
   var ovOn=document.getElementById('ov').classList.contains('on');
   if(e.key==='Escape'){ if(ovOn) toggleOv(false); else if(notesOn) toggleNotes(false); else return; e.preventDefault(); return; }
   if(e.key==='o'||e.key==='O'){ toggleOv(!ovOn); e.preventDefault(); return; }
@@ -1550,7 +1695,11 @@ document.addEventListener('keydown',function(e){
 /* swipe */
 var sx=null,sy=null;
 var vp=document.getElementById('viewport');
-vp.addEventListener('pointerdown',function(e){ sx=e.clientX; sy=e.clientY; });
+vp.addEventListener('pointerdown',function(e){
+  /* 문제 카드 위에서는 스와이프로 넘기지 않는다 (입력·버튼 조작과 충돌) */
+  if(e.target && e.target.closest && e.target.closest('.qcard')){ sx=null; return; }
+  sx=e.clientX; sy=e.clientY;
+});
 vp.addEventListener('pointerup',function(e){
   if(sx===null) return;
   var dx=e.clientX-sx, dy=e.clientY-sy;
