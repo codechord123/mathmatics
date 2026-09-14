@@ -139,16 +139,24 @@ td.no{color:var(--warn)}
 .mx{display:inline-flex; align-items:center; vertical-align:middle; gap:.08em; white-space:nowrap}
 .eq{white-space:nowrap; font-variant-numeric:tabular-nums}
 .eq .op{color:var(--mut); padding:0 .16em}
+
+/* 비율 · 몫 */
+.why{border:1.6px solid var(--blue); border-radius:10px; background:#F6FAFD; padding:10px 14px}
+.why .h{font-size:9.6pt; font-weight:700; color:var(--blue); margin-bottom:4px}
+.why .steps{font-family:'GBT',serif; font-size:12.5pt; font-weight:700; margin:7px 0; line-height:1.75; color:var(--ink)}
+.why p{margin:0; font-size:9.6pt; color:var(--ink2); line-height:1.58}
+.why .k{color:var(--blue)}
 </style></head><body>
 
 <!-- ================= 1쪽 ================= -->
 <section class="page">
-  <div class="pnum">1 / 2</div>
+  <div class="pnum">1 / 3</div>
   <div class="eyebrow">5학년 수학 · 분수의 곱셈 · 스스로 공부하기</div>
-  <h1>분수의 곱셈, 읽는 법이 두 가지예요</h1>
+  <h1>분수의 곱셈, 네 가지 그림으로 읽기</h1>
   <div class="name">5학년 <span></span>반 이름 <span></span></div>
   <div class="rule"></div>
-  <p class="lede">곱셈 기호 <b>× 뒤에 오는 수</b>가 자연수인지 분수인지에 따라 읽는 법이 달라져요. 천천히 읽고 <b>직접 풀어 보세요.</b></p>
+  <p class="lede">분수의 곱셈은 <b>네 가지 그림</b>으로 읽을 수 있어요. 그림이 달라도 계산하는 방법은 같답니다.
+  천천히 읽고 <b>직접 풀어 보세요.</b></p>
 
   <div class="core">
     <div class="t">가장 중요한 한 줄</div>
@@ -156,9 +164,9 @@ td.no{color:var(--warn)}
        <span class="hl2">분수</span>면 &ldquo;<span class="hl2">~의 얼마만큼</span>&rdquo;</p>
   </div>
 
-  <!-- 하나 -->
+  <!-- 모델 1 -->
   <div class="sec">
-    <div class="sec-h"><span class="sec-n">하나</span><h2>× 뒤가 자연수일 때 &mdash; 여러 번 더하기</h2>
+    <div class="sec-h"><span class="sec-n">모델 1</span><h2>여러 번 더하기</h2>
       <span class="tag up">답이 커져요</span></div>
     <div class="row">
       <div class="figbox">
@@ -182,12 +190,12 @@ td.no{color:var(--warn)}
           <p><span class="eq" data-eq="2/5 × 3"></span> 은 <b>&ldquo;<span class="eq" data-eq="2/5"></span> 씩 3묶음&rdquo;</b>이에요.
           <span class="eq" data-eq="2/5 + 2/5 + 2/5"></span> 와 같지요.</p>
           <p>조각 하나의 크기(<span class="eq" data-eq="1/5"></span>)는 그대로이고 <b>개수만</b> 3배가 돼요.
-          그래서 <b>분모는 그대로 두고 분자에만</b> 3을 곱해요.</p>
+          그래서 <b>분모는 그대로, 분자에만</b> 3을 곱해요.</p>
         </div>
         <div class="ex">
           <div class="h">함께 풀어 보기</div>
           <div class="e"><span class="eq" data-eq="2/5 × 3 = ( 2 × 3 ) / 5 = 6/5 = 1_1/5"></span></div>
-          <div class="w">답이 처음 <span class="eq" data-eq="2/5"></span> 보다 <b>커졌어요.</b></div>
+          <div class="w">× 뒤가 자연수라서 답이 <b>커졌어요.</b></div>
         </div>
       </div>
     </div>
@@ -202,9 +210,9 @@ td.no{color:var(--warn)}
     </div>
   </div>
 
-  <!-- 둘 -->
+  <!-- 모델 2 -->
   <div class="sec">
-    <div class="sec-h"><span class="sec-n">둘</span><h2>× 뒤가 분수일 때 &mdash; 전체의 얼마만큼</h2>
+    <div class="sec-h"><span class="sec-n">모델 2</span><h2>몇 배 &mdash; 전체의 얼마만큼</h2>
       <span class="tag dn">답이 작아질 수 있어요</span></div>
     <div class="row">
       <div class="figbox">
@@ -245,15 +253,63 @@ td.no{color:var(--warn)}
     </div>
   </div>
 
-  <div class="foot"><div>다음 쪽에서 <b>분수끼리</b> 곱하는 방법을 알아봐요.</div><div>1쪽</div></div>
+  <div class="foot"><div>다음 쪽에서 <b>비율</b>과 <b>넓이</b>로 읽는 법을 알아봐요.</div><div>1쪽</div></div>
 </section>
 
 <!-- ================= 2쪽 ================= -->
 <section class="page">
-  <div class="pnum">2 / 2</div>
+  <div class="pnum">2 / 3</div>
 
+  <!-- 모델 3 -->
   <div class="sec">
-    <div class="sec-h"><span class="sec-n">셋</span><h2>분수끼리 곱할 때 &mdash; 겹치는 칸 세기</h2></div>
+    <div class="sec-h"><span class="sec-n">모델 3</span><h2>비율 &mdash; 1시간에 얼마씩</h2>
+      <span class="tag dn">답이 작아질 수 있어요</span></div>
+    <div class="row">
+      <div class="figbox">
+        <svg viewBox="0 0 150 94" role="img" aria-label="시간과 거리를 짝지은 이중 수직선. 1시간에 6km, 3분의 2시간에 4km">
+          <text x="0" y="35" font-family="NSKR" font-size="8.5" fill="#6E7C74">시간</text>
+          <text x="0" y="67" font-family="NSKR" font-size="8.5" fill="#6E7C74">거리</text>
+          <line x1="26" y1="32" x2="146" y2="32" stroke="#3E4C44" stroke-width="1.2"/>
+          <line x1="26" y1="64" x2="146" y2="64" stroke="#3E4C44" stroke-width="1.2"/>
+          <line x1="26" y1="32" x2="26" y2="64" stroke="#B3BFB6" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="146" y1="32" x2="146" y2="64" stroke="#B3BFB6" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="106" y1="29" x2="106" y2="67" stroke="#227054" stroke-width="2"/>
+          <g stroke="#3E4C44" stroke-width="1.2"><path d="M26 27v10M146 27v10M26 59v10M146 59v10"/></g>
+          <g font-family="NSKR" font-size="9" fill="#3E4C44">
+            <text x="26" y="20" text-anchor="middle">0</text><text x="148" y="20" text-anchor="end">1시간</text>
+            <text x="26" y="82" text-anchor="middle">0</text><text x="148" y="82" text-anchor="end">6 km</text></g>
+          <text x="106" y="20" font-family="NSKR" font-size="9.5" font-weight="700" fill="#227054" text-anchor="middle">2/3시간</text>
+          <text x="106" y="84" font-family="NSKR" font-size="13" font-weight="700" fill="#227054" text-anchor="middle">?</text>
+        </svg>
+        <p class="figcap">1시간에 6 km를 걷는 빠르기</p>
+      </div>
+      <div>
+        <div class="card">
+          <p><b>1시간에 6 km</b>를 걷는 사람이 <span class="eq" data-eq="2/3"></span> 시간 동안 걸으면 몇 km를 갈까요?</p>
+          <p>시간이 <span class="eq" data-eq="2/3"></span> 로 줄었으니 거리도 <b>6 km의 <span class="eq" data-eq="2/3"></span> 만큼</b>이 돼요.
+          위·아래 눈금은 <b>항상 짝을 이루어</b> 함께 움직인답니다.</p>
+        </div>
+        <div class="ex">
+          <div class="h">함께 풀어 보기</div>
+          <div class="e"><span class="eq" data-eq="6 × 2/3 = ( 6 × 2 ) / 3 = 12/3 = 4"></span></div>
+          <div class="w">답 <b>4 km.</b> 1시간보다 짧게 걸었으니 6 km보다 <b>짧아요.</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="try">
+      <div class="h">✏️ 스스로 풀어 보세요</div>
+      <div class="tq"><span class="n">5</span><div>
+        <div class="q">1분에 <b>12 L</b>씩 나오는 수도로 <span class="eq" data-eq="3/4"></span> 분 동안 받으면 몇 L일까요?</div>
+        <div class="ansline">풀이 <i></i> 답 <i style="max-width:88px"></i></div></div></div>
+      <div class="tq"><span class="n">6</span><div>
+        <div class="q">1시간에 <b>8 km</b>를 달리는 자전거로 <span class="eq" data-eq="5/8"></span> 시간 달리면 몇 km일까요?</div>
+        <div class="ansline">풀이 <i></i> 답 <i style="max-width:88px"></i></div></div></div>
+    </div>
+  </div>
+
+  <!-- 모델 4 -->
+  <div class="sec">
+    <div class="sec-h"><span class="sec-n">모델 4</span><h2>넓이 &mdash; 겹치는 칸 세기</h2></div>
     <div class="row">
       <div class="figbox">
         <svg viewBox="0 0 150 116" role="img" aria-label="정사각형을 가로 4등분 세로 3등분해 12칸으로 만들고 겹친 6칸을 표시한 그림">
@@ -287,28 +343,49 @@ td.no{color:var(--warn)}
     </div>
     <div class="try">
       <div class="h">✏️ 스스로 풀어 보세요</div>
-      <div class="tq"><span class="n">5</span><div>
+      <div class="tq"><span class="n">7</span><div>
         <div class="q"><span class="eq" data-eq="2/3 × 3/5"></span> 을 계산하고 <b>약분</b>까지 해 보세요.</div>
         <div class="ansline">풀이 <i></i> 답 <i style="max-width:88px"></i></div></div></div>
-      <div class="tq"><span class="n">6</span><div>
+      <div class="tq"><span class="n">8</span><div>
         <div class="q">케이크의 <span class="eq" data-eq="3/4"></span> 이 남았어요. 그중 <span class="eq" data-eq="1/2"></span> 을 먹었다면 먹은 양은 <b>한 판의 얼마</b>일까요?</div>
         <div class="ansline">풀이 <i></i> 답 <i style="max-width:88px"></i></div></div></div>
     </div>
   </div>
 
   <div class="sec">
-    <div class="sec-h"><span class="sec-n">정리</span><h2>한눈에 비교하기</h2></div>
+    <div class="sec-h"><span class="sec-n">정리</span><h2>네 가지 그림, 한눈에</h2></div>
     <table>
-      <thead><tr><th>이렇게 생각해요</th><th>× 뒤가 <b>자연수</b> (× 3)</th><th>× 뒤가 <b>분수</b> (× <span class="eq" data-eq="2/3"></span>)</th></tr></thead>
+      <thead><tr><th>그림</th><th>이런 상황</th><th>× 뒤가 분수여도 되나요?</th></tr></thead>
       <tbody>
-        <tr><th>여러 번 더하기</th><td><b>돼요.</b> 똑같은 양을 3번 더해요.</td>
+        <tr><th>1 · 여러 번 더하기</th><td><span class="eq" data-eq="2/5"></span> L짜리 주스 <b>3병</b></td>
           <td class="no"><b>안 돼요.</b> &ldquo;<span class="eq" data-eq="2/3"></span> 번 더한다&rdquo;는 말은 없어요.</td></tr>
-        <tr><th>몇 배 하기</th><td>3배로 <b>늘어나요.</b></td>
-          <td>3묶음으로 나눈 뒤 2묶음만 골라 <b>줄어들어요.</b></td></tr>
-        <tr><th>넓이로 보기</th><td>직사각형을 옆으로 <b>3개 이어 붙여요.</b></td>
-          <td>가로·세로로 <b>둘 다 잘라</b> 겹친 칸을 세요.</td></tr>
+        <tr><th>2 · 몇 배</th><td>사탕 12개의 <span class="eq" data-eq="2/3"></span></td>
+          <td><b>돼요.</b> 나누고 골라내면 되니까요.</td></tr>
+        <tr><th>3 · 비율</th><td>1시간에 6 km로 <span class="eq" data-eq="2/3"></span> 시간</td>
+          <td><b>돼요.</b> 시간은 이어져 있으니까요.</td></tr>
+        <tr><th>4 · 넓이</th><td>가로 <span class="eq" data-eq="3/4"></span> m, 세로 <span class="eq" data-eq="2/3"></span> m</td>
+          <td><b>돼요.</b> 가로·세로 둘 다 잘라요.</td></tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="foot"><div>네 가지 그림이 달라 보여도 <b>계산하는 방법은 하나</b>예요.</div><div>2쪽</div></div>
+</section>
+
+<!-- ================= 3쪽 ================= -->
+<section class="page">
+  <div class="pnum">3 / 3</div>
+
+  <div class="sec">
+    <div class="sec-h"><span class="sec-n">원리</span><h2>왜 분자를 곱하고 분모로 나눌까?</h2></div>
+    <div class="why">
+      <div class="h">분수는 그 자체가 <span class="k">나눗셈</span>이에요</div>
+      <p><span class="eq" data-eq="2/3"></span> 은 <b>2를 3으로 나눈 몫</b>이에요. 곧 <span class="eq" data-eq="2/3 = 2 ÷ 3"></span> 이지요.
+      그래서 <span class="eq" data-eq="12 × 2/3"></span> 은 이렇게 풀립니다.</p>
+      <div class="steps"><span class="eq" data-eq="12 × 2/3 = 12 × ( 2 ÷ 3 ) = ( 12 × 2 ) ÷ 3 = 24 ÷ 3 = 8"></span></div>
+      <p><b>&ldquo;분자를 곱하고 분모로 나눈다&rdquo;</b>는 규칙은 여기서 나온 거예요.
+      앞의 <b>네 가지 그림 어느 것으로 읽어도</b> 계산은 모두 이 방법으로 합니다.</p>
+    </div>
   </div>
 
   <div class="sec">
@@ -345,27 +422,53 @@ td.no{color:var(--warn)}
   </div>
 
 
-  <div class="try" style="margin-top:8px; border-color:var(--blue); background:#FBFDFE">
+  <div class="sec">
+    <div class="sec-h"><span class="sec-n">마무리</span><h2>섞어서 풀어 보기</h2></div>
+    <div class="try">
+      <div class="h">✏️ 어떤 그림으로 읽을지 먼저 정하고 푸세요</div>
+      <div class="tq"><span class="n">11</span><div>
+        <div class="q"><span class="eq" data-eq="3/8"></span> L짜리 우유 <b>6팩</b>에 든 우유는 모두 몇 L일까요?</div>
+        <div class="ansline">그림 <i style="max-width:96px"></i> 답 <i style="max-width:96px"></i></div></div></div>
+      <div class="tq"><span class="n">12</span><div>
+        <div class="q">우리 반 <b>30명</b>의 <span class="eq" data-eq="3/5"></span> 는 몇 명일까요?</div>
+        <div class="ansline">그림 <i style="max-width:96px"></i> 답 <i style="max-width:96px"></i></div></div></div>
+      <div class="tq"><span class="n">13</span><div>
+        <div class="q">1분에 <b>20 L</b>씩 나오는 수도로 <span class="eq" data-eq="7/10"></span> 분 받으면 몇 L일까요?</div>
+        <div class="ansline">그림 <i style="max-width:96px"></i> 답 <i style="max-width:96px"></i></div></div></div>
+      <div class="tq"><span class="n">14</span><div>
+        <div class="q">가로 <span class="eq" data-eq="5/6"></span> m, 세로 <span class="eq" data-eq="3/4"></span> m인 직사각형의 넓이는 몇 m&sup2;일까요?</div>
+        <div class="ansline">그림 <i style="max-width:96px"></i> 답 <i style="max-width:96px"></i></div></div></div>
+    </div>
+  </div>
+
+  <div class="try" style="border-color:var(--blue); background:#FBFDFE">
     <div class="h" style="color:var(--blue)">🏅 도전 문제</div>
-    <div class="tq"><span class="n" style="background:var(--blue)">7</span><div>
+    <div class="tq"><span class="n" style="background:var(--blue)">9</span><div>
       <div class="q"><span class="eq" data-eq="12 × 3/4"></span> 와 <span class="eq" data-eq="3/4 × 12"></span> 를 각각 계산하고,
       두 답이 <b>같은 이유</b>를 써 보세요.</div>
       <div class="ansline">이유 <i></i></div></div></div>
-    <div class="tq"><span class="n" style="background:var(--blue)">8</span><div>
+    <div class="tq"><span class="n" style="background:var(--blue)">10</span><div>
       <div class="q"><span class="eq" data-eq="20 × □"></span> 의 답이 <b>20보다 작아지려면</b> □ 안에 어떤 수가 들어가야 할까요?</div>
       <div class="ansline">답 <i></i></div></div></div>
   </div>
 
-  <div class="ans">
+  <div class="ans" style="margin-top:6px">
     <div class="h">정 답</div>
     <p><b>1.</b> <span class="eq" data-eq="12/7 = 1_5/7"></span> &nbsp;&nbsp;
        <b>2.</b> <span class="eq" data-eq="10/9 = 1_1/9"></span> m &nbsp;&nbsp;
        <b>3.</b> 20개 &nbsp;&nbsp; <b>4.</b> 10 m &nbsp;&nbsp;
-       <b>5.</b> <span class="eq" data-eq="6/15 = 2/5"></span> &nbsp;&nbsp;
-       <b>6.</b> <span class="eq" data-eq="3/8"></span> &nbsp;&nbsp; <b>7.</b> 둘 다 9 (곱하는 순서를 바꿔도 답은 같아요) &nbsp;&nbsp; <b>8.</b> 1보다 작은 수(진분수)</p>
+       <b>5.</b> 9 L &nbsp;&nbsp; <b>6.</b> 5 km &nbsp;&nbsp;
+       <b>7.</b> <span class="eq" data-eq="6/15 = 2/5"></span> &nbsp;&nbsp;
+       <b>8.</b> <span class="eq" data-eq="3/8"></span> &nbsp;&nbsp;
+       <b>9.</b> 둘 다 9 (곱하는 순서를 바꿔도 답은 같아요) &nbsp;&nbsp;
+       <b>10.</b> 1보다 작은 수(진분수)<br>
+       <b>11.</b> 여러 번 더하기 · <span class="eq" data-eq="18/8 = 2_1/4"></span> L &nbsp;&nbsp;
+       <b>12.</b> 몇 배 · 18명 &nbsp;&nbsp;
+       <b>13.</b> 비율 · 14 L &nbsp;&nbsp;
+       <b>14.</b> 넓이 · <span class="eq" data-eq="15/24 = 5/8"></span> m&sup2;</p>
   </div>
 
-  <div class="foot"><div>틀린 문제는 <b>그림으로 다시 그려</b> 보세요. 어디서 어긋났는지 바로 보여요.</div><div>2쪽</div></div>
+  <div class="foot"><div>틀린 문제는 <b>그림으로 다시 그려</b> 보세요. 어디서 어긋났는지 바로 보여요.</div><div>3쪽</div></div>
 </section>
 
 <script>
