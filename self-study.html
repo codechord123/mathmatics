@@ -1,0 +1,391 @@
+<!doctype html>
+<!-- 분수의 곱셈 자습지 (학생용, A4) — 폰트는 @fontsource woff2 임베드, 헤드리스 크로미움 인쇄 -->
+<html lang="ko"><head><meta charset="utf-8"><title>분수의 곱셈 자습지</title>
+<style>
+@font-face{font-family:'NSKR';font-weight:400;font-display:block;
+ src:url('fonts/noto/files/noto-sans-kr-latin-400-normal.woff2') format('woff2');
+ unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2200-22FF,U+25A0-25FF,U+2713,U+2717;}
+@font-face{font-family:'NSKR';font-weight:400;font-display:block;
+ src:url('fonts/noto/files/noto-sans-kr-korean-400-normal.woff2') format('woff2');
+ unicode-range:U+1100-11FF,U+3000-303F,U+3130-318F,U+A960-A97F,U+AC00-D7A3,U+D7B0-D7FF,U+FF00-FFEF;}
+@font-face{font-family:'NSKR';font-weight:500;font-display:block;
+ src:url('fonts/noto/files/noto-sans-kr-latin-500-normal.woff2') format('woff2');
+ unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2200-22FF,U+25A0-25FF,U+2713,U+2717;}
+@font-face{font-family:'NSKR';font-weight:500;font-display:block;
+ src:url('fonts/noto/files/noto-sans-kr-korean-500-normal.woff2') format('woff2');
+ unicode-range:U+1100-11FF,U+3000-303F,U+3130-318F,U+A960-A97F,U+AC00-D7A3,U+D7B0-D7FF,U+FF00-FFEF;}
+@font-face{font-family:'NSKR';font-weight:700;font-display:block;
+ src:url('fonts/noto/files/noto-sans-kr-latin-700-normal.woff2') format('woff2');
+ unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2200-22FF,U+25A0-25FF,U+2713,U+2717;}
+@font-face{font-family:'NSKR';font-weight:700;font-display:block;
+ src:url('fonts/noto/files/noto-sans-kr-korean-700-normal.woff2') format('woff2');
+ unicode-range:U+1100-11FF,U+3000-303F,U+3130-318F,U+A960-A97F,U+AC00-D7A3,U+D7B0-D7FF,U+FF00-FFEF;}
+@font-face{font-family:'GBT';font-weight:700;font-display:block;
+ src:url('fonts/gowun/files/gowun-batang-latin-700-normal.woff2') format('woff2');
+ unicode-range:U+0000-00FF,U+2000-206F;}
+@font-face{font-family:'GBT';font-weight:700;font-display:block;
+ src:url('fonts/gowun/files/gowun-batang-korean-700-normal.woff2') format('woff2');
+ unicode-range:U+1100-11FF,U+3000-303F,U+3130-318F,U+A960-A97F,U+AC00-D7A3,U+D7B0-D7FF,U+FF00-FFEF;}
+
+:root{
+  --ink:#17211C; --ink2:#3E4C44; --mut:#6E7C74;
+  --rule:#D9E0D8; --rule2:#B3BFB6;
+  --bg:#FFFFFF; --soft:#F1F5F0; --soft2:#E7EEE6;
+  --blue:#1B6C9E; --blue-s:#DCEAF4;
+  --amber:#9C6710; --amber-s:#F8EBCF;
+  --green:#227054; --green-s:#CFE5D9;
+  --warn:#9E3F2B; --warn-s:#F7E2DB;
+}
+*{box-sizing:border-box}
+@page{size:A4; margin:0}
+html,body{margin:0;padding:0}
+body{font-family:'NSKR',sans-serif; color:var(--ink); background:var(--bg);
+  font-size:10.4pt; line-height:1.62; -webkit-font-smoothing:antialiased}
+.page{width:210mm; height:297mm; padding:13mm 15mm 11mm; position:relative;
+  display:flex; flex-direction:column; break-after:page; overflow:hidden}
+.page:last-child{break-after:auto}
+.page > *{flex:none}
+.pnum{position:absolute; right:15mm; top:7mm; font-size:8.4pt; color:var(--rule2); font-weight:700}
+
+/* 머리 */
+.eyebrow{font-size:8.6pt; letter-spacing:.2em; color:var(--green); font-weight:700}
+h1{font-family:'GBT',serif; font-weight:700; font-size:21pt; line-height:1.28; margin:3px 0 5px}
+.name{display:flex; gap:14px; align-items:baseline; margin:8px 0 0; font-size:9.4pt; color:var(--mut)}
+.name span{border-bottom:1px solid var(--rule2); min-width:72px; display:inline-block; height:15px}
+.lede{margin:8px 0 0; color:var(--ink2); font-size:10.2pt; line-height:1.6}
+.rule{height:2.5px; background:var(--green); margin:8px 0 10px; width:52px; border-radius:2px}
+
+.core{background:var(--soft); border-left:4px solid var(--green); border-radius:0 9px 9px 0;
+  padding:9px 14px; margin:0 0 8px}
+.core .t{font-size:8.4pt; letter-spacing:.16em; color:var(--green); font-weight:700; margin-bottom:4px}
+.core p{margin:0; font-size:12pt; font-weight:700; line-height:1.5}
+.core .hl{color:var(--blue)} .core .hl2{color:var(--amber)}
+
+/* 섹션 */
+.sec{margin-bottom:5px}
+.sec-h{display:flex; align-items:baseline; gap:9px; margin-bottom:5px}
+.sec-n{font-size:8.4pt; font-weight:700; color:#fff; background:var(--ink);
+  border-radius:4px; padding:2px 7px; letter-spacing:.06em}
+.sec-h h2{font-family:'GBT',serif; font-size:13.6pt; font-weight:700; margin:0}
+.sec-h .tag{font-size:8.8pt; font-weight:700; margin-left:auto; padding:2px 10px; border-radius:20px}
+.tag.up{color:var(--blue); background:var(--blue-s)}
+.tag.dn{color:var(--warn); background:var(--warn-s)}
+
+.row{display:grid; grid-template-columns:186px 1fr; gap:11px; align-items:start}
+.figbox{border:1px solid var(--rule); border-radius:9px; padding:9px 11px 7px; background:var(--bg)}
+.figbox svg{display:block; width:100%; height:auto}
+.figcap{margin:5px 0 0; font-size:8.6pt; color:var(--mut); line-height:1.45; text-align:center}
+.card{border:1px solid var(--rule); border-radius:9px; padding:9px 12px; background:var(--bg)}
+.card p{margin:0; font-size:9.7pt; line-height:1.6; color:var(--ink2)}
+.card p+p{margin-top:5px}
+.card b{color:var(--ink)}
+
+/* 예제 */
+.ex{background:var(--soft); border-radius:9px; padding:8px 12px; margin-top:7px}
+.ex .h{font-size:8.4pt; font-weight:700; letter-spacing:.1em; color:var(--green); margin-bottom:3px}
+.ex .e{font-family:'GBT',serif; font-size:13pt; font-weight:700}
+.ex .w{font-size:9pt; color:var(--mut); margin-top:3px}
+
+/* 스스로 풀기 */
+.try{border:1.6px dashed var(--green); border-radius:10px; background:#FCFDFB; padding:7px 12px; margin-top:5px}
+.try .h{font-size:9pt; font-weight:700; color:var(--green); margin-bottom:5px}
+.tq{display:grid; grid-template-columns:17px 1fr; gap:8px; padding:2px 0}
+.tq+.tq{border-top:1px dashed var(--rule)}
+.tq .n{font-size:8.4pt; font-weight:700; color:#fff; background:var(--green);
+  border-radius:50%; width:17px; height:17px; display:grid; place-items:center; margin-top:2px}
+.tq .q{font-size:9.7pt; line-height:1.55}
+.tq .ansline{display:flex; align-items:flex-end; gap:7px; margin-top:5px; font-size:9pt; color:var(--mut)}
+.tq .ansline i{flex:1; border-bottom:1.2px dotted var(--rule2); height:17px; font-style:normal}
+
+/* 표 */
+table{width:100%; border-collapse:collapse; font-size:9.3pt}
+th,td{border:1px solid var(--rule); padding:5px 8px; vertical-align:top; text-align:left}
+thead th{background:var(--soft2); font-weight:700; font-size:9.1pt}
+thead th:first-child{width:21%}
+tbody th{background:var(--soft); font-weight:700; width:21%}
+td.no{color:var(--warn)}
+
+/* 실수 */
+.miss{border:1px solid var(--warn-s); border-radius:9px; overflow:hidden}
+.miss-h{background:var(--warn-s); color:var(--warn); font-weight:700; font-size:9.3pt; padding:4px 12px}
+.miss-b{padding:3px 12px 6px}
+.miss-row{display:grid; grid-template-columns:auto 1fr; gap:11px; align-items:baseline;
+  padding:3px 0; border-bottom:1px dashed var(--rule)}
+.miss-row:last-child{border-bottom:none}
+.miss-eq{font-size:10.2pt; white-space:nowrap}
+.miss-eq .x{color:var(--warn); font-weight:700}
+.miss-eq .o{color:var(--green); font-weight:700}
+.miss-why{font-size:9.2pt; color:var(--ink2); line-height:1.5}
+
+/* 점검 */
+.check{display:grid; grid-template-columns:1fr 1fr; gap:4px 16px; font-size:9.6pt}
+.check div{display:flex; gap:8px; align-items:flex-start}
+.check b{display:inline-block; width:13px; height:13px; border:1.6px solid var(--green);
+  border-radius:3px; flex:0 0 auto; margin-top:3px}
+
+/* 정답 */
+.ans{border:1px solid var(--rule); border-radius:9px; background:var(--soft); padding:6px 12px}
+.ans .h{font-size:8.6pt; font-weight:700; letter-spacing:.12em; color:var(--mut); margin-bottom:4px}
+.ans p{margin:0; font-size:9.3pt; color:var(--ink2); line-height:1.7}
+.ans b{color:var(--ink)}
+
+.foot{margin-top:auto; padding-top:8px; border-top:1px solid var(--rule);
+  font-size:9pt; color:var(--mut); display:flex; justify-content:space-between; gap:16px}
+
+/* 분수 */
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1; margin:0 .14em}
+.fr .n{font-size:.66em; padding:0 .2em}
+.fr .d{font-size:.66em; padding:0 .2em; border-top:1.1px solid currentColor; margin-top:.08em}
+.mx{display:inline-flex; align-items:center; vertical-align:middle; gap:.08em; white-space:nowrap}
+.eq{white-space:nowrap; font-variant-numeric:tabular-nums}
+.eq .op{color:var(--mut); padding:0 .16em}
+</style></head><body>
+
+<!-- ================= 1쪽 ================= -->
+<section class="page">
+  <div class="pnum">1 / 2</div>
+  <div class="eyebrow">5학년 수학 · 분수의 곱셈 · 스스로 공부하기</div>
+  <h1>분수의 곱셈, 읽는 법이 두 가지예요</h1>
+  <div class="name">5학년 <span></span>반 이름 <span></span></div>
+  <div class="rule"></div>
+  <p class="lede">곱셈 기호 <b>× 뒤에 오는 수</b>가 자연수인지 분수인지에 따라 읽는 법이 달라져요. 천천히 읽고 <b>직접 풀어 보세요.</b></p>
+
+  <div class="core">
+    <div class="t">가장 중요한 한 줄</div>
+    <p>× 뒤가 <span class="hl">자연수</span>면 &ldquo;<span class="hl">몇 번 더하기</span>&rdquo;,
+       <span class="hl2">분수</span>면 &ldquo;<span class="hl2">~의 얼마만큼</span>&rdquo;</p>
+  </div>
+
+  <!-- 하나 -->
+  <div class="sec">
+    <div class="sec-h"><span class="sec-n">하나</span><h2>× 뒤가 자연수일 때 &mdash; 여러 번 더하기</h2>
+      <span class="tag up">답이 커져요</span></div>
+    <div class="row">
+      <div class="figbox">
+        <svg viewBox="0 0 176 74" role="img" aria-label="5칸 중 2칸이 칠해진 막대 3개">
+          <g fill="#F8EBCF"><rect x="6.4" y="14.4" width="18" height="27.2"/><rect x="65.4" y="14.4" width="18" height="27.2"/><rect x="124.4" y="14.4" width="18" height="27.2"/></g>
+          <g stroke="#B3BFB6" stroke-width="0.7" fill="none">
+            <path d="M15.2 14v28M24.4 14v28M33.6 14v28M42.8 14v28"/>
+            <path d="M74.2 14v28M83.4 14v28M92.6 14v28M101.8 14v28"/>
+            <path d="M133.2 14v28M142.4 14v28M151.6 14v28M160.8 14v28"/></g>
+          <g fill="none" stroke="#17211C" stroke-width="1.2">
+            <rect x="6" y="14" width="46" height="28"/><rect x="65" y="14" width="46" height="28"/><rect x="124" y="14" width="46" height="28"/></g>
+          <g font-family="NSKR" font-size="8.5" fill="#3E4C44" text-anchor="middle">
+            <text x="29" y="10">1병</text><text x="88" y="10">1병</text><text x="147" y="10">1병</text>
+            <text x="29" y="53">2칸</text><text x="88" y="53">2칸</text><text x="147" y="53">2칸</text></g>
+          <text x="88" y="69" font-family="NSKR" font-size="10.5" font-weight="700" fill="#227054" text-anchor="middle">모두 6칸 = 6/5 L</text>
+        </svg>
+        <p class="figcap">한 병이 <span class="eq" data-eq="2/5"></span> L인 주스 3병</p>
+      </div>
+      <div>
+        <div class="card">
+          <p><span class="eq" data-eq="2/5 × 3"></span> 은 <b>&ldquo;<span class="eq" data-eq="2/5"></span> 씩 3묶음&rdquo;</b>이에요.
+          <span class="eq" data-eq="2/5 + 2/5 + 2/5"></span> 와 같지요.</p>
+          <p>조각 하나의 크기(<span class="eq" data-eq="1/5"></span>)는 그대로이고 <b>개수만</b> 3배가 돼요.
+          그래서 <b>분모는 그대로 두고 분자에만</b> 3을 곱해요.</p>
+        </div>
+        <div class="ex">
+          <div class="h">함께 풀어 보기</div>
+          <div class="e"><span class="eq" data-eq="2/5 × 3 = ( 2 × 3 ) / 5 = 6/5 = 1_1/5"></span></div>
+          <div class="w">답이 처음 <span class="eq" data-eq="2/5"></span> 보다 <b>커졌어요.</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="try">
+      <div class="h">✏️ 스스로 풀어 보세요</div>
+      <div class="tq"><span class="n">1</span><div>
+        <div class="q"><span class="eq" data-eq="3/7 × 4"></span> 를 계산해 보세요.</div>
+        <div class="ansline">풀이 <i></i> 답 <i style="max-width:88px"></i></div></div></div>
+      <div class="tq"><span class="n">2</span><div>
+        <div class="q">길이가 <span class="eq" data-eq="2/9"></span> m인 색 테이프 <b>5도막</b>을 이으면 몇 m일까요?</div>
+        <div class="ansline">풀이 <i></i> 답 <i style="max-width:88px"></i></div></div></div>
+    </div>
+  </div>
+
+  <!-- 둘 -->
+  <div class="sec">
+    <div class="sec-h"><span class="sec-n">둘</span><h2>× 뒤가 분수일 때 &mdash; 전체의 얼마만큼</h2>
+      <span class="tag dn">답이 작아질 수 있어요</span></div>
+    <div class="row">
+      <div class="figbox">
+        <svg viewBox="0 0 176 74" role="img" aria-label="사탕 12개를 4개씩 3묶음으로 나누고 2묶음을 고른 그림">
+          <rect x="2" y="12" width="50" height="25" rx="4" fill="#CFE5D9" stroke="#227054" stroke-width="1.2"/>
+          <rect x="63" y="12" width="50" height="25" rx="4" fill="#CFE5D9" stroke="#227054" stroke-width="1.2"/>
+          <rect x="124" y="12" width="50" height="25" rx="4" fill="#F1F5F0" stroke="#B3BFB6" stroke-width="1.2"/>
+          <g font-size="8.5" text-anchor="middle">
+            <text x="27" y="28">🍬🍬🍬🍬</text><text x="88" y="28">🍬🍬🍬🍬</text><text x="149" y="28">🍬🍬🍬🍬</text></g>
+          <g font-family="NSKR" font-size="8.5" fill="#3E4C44" text-anchor="middle">
+            <text x="27" y="48">4개</text><text x="88" y="48">4개</text><text x="149" y="48">4개</text></g>
+          <path d="M2 54v4h111v-4" fill="none" stroke="#227054" stroke-width="1.2"/>
+          <text x="57" y="70" font-family="NSKR" font-size="10.5" font-weight="700" fill="#227054" text-anchor="middle">고른 2묶음 = 8개</text>
+        </svg>
+        <p class="figcap">사탕 12개의 <span class="eq" data-eq="2/3"></span></p>
+      </div>
+      <div>
+        <div class="card">
+          <p><b>&ldquo;<span class="eq" data-eq="2/3"></span> 번 더한다&rdquo;는 말은 없어요.</b>
+          그래서 <span class="eq" data-eq="12 × 2/3"></span> 은 <b>&ldquo;12의 <span class="eq" data-eq="2/3"></span> 만큼&rdquo;</b>으로 읽어요.</p>
+          <p><b>분모 3</b> &rarr; 12개를 <b>3묶음</b>으로 나누고, <b>분자 2</b> &rarr; 그중 <b>2묶음</b>을 가져와요.</p>
+        </div>
+        <div class="ex">
+          <div class="h">함께 풀어 보기</div>
+          <div class="e"><span class="eq" data-eq="12 × 2/3 = ( 12 × 2 ) / 3 = 24/3 = 8"></span></div>
+          <div class="w">답 8개는 처음 12개보다 <b>작아요.</b> 틀린 게 아니에요!</div>
+        </div>
+      </div>
+    </div>
+    <div class="try">
+      <div class="h">✏️ 스스로 풀어 보세요</div>
+      <div class="tq"><span class="n">3</span><div>
+        <div class="q">사탕 <b>24개</b>의 <span class="eq" data-eq="5/6"></span> 은 몇 개일까요?</div>
+        <div class="ansline">풀이 <i></i> 답 <i style="max-width:88px"></i></div></div></div>
+      <div class="tq"><span class="n">4</span><div>
+        <div class="q">길이가 <b>15 m</b>인 끈의 <span class="eq" data-eq="2/3"></span> 만큼은 몇 m일까요?</div>
+        <div class="ansline">풀이 <i></i> 답 <i style="max-width:88px"></i></div></div></div>
+    </div>
+  </div>
+
+  <div class="foot"><div>다음 쪽에서 <b>분수끼리</b> 곱하는 방법을 알아봐요.</div><div>1쪽</div></div>
+</section>
+
+<!-- ================= 2쪽 ================= -->
+<section class="page">
+  <div class="pnum">2 / 2</div>
+
+  <div class="sec">
+    <div class="sec-h"><span class="sec-n">셋</span><h2>분수끼리 곱할 때 &mdash; 겹치는 칸 세기</h2></div>
+    <div class="row">
+      <div class="figbox">
+        <svg viewBox="0 0 150 116" role="img" aria-label="정사각형을 가로 4등분 세로 3등분해 12칸으로 만들고 겹친 6칸을 표시한 그림">
+          <rect x="34" y="22" width="96" height="72" fill="#F1F5F0"/>
+          <rect x="34" y="22" width="72" height="72" fill="#DCEAF4"/>
+          <rect x="34" y="22" width="96" height="48" fill="#F8EBCF" fill-opacity="0.8"/>
+          <rect x="34" y="22" width="72" height="48" fill="#CFE5D9"/>
+          <g stroke="#B3BFB6" stroke-width="0.8"><path d="M58 22v72M82 22v72M106 22v72"/><path d="M34 46h96M34 70h96"/></g>
+          <rect x="34" y="22" width="72" height="48" fill="none" stroke="#227054" stroke-width="1.8"/>
+          <rect x="34" y="22" width="96" height="72" fill="none" stroke="#17211C" stroke-width="1.2"/>
+          <path d="M34 17v-4h72v4" fill="none" stroke="#1B6C9E" stroke-width="1.1"/>
+          <text x="70" y="9" font-family="NSKR" font-size="8.5" font-weight="700" fill="#1B6C9E" text-anchor="middle">가로 3칸</text>
+          <path d="M29 22h-4v48h4" fill="none" stroke="#9C6710" stroke-width="1.1"/>
+          <text x="18" y="46" font-family="NSKR" font-size="8.5" font-weight="700" fill="#9C6710" text-anchor="middle" transform="rotate(-90 18 46)">세로 2칸</text>
+          <text x="82" y="107" font-family="NSKR" font-size="9.5" font-weight="700" fill="#227054" text-anchor="middle">겹친 6칸 / 전체 12칸</text>
+        </svg>
+        <p class="figcap">가로 <span class="eq" data-eq="3/4"></span> m, 세로 <span class="eq" data-eq="2/3"></span> m인 땅</p>
+      </div>
+      <div>
+        <div class="card">
+          <p>한 변이 1 m인 정사각형을 <b>가로로 4등분, 세로로 3등분</b>하면 12칸이 생겨요.
+          가로 3칸과 세로 2칸이 <b>겹친 칸이 6개</b>예요.</p>
+          <p><b>전체 칸 12 = 4 × 3</b> (분모끼리 곱) &nbsp;·&nbsp; <b>겹친 칸 6 = 3 × 2</b> (분자끼리 곱)</p>
+        </div>
+        <div class="ex">
+          <div class="h">함께 풀어 보기</div>
+          <div class="e"><span class="eq" data-eq="3/4 × 2/3 = ( 3 × 2 ) / ( 4 × 3 ) = 6/12 = 1/2"></span></div>
+          <div class="w">약분하는 것을 <b>잊지 마세요.</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="try">
+      <div class="h">✏️ 스스로 풀어 보세요</div>
+      <div class="tq"><span class="n">5</span><div>
+        <div class="q"><span class="eq" data-eq="2/3 × 3/5"></span> 을 계산하고 <b>약분</b>까지 해 보세요.</div>
+        <div class="ansline">풀이 <i></i> 답 <i style="max-width:88px"></i></div></div></div>
+      <div class="tq"><span class="n">6</span><div>
+        <div class="q">케이크의 <span class="eq" data-eq="3/4"></span> 이 남았어요. 그중 <span class="eq" data-eq="1/2"></span> 을 먹었다면 먹은 양은 <b>한 판의 얼마</b>일까요?</div>
+        <div class="ansline">풀이 <i></i> 답 <i style="max-width:88px"></i></div></div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h"><span class="sec-n">정리</span><h2>한눈에 비교하기</h2></div>
+    <table>
+      <thead><tr><th>이렇게 생각해요</th><th>× 뒤가 <b>자연수</b> (× 3)</th><th>× 뒤가 <b>분수</b> (× <span class="eq" data-eq="2/3"></span>)</th></tr></thead>
+      <tbody>
+        <tr><th>여러 번 더하기</th><td><b>돼요.</b> 똑같은 양을 3번 더해요.</td>
+          <td class="no"><b>안 돼요.</b> &ldquo;<span class="eq" data-eq="2/3"></span> 번 더한다&rdquo;는 말은 없어요.</td></tr>
+        <tr><th>몇 배 하기</th><td>3배로 <b>늘어나요.</b></td>
+          <td>3묶음으로 나눈 뒤 2묶음만 골라 <b>줄어들어요.</b></td></tr>
+        <tr><th>넓이로 보기</th><td>직사각형을 옆으로 <b>3개 이어 붙여요.</b></td>
+          <td>가로·세로로 <b>둘 다 잘라</b> 겹친 칸을 세요.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <div class="miss">
+      <div class="miss-h">이런 실수, 하고 있지 않나요?</div>
+      <div class="miss-b">
+        <div class="miss-row">
+          <div class="miss-eq"><span class="x">✗</span> <span class="eq" data-eq="2/5 × 3 = 6/15"></span>
+            &nbsp;&rarr;&nbsp; <span class="o">✓</span> <span class="eq" data-eq="6/5"></span></div>
+          <div class="miss-why"><b>분모에도 곱했어요.</b> 칸을 더 잘게 나눈 적이 없으니 분모는 그대로예요.</div>
+        </div>
+        <div class="miss-row">
+          <div class="miss-eq"><span class="x">✗</span> <span class="eq" data-eq="1_3/4 × 4 = 3"></span>
+            &nbsp;&rarr;&nbsp; <span class="o">✓</span> 7</div>
+          <div class="miss-why"><b>앞의 1을 빠뜨렸어요.</b> 대분수는 <span class="eq" data-eq="7/4"></span> 로 고쳐서 곱하면 실수가 줄어요.</div>
+        </div>
+        <div class="miss-row">
+          <div class="miss-eq"><span class="x">✗</span> <span class="eq" data-eq="6/12"></span> 로 끝내기
+            &nbsp;&rarr;&nbsp; <span class="o">✓</span> <span class="eq" data-eq="1/2"></span></div>
+          <div class="miss-why"><b>약분을 빠뜨렸어요.</b> 답을 쓰기 전에 한 번만 더 확인해요.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h"><span class="sec-n">점검</span><h2>다 풀었다면 확인해요</h2></div>
+    <div class="check">
+      <div><b></b><span>× 뒤가 자연수인지 분수인지 먼저 봤나요?</span></div>
+      <div><b></b><span>답이 커졌는지 작아졌는지 확인했나요?</span></div>
+      <div><b></b><span>대분수는 가분수로 고쳤나요?</span></div>
+      <div><b></b><span>약분을 끝까지 했나요?</span></div>
+    </div>
+  </div>
+
+
+  <div class="try" style="margin-top:8px; border-color:var(--blue); background:#FBFDFE">
+    <div class="h" style="color:var(--blue)">🏅 도전 문제</div>
+    <div class="tq"><span class="n" style="background:var(--blue)">7</span><div>
+      <div class="q"><span class="eq" data-eq="12 × 3/4"></span> 와 <span class="eq" data-eq="3/4 × 12"></span> 를 각각 계산하고,
+      두 답이 <b>같은 이유</b>를 써 보세요.</div>
+      <div class="ansline">이유 <i></i></div></div></div>
+    <div class="tq"><span class="n" style="background:var(--blue)">8</span><div>
+      <div class="q"><span class="eq" data-eq="20 × □"></span> 의 답이 <b>20보다 작아지려면</b> □ 안에 어떤 수가 들어가야 할까요?</div>
+      <div class="ansline">답 <i></i></div></div></div>
+  </div>
+
+  <div class="ans">
+    <div class="h">정 답</div>
+    <p><b>1.</b> <span class="eq" data-eq="12/7 = 1_5/7"></span> &nbsp;&nbsp;
+       <b>2.</b> <span class="eq" data-eq="10/9 = 1_1/9"></span> m &nbsp;&nbsp;
+       <b>3.</b> 20개 &nbsp;&nbsp; <b>4.</b> 10 m &nbsp;&nbsp;
+       <b>5.</b> <span class="eq" data-eq="6/15 = 2/5"></span> &nbsp;&nbsp;
+       <b>6.</b> <span class="eq" data-eq="3/8"></span> &nbsp;&nbsp; <b>7.</b> 둘 다 9 (곱하는 순서를 바꿔도 답은 같아요) &nbsp;&nbsp; <b>8.</b> 1보다 작은 수(진분수)</p>
+  </div>
+
+  <div class="foot"><div>틀린 문제는 <b>그림으로 다시 그려</b> 보세요. 어디서 어긋났는지 바로 보여요.</div><div>2쪽</div></div>
+</section>
+
+<script>
+(function(){
+  function fr(n,d){var s=document.createElement('span');s.className='fr';
+    var a=document.createElement('span');a.className='n';a.textContent=n;
+    var b=document.createElement('span');b.className='d';b.textContent=d;
+    s.appendChild(a);s.appendChild(b);return s;}
+  function mx(w,n,d){var s=document.createElement('span');s.className='mx';
+    var t=document.createElement('span');t.textContent=w;s.appendChild(t);s.appendChild(fr(n,d));return s;}
+  document.querySelectorAll('[data-eq]').forEach(function(h){
+    var toks=h.getAttribute('data-eq').trim().split(/\s+/);h.textContent='';
+    toks.forEach(function(t,i){
+      if(i)h.appendChild(document.createTextNode(' '));
+      var m=/^(\d+)_(\d+)\/(\d+)$/.exec(t); if(m){h.appendChild(mx(m[1],m[2],m[3]));return;}
+      m=/^(\d+)\/(\d+)$/.exec(t); if(m){h.appendChild(fr(m[1],m[2]));return;}
+      var s=document.createElement('span');
+      if('×=+−-÷'.indexOf(t)>=0)s.className='op';
+      s.textContent=t;h.appendChild(s);});
+  });
+})();
+</script>
+</body></html>
