@@ -205,6 +205,20 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
 #tools button.act{background:var(--fc); color:#fff; border-color:var(--fc)}
 #counter{font-family:var(--mono); font-size:17px; color:var(--ink-2); background:rgba(255,255,255,.72);
   border:1px solid rgba(128,140,132,.35); border-radius:999px; padding:8px 16px; backdrop-filter:blur(6px)}
+#lessons{position:fixed; left:50%; transform:translateX(-50%); bottom:20px; z-index:33;
+  display:flex; gap:5px; padding:6px; border-radius:15px; max-width:calc(100vw - 200px); overflow-x:auto;
+  background:rgba(255,255,255,.82); border:1px solid rgba(128,140,132,.35); backdrop-filter:blur(8px)}
+#lessons button{font-family:var(--sans); font-size:15px; font-weight:600; padding:7px 14px;
+  border-radius:10px; border:none; background:transparent; color:#16211C; cursor:pointer; white-space:nowrap}
+#lessons button:hover{background:rgba(38,119,90,.13)}
+#lessons button.on{background:var(--fc); color:#fff}
+#lessons button:focus-visible{outline:3px solid var(--fc); outline-offset:2px}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) #lessons{background:rgba(28,36,31,.86); border-color:rgba(150,165,155,.35)}
+  :root:not([data-theme="light"]) #lessons button{color:#E6EDE7}
+}
+:root[data-theme="dark"] #lessons{background:rgba(28,36,31,.86); border-color:rgba(150,165,155,.35)}
+:root[data-theme="dark"] #lessons button{color:#E6EDE7}
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]) .navbtn,
   :root:not([data-theme="light"]) #tools button,
@@ -284,8 +298,9 @@ body{margin:0; background:var(--stage-bg); color:var(--ink);
 <div id="chrome">
   <button class="navbtn" id="prev" aria-label="이전 슬라이드">‹</button>
   <button class="navbtn" id="next" aria-label="다음 슬라이드">›</button>
+  <nav id="lessons" aria-label="차시 바로가기"></nav>
   <div id="tools">
-    <span id="counter" aria-live="polite">1 / 26</span>
+    <span id="counter" aria-live="polite">1 / 32</span>
     <button id="unlockbtn" aria-label="연습 문제 잠금 해제" style="display:none">잠금 해제</button>
     <button id="animbtn" aria-label="단계별 등장 켜기 끄기">단계별 등장</button>
     <button id="notebtn" aria-label="발표자 노트 열기">발표자 노트</button>
@@ -320,7 +335,7 @@ function mixEl(w,n,d){
 /* [3/4] 분수 · [1_3/4] 대분수 · *굵게* · {✗ …}{✓ …} 정오 · | 화살표 */
 function md(str,host){
   host.textContent='';
-  var re=/\[(\d+)_(\d+)\/(\d+)\]|\[(\d+)\/(\d+)\]|\*([^*]+)\*|\{([^}]+)\}|(\|)/g, last=0, m;
+  var re=/\[(\d+)_(\d+)\/(\d+)\]|\[(\d+)\/(\d+)\]|\*([^*]+)\*|\{([^}]+)\}|(\|)|\[(\d+)\]/g, last=0, m;
   while((m=re.exec(str))){
     if(m.index>last) host.appendChild(document.createTextNode(str.slice(last,m.index)));
     if(m[1]) host.appendChild(mixEl(m[1],m[2],m[3]));
@@ -328,7 +343,8 @@ function md(str,host){
     else if(m[6]){ var b=document.createElement('b'); md(m[6],b); host.appendChild(b); }
     else if(m[7]){ var k=document.createElement('span'); k.className=/^✗/.test(m[7])?'mark-x':'mark-o';
            md(m[7].replace(/^[✗✓]\s*/,''),k); host.appendChild(k); }
-    else { var a=document.createElement('span'); a.className='arrow'; a.textContent='→'; host.appendChild(a); }
+    else if(m[8]){ var a=document.createElement('span'); a.className='arrow'; a.textContent='→'; host.appendChild(a); }
+    else { host.appendChild(document.createTextNode(m[9])); }   /* [12] 처럼 대괄호 안 정수 */
     last=re.lastIndex;
   }
   if(last<str.length) host.appendChild(document.createTextNode(str.slice(last)));
@@ -1104,7 +1120,7 @@ var L=[
 
 /* ---------------- 4차시 ---------------- */
 {k:'intro',chasi:'4차시',title:'(자연수) × (진분수)',pages:'수 40–41p · 수익 30–31p',
- read:'[12] × [2/3] 은 “[2/3]번 더한다”가 아니라 *12의 [2/3]만큼*',
+ read:'12 × [2/3] 은 “[2/3]번 더한다”가 아니라 *12의 [2/3]만큼*',
  trapKey:'{✗ 곱하면 항상 커진다} | {✓ 12 × [2/3] = 8}',
  trapSub:'1보다 작은 수를 곱하면 작아진다 — 8장은 12장보다 눈에 보이게 적습니다',
  sub:'이 단원에서 가장 큰 개념 전환입니다. 곱하는 수가 1보다 작으므로 결과가 원래 수보다 작아집니다.',
@@ -1443,7 +1459,8 @@ L.forEach(function(sl,i){
     var kk=el('div','keys',slide);
     kk.innerHTML='<span><kbd>→</kbd>그림을 한 단계씩 쌓고, 다 쌓이면 다음 화면</span>'+
       '<span><kbd>N</kbd>발표자 노트</span><span><kbd>A</kbd>단계별 등장 끄기</span>'+
-      '<span><kbd>O</kbd>전체 보기</span><span><kbd>1</kbd>~<kbd>6</kbd>차시로 이동</span>'+
+      '<span><kbd>O</kbd>전체 보기</span>'+
+      '<span><kbd>1</kbd>~<kbd>6</kbd>차시로 이동 — 화면 아래 <b>차시 바로가기</b>를 눌러도 됩니다</span>'+
       '<span>연습 문제는 세 문제를 맞혀야 넘어갑니다 — 교사용 <kbd>Shift</kbd><kbd>→</kbd>로 건너뛰기</span>';
     nodes.push(slide); return;
   }
@@ -1468,7 +1485,7 @@ L.forEach(function(sl,i){
     var tb=el('div','trapbig',ib);
     el('div','lbl',tb).textContent='자주 나오는 오답';
     md(sl.trapKey,el('div','line',tb));
-    el('div','sub2',tb).textContent=sl.trapSub;
+    md(sl.trapSub,el('div','sub2',tb));
     nodes.push(slide); return;
   }
 
@@ -1609,6 +1626,7 @@ function applyBuild(){
   var ub=document.getElementById('unlockbtn');
   ub.style.display=isQuiz?'':'none';
   ub.classList.toggle('act',!!UNLOCK[cur]);
+  markLesson();
 }
 function show(i,push,atEnd){
   i=Math.max(0,Math.min(L.length-1,i));
@@ -1668,6 +1686,24 @@ document.getElementById('unlockbtn').addEventListener('click',function(){
 });
 
 var LESSON_START=[2,7,12,17,22,27];
+var LESSON_NAME=['2차시','3차시','4차시','5차시','6·7차시','8차시'];
+
+/* 차시 바로가기 바 */
+(function(){
+  var bar=document.getElementById('lessons');
+  var items=[{i:0,t:'표지'},{i:1,t:'개념 흐름'}].concat(
+    LESSON_START.map(function(v,k){ return {i:v,t:LESSON_NAME[k]}; }));
+  items.forEach(function(it){
+    var b=el('button',null,bar); b.type='button'; b.textContent=it.t; b._to=it.i;
+    b.addEventListener('click',function(){ show(it.i); });
+  });
+})();
+function markLesson(){
+  var btns=document.getElementById('lessons').children;
+  var best=-1;
+  for(var k=0;k<btns.length;k++) if(btns[k]._to<=cur) best=k;
+  for(var j=0;j<btns.length;j++) btns[j].classList.toggle('on',j===best);
+}
 
 document.addEventListener('keydown',function(e){
   if(e.metaKey||e.ctrlKey||e.altKey) return;
@@ -1777,8 +1813,12 @@ anim=animInit;
 stage.classList.toggle('noanim',!anim);
 document.getElementById('animbtn').classList.toggle('act',anim);
 
+/* 시작 화면 : #s12 또는 ?s=12 로 특정 차시를 바로 열 수 있게 */
+var start=0;
 var hm=/^#s(\d+)$/.exec(location.hash);
-show(hm? (+hm[1]-1) : 0, false);
+if(hm) start=+hm[1]-1;
+else { var qm=/[?&]s=(\d+)/.exec(location.search); if(qm) start=+qm[1]-1; }
+show(start,false);
 
 try{
   if(window.claude && window.claude.hot){
