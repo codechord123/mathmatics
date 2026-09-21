@@ -6,6 +6,7 @@
 <title>도전 골든벨</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html,body{height:100%;overflow:hidden;background:#05091c;
  font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR','맑은 고딕',sans-serif;
  color:#fff;-webkit-font-smoothing:antialiased}
@@ -43,8 +44,8 @@ html,body{height:100%;overflow:hidden;background:#05091c;
  -webkit-background-clip:text;background-clip:text;color:transparent;
  filter:drop-shadow(0 4px 0 rgba(0,0,0,.28))}
 .sub{font-size:25px;color:rgba(255,255,255,.66);font-weight:700;margin-top:2px}
-.lb-body{display:grid;grid-template-columns:520px 1fr;gap:30px;height:552px}
-.lb-left{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:22px;padding:24px}
+.lb-body{display:grid;grid-template-columns:660px 1fr;gap:26px;height:614px}
+.lb-left{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:22px;padding:24px 26px;overflow:hidden}
 .lh{font-size:28px;font-weight:900;margin-bottom:14px;color:#ffd24a}
 .row{display:flex;gap:10px}
 .row2{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
@@ -56,10 +57,10 @@ html,body{height:100%;overflow:hidden;background:#05091c;
 .paste{display:none;width:100%;height:132px;margin-top:12px;font:inherit;font-size:19px;line-height:1.5;
  padding:12px 14px;border-radius:14px;border:2px solid rgba(255,255,255,.25);
  background:rgba(0,0,0,.3);color:#fff;resize:none;outline:none}
-.opt{display:flex;align-items:center;gap:14px;margin-top:18px}
-.ol{font-size:21px;font-weight:800;color:rgba(255,255,255,.7);width:92px;white-space:nowrap;flex:0 0 auto}
+.opt{display:flex;align-items:center;gap:14px;margin-top:13px}
+.ol{font-size:22px;font-weight:800;color:rgba(255,255,255,.7);width:104px;white-space:nowrap;flex:0 0 auto}
 .segs{display:flex;gap:6px;flex-wrap:wrap}
-.seg{padding:9px 12px;border-radius:11px;font-size:18px;font-weight:800;cursor:pointer;white-space:nowrap;
+.seg{padding:10px 16px;border-radius:12px;font-size:20px;font-weight:800;cursor:pointer;white-space:nowrap;
  background:rgba(255,255,255,.08);border:2px solid transparent;transition:.15s}
 .seg.on{background:#ffd24a;color:#3a2500;border-color:#fff3c4}
 .lb-right{background:rgba(0,0,0,.22);border:2px solid rgba(255,255,255,.10);border-radius:22px;padding:18px 20px;display:flex;flex-direction:column}
@@ -88,11 +89,12 @@ html,body{height:100%;overflow:hidden;background:#05091c;
 .qhead{display:flex;align-items:center;justify-content:space-between;height:60px}
 .rnum{font-size:32px;font-weight:900;color:rgba(255,255,255,.8)}
 .rnum b{font-size:46px;color:#ffd24a;margin:0 4px}
-.chips{display:flex;gap:9px}
+.chips{display:flex;gap:9px;flex:1;justify-content:center}
 .chip{padding:9px 18px;border-radius:999px;font-size:21px;font-weight:800;
  background:rgba(108,184,255,.18);border:2px solid rgba(108,184,255,.45);color:#b9dcff}
 .chip.alt{background:rgba(61,220,132,.16);border-color:rgba(61,220,132,.42);color:#b6f2d2}
 .chip.rev{background:rgba(255,107,107,.18);border-color:rgba(255,107,107,.5);color:#ffc0c0}
+.chip.room{background:rgba(255,210,74,.14);border-color:rgba(255,210,74,.42);color:#ffe08a;letter-spacing:.04em}
 .alive{font-size:26px;font-weight:800;color:rgba(255,255,255,.72)}
 .alive b{font-size:42px;color:#3ddc84}
 .alive small{font-size:22px;opacity:.6}
@@ -176,24 +178,140 @@ html,body{height:100%;overflow:hidden;background:#05091c;
  animation:tin .35s ease both}
 @keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(-14px)}to{opacity:1;transform:translateX(-50%)}}
 .hint{position:absolute;left:44px;bottom:28px;font-size:17px;color:rgba(255,255,255,.35);font-weight:700;z-index:5}
+
+/* ---- role picker ---- */
+.roles{display:flex;gap:28px;justify-content:center;margin-top:88px}
+.rolebtn{width:430px;padding:44px 28px;border:3px solid rgba(255,255,255,.18);border-radius:26px;
+ background:rgba(255,255,255,.07);color:#fff;font:inherit;cursor:pointer;
+ display:flex;flex-direction:column;align-items:center;gap:10px;transition:.15s}
+.rolebtn:hover{transform:translateY(-4px);border-color:#ffd24a;background:rgba(255,210,74,.12)}
+.rolebtn .ri{font-size:88px;line-height:1.1}
+.rolebtn b{font-size:40px;font-weight:900;letter-spacing:-.03em}
+.rolebtn small{font-size:22px;color:rgba(255,255,255,.6);font-weight:700}
+.rolenote{text-align:center;margin-top:34px;font-size:21px;color:rgba(255,255,255,.45);font-weight:700}
+
+/* ---- room panel ---- */
+.roomrow{display:flex;gap:26px;align-items:center}
+.roomqr{background:#fff;padding:12px;border-radius:18px;flex:0 0 auto;line-height:0}
+.roomqr canvas{display:block;width:222px;height:222px;image-rendering:pixelated}
+.rl{font-size:24px;font-weight:800;color:rgba(255,255,255,.55);letter-spacing:.14em}
+.rv{font-size:100px;font-weight:900;line-height:1.05;letter-spacing:.06em;
+ background:linear-gradient(180deg,#fff7d6,#ffd24a 55%,#e79b00);
+ -webkit-background-clip:text;background-clip:text;color:transparent}
+.rlink{font-size:16px;color:rgba(255,255,255,.45);font-weight:700;word-break:break-all;line-height:1.35;margin-top:2px}
+.rnote{margin-top:18px;font-size:20px;line-height:1.55;color:rgba(255,255,255,.72);font-weight:700}
+.rnote b{color:#ffd24a}
+.rwarn{margin-top:10px;font-size:17px;line-height:1.5;color:rgba(255,255,255,.42);font-weight:700}
+.rhead{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.rhead small{font-size:17px;opacity:.55;font-weight:700}
+
+/* ---- student app (responsive, not scaled) ---- */
+body.student #wrap{display:none}
+body.student #sapp{display:block}
+#sapp{display:none;min-height:100vh;padding:18px 16px 40px;
+ background:radial-gradient(700px 420px at 50% 0%,#23306f 0%,#141e52 45%,#070c22 100%)}
+.sbox{max-width:600px;margin:0 auto}
+.shd{text-align:center;margin-bottom:18px}
+.shd .b{font-size:40px;line-height:1}
+.shd h1{font-size:30px;font-weight:900;letter-spacing:-.03em;
+ background:linear-gradient(180deg,#fff7d6,#ffd24a 55%,#e79b00);
+ -webkit-background-clip:text;background-clip:text;color:transparent}
+.shd p{font-size:16px;color:rgba(255,255,255,.55);font-weight:700;margin-top:2px}
+.sfield{margin-bottom:14px}
+.slab{font-size:17px;font-weight:800;color:rgba(255,255,255,.65);margin-bottom:6px}
+.sinput{width:100%;font:inherit;font-size:26px;font-weight:800;padding:14px 16px;border-radius:14px;
+ border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.3);color:#fff;outline:none;text-align:center}
+.sinput:focus{border-color:#ffd24a;background:rgba(0,0,0,.45)}
+.sbtn{width:100%;border:0;font:inherit;font-size:22px;font-weight:900;padding:16px;border-radius:16px;
+ cursor:pointer;background:linear-gradient(180deg,#ffdc6b,#f0a81c);color:#3a2500;
+ box-shadow:0 6px 0 #b97c00;margin-top:6px}
+.sbtn:active{transform:translateY(3px);box-shadow:0 3px 0 #b97c00}
+.sbtn.ghost{background:rgba(255,255,255,.12);color:#fff;box-shadow:none;border:2px solid rgba(255,255,255,.22)}
+.sbtn[disabled]{opacity:.4;pointer-events:none}
+.serr{color:#ff9d9d;font-size:16px;font-weight:800;text-align:center;margin-top:10px;min-height:20px}
+.stop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.sround{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:900}
+.sround b{font-size:27px;color:#ffd24a}
+.nud{width:34px;height:34px;border-radius:10px;border:2px solid rgba(255,255,255,.2);
+ background:rgba(255,255,255,.08);color:#fff;font-size:17px;font-weight:900;cursor:pointer}
+.sbadge{padding:7px 14px;border-radius:999px;font-size:16px;font-weight:900;
+ background:rgba(61,220,132,.2);border:2px solid rgba(61,220,132,.5);color:#b6f2d2;white-space:nowrap}
+.sbadge.out{background:rgba(255,107,107,.18);border-color:rgba(255,107,107,.5);color:#ffc0c0}
+.schips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.schip{padding:5px 12px;border-radius:999px;font-size:14px;font-weight:800;
+ background:rgba(108,184,255,.16);border:1px solid rgba(108,184,255,.4);color:#b9dcff}
+.sq{background:rgba(255,255,255,.07);border:2px solid rgba(255,210,74,.32);border-radius:18px;
+ padding:22px 18px;font-size:27px;font-weight:800;line-height:1.5;text-align:center;
+ display:flex;align-items:center;justify-content:center;gap:12px;min-height:130px}
+.sq .si{font-size:40px;flex:0 0 auto}
+.ansin{display:flex;align-items:center;justify-content:center;gap:12px;margin:18px 0 6px}
+.ansin input{width:78px;font:inherit;font-size:30px;font-weight:900;text-align:center;padding:10px 4px;
+ border-radius:12px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.32);color:#fff;outline:none}
+.ansin input:focus{border-color:#ffd24a}
+.ansin input::placeholder{font-size:16px;font-weight:700;color:rgba(255,255,255,.34)}
+.fracin{display:flex;flex-direction:column;align-items:center;gap:5px}
+.fracbar{width:78px;height:4px;background:rgba(255,255,255,.85);border-radius:2px}
+.anshint{text-align:center;font-size:14px;color:rgba(255,255,255,.4);font-weight:700;margin-bottom:10px}
+.res{margin-top:16px;border-radius:18px;padding:18px;text-align:center;animation:pop .3s ease both}
+.res.ok{background:rgba(61,220,132,.16);border:2px solid #3ddc84}
+.res.no{background:rgba(255,107,107,.15);border:2px solid #ff6b6b}
+.res .rt{font-size:30px;font-weight:900;margin-bottom:8px}
+.res.ok .rt{color:#8ff0bb}.res.no .rt{color:#ffb3b3}
+.res .ra{font-size:40px;font-weight:900;margin-bottom:10px}
+.res .rh{font-size:18px;font-weight:700;color:rgba(255,255,255,.75);line-height:1.6}
+.sfoot{margin-top:16px;display:flex;gap:10px}
+.sfoot .sbtn{margin-top:0}
+.sstat{text-align:center;font-size:15px;color:rgba(255,255,255,.45);font-weight:700;margin-top:16px}
+#sapp .fr{font-size:.74em;vertical-align:middle;position:relative;top:-.04em}
 </style>
 </head>
 <body>
 <div id="wrap"><div id="stage">
 <canvas id="cf" width="1600" height="900"></canvas>
 
-<section class="scr on" id="scLobby">
+<section class="scr on" id="scRole">
   <div class="lb-head">
     <div class="crown">🔔</div>
     <h1 class="ttl">도전! 골든벨</h1>
     <p class="sub">5학년 1학기 · 분수의 곱셈</p>
   </div>
+  <div class="roles">
+    <button class="rolebtn" id="roleT"><span class="ri">🖥️</span><b>선생님 화면</b><small>전자칠판에 띄우기</small></button>
+    <button class="rolebtn" id="roleS"><span class="ri">📱</span><b>학생으로 들어가기</b><small>내 기기에서 풀기</small></button>
+  </div>
+  <p class="rolenote">선생님이 먼저 방을 열고, 아이들은 QR이나 링크로 들어와 방 번호를 입력합니다.</p>
+</section>
+
+<section class="scr" id="scLobby">
+  <div class="lb-head" style="margin-bottom:10px">
+    <h1 class="ttl" style="font-size:54px">도전! 골든벨</h1>
+    <p class="sub">5학년 1학기 · 분수의 곱셈</p>
+  </div>
   <div class="lb-body">
     <div class="lb-left">
-      <h2 class="lh">입장하기</h2>
+      <div class="roomrow">
+        <div class="roomqr"><canvas id="qr" width="168" height="168"></canvas></div>
+        <div class="roomno">
+          <div class="rl">방 번호</div>
+          <div class="rv" id="roomNo">0000</div>
+          <div class="rlink" id="roomLink"></div>
+        </div>
+      </div>
+      <p class="rnote">📱 아이들은 <b>QR을 찍거나 링크</b>로 들어와 <b>방 번호</b>를 입력하면
+        이 화면과 <b>똑같은 문제</b>가 자기 기기에 나옵니다.</p>
+      <p class="rwarn" id="rwarn">아이들이 들어오려면 처음 한 번, 오른쪽 위 <b>공유</b>에서
+        <b>“링크가 있는 모든 사용자”</b>로 바꿔 주세요.</p>
+      <div class="opt"><span class="ol">제한 시간</span><div class="segs" id="timeSeg"></div></div>
+      <div class="opt"><span class="ol">소리</span><div class="segs" id="sndSeg"></div></div>
+      <div class="opt"><span class="ol">문제</span><div class="segs" id="lvSeg"></div></div>
+    </div>
+    <div class="lb-right">
+      <div class="rhead">
+        <div class="cnt"><b id="cntN">0</b>명 <small>칠판에서 채점할 명단 (선택)</small></div>
+      </div>
       <div class="row">
         <input id="nameIn" placeholder="이름을 쓰고 Enter" maxlength="10" autocomplete="off">
-        <button class="btn gold" id="addBtn">입장</button>
+        <button class="btn gold" id="addBtn">추가</button>
       </div>
       <div class="row2">
         <button class="btn ghost" id="numBtn">번호로 채우기</button>
@@ -202,23 +320,17 @@ html,body{height:100%;overflow:hidden;background:#05091c;
       </div>
       <textarea id="pasteArea" class="paste" placeholder="한 줄에 한 명씩 이름을 붙여넣으세요"></textarea>
       <button class="btn gold wide" id="pasteOk" style="display:none">명단 등록</button>
-      <div class="opt"><span class="ol">제한 시간</span><div class="segs" id="timeSeg"></div></div>
-      <div class="opt"><span class="ol">소리</span><div class="segs" id="sndSeg"></div></div>
-      <div class="opt"><span class="ol">문제</span><div class="segs" id="lvSeg"></div></div>
-    </div>
-    <div class="lb-right">
-      <div class="cnt"><b id="cntN">0</b>명 입장</div>
       <div class="pgrid" id="lobGrid"></div>
     </div>
   </div>
-  <button class="start" id="startBtn" disabled>골든벨 시작 ▶</button>
+  <button class="start" id="startBtn">골든벨 시작 ▶</button>
 </section>
 
 <section class="scr" id="scQuiz">
   <div class="qhead">
     <div class="rnum">제 <b id="rN">1</b> 문제</div>
-    <div class="chips"><span class="chip" id="chLes"></span><span class="chip alt" id="chTag"></span></div>
-    <div class="alive">생존 <b id="aliveN">0</b><small>/<span id="totN">0</span></small></div>
+    <div class="chips"><span class="chip room" id="chRoom"></span><span class="chip" id="chLes"></span><span class="chip alt" id="chTag"></span></div>
+    <div class="alive" id="aliveBox">생존 <b id="aliveN">0</b><small>/<span id="totN">0</span></small></div>
   </div>
   <div class="tbar" id="tbar"><i id="tfill"></i><span id="tnum">40</span></div>
   <div class="qbox" id="qbox">
@@ -235,6 +347,7 @@ html,body{height:100%;overflow:hidden;background:#05091c;
     <button class="btn gold" id="revBtn">정답 공개</button>
     <button class="btn gold" id="scoreBtn" style="display:none">채점하기 ▶</button>
     <button class="btn ghost" id="skipBtn">다른 문제</button>
+    <button class="btn ghost" id="bellBtn" style="display:none">🔔 골든벨</button>
   </div>
   <div class="hint">Space 타이머 · Enter 정답공개 · → 다음</div>
 </section>
@@ -270,6 +383,50 @@ html,body{height:100%;overflow:hidden;background:#05091c;
 </section>
 
 </div></div>
+
+<div id="sapp">
+  <div class="sbox">
+    <section id="stJoin">
+      <div class="shd"><div class="b">🔔</div><h1>도전! 골든벨</h1><p>분수의 곱셈</p></div>
+      <div class="sfield"><div class="slab">방 번호 (칠판에 있는 4자리)</div>
+        <input class="sinput" id="jCode" inputmode="numeric" maxlength="4" placeholder="0000"></div>
+      <div class="sfield"><div class="slab">이름</div>
+        <input class="sinput" id="jName" maxlength="10" placeholder="이름"></div>
+      <button class="sbtn" id="jGo">들어가기</button>
+      <div class="serr" id="jErr"></div>
+    </section>
+
+    <section id="stPlay" hidden>
+      <div class="stop">
+        <div class="sround"><button class="nud" id="nPrev">◀</button>제 <b id="sRn">1</b> 문제<button class="nud" id="nNext">▶</button></div>
+        <div class="sbadge" id="sBadge">생존</div>
+      </div>
+      <div class="schips"><span class="schip" id="sLes"></span><span class="schip" id="sTag"></span></div>
+      <div class="sq"><span class="si" id="sIcon"></span><span id="sText"></span></div>
+
+      <div id="sAnsWrap">
+        <div class="ansin">
+          <input id="inW" inputmode="numeric" maxlength="3" placeholder="자연수">
+          <div class="fracin">
+            <input id="inN" inputmode="numeric" maxlength="3" placeholder="분자">
+            <div class="fracbar"></div>
+            <input id="inD" inputmode="numeric" maxlength="3" placeholder="분모">
+          </div>
+        </div>
+        <div class="anshint">자연수만 있으면 왼쪽 칸만, 진분수면 분자·분모만 쓰세요</div>
+        <button class="sbtn" id="sSubmit">답 제출</button>
+      </div>
+
+      <div id="sRes"></div>
+      <div class="sfoot" id="sFoot" hidden>
+        <button class="sbtn ghost" id="sRevive" hidden>부활 도전</button>
+        <button class="sbtn" id="sNext">다음 문제 ▶</button>
+      </div>
+      <div class="sstat" id="sStat"></div>
+    </section>
+  </div>
+</div>
+
 <script>
 (function(){
 "use strict";
@@ -293,11 +450,145 @@ function dingdong(){beep(784,'triangle',.5,.18);setTimeout(function(){beep(587,'
 function buzz(){beep(150,'sawtooth',.45,.14)}
 function bellRing(){[1046,1318,1568,2093].forEach(function(f,i){setTimeout(function(){beep(f,'triangle',1.3,.17)},i*140)})}
 
+/* Minimal QR encoder — byte mode, EC level M, versions 1..10 */
+var QR=(function(){
+/* [ecPerBlock, g1blocks, g1data, g2blocks, g2data] for EC level M */
+var EC=[null,
+ [10,1,16,0,0],[16,1,28,0,0],[26,1,44,0,0],[18,2,32,0,0],[24,2,43,0,0],
+ [16,4,27,0,0],[18,4,31,0,0],[22,2,38,2,39],[22,3,36,2,37]];
+var ALIGN=[null,[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46]];
+/* GF(256) */
+var EXP=new Array(512),LOG=new Array(256);
+(function(){var x=1;for(var i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x<<=1;if(x&0x100)x^=0x11D}
+ for(i=255;i<512;i++)EXP[i]=EXP[i-255]})();
+function mul(a,b){return (a===0||b===0)?0:EXP[LOG[a]+LOG[b]]}
+function genPoly(n){var p=[1];
+ for(var i=0;i<n;i++){var q=new Array(p.length+1);for(var j=0;j<q.length;j++)q[j]=0;
+  for(j=0;j<p.length;j++){q[j]^=mul(p[j],1);q[j+1]^=mul(p[j],EXP[i])}
+  p=q}
+ return p}
+function ecc(data,n){var g=genPoly(n),r=data.slice().concat(new Array(n).fill(0));
+ for(var i=0;i<data.length;i++){var f=r[i];if(f===0)continue;
+  for(var j=0;j<g.length;j++)r[i+j]^=mul(g[j],f)}
+ return r.slice(data.length)}
+function fmtBits(mask){var data=(0<<3)|mask,d=data<<10,g=0x537;
+ for(var i=14;i>=10;i--)if(d&(1<<i))d^=g<<(i-10);
+ return ((data<<10)|d)^0x5412}
+function verBits(v){var d=v<<12,g=0x1F25;
+ for(var i=17;i>=12;i--)if(d&(1<<i))d^=g<<(i-12);
+ return (v<<12)|d}
+
+function encode(text){
+ var bytes=[],i;
+ var u=unescape(encodeURIComponent(text));
+ for(i=0;i<u.length;i++)bytes.push(u.charCodeAt(i)&0xff);
+ var ver=0;
+ for(var v=1;v<=9;v++){var e=EC[v];var cap=e[1]*e[2]+e[3]*e[4];
+  if(bytes.length+2<=cap){ver=v;break}}
+ if(!ver)throw new Error('too long');
+ var e=EC[ver],total=e[1]*e[2]+e[3]*e[4];
+ /* bit stream */
+ var bits=[];
+ function put(val,len){for(var k=len-1;k>=0;k--)bits.push((val>>k)&1)}
+ put(4,4);put(bytes.length,8);
+ for(i=0;i<bytes.length;i++)put(bytes[i],8);
+ var rem=total*8-bits.length;
+ put(0,Math.min(4,rem));
+ while(bits.length%8)bits.push(0);
+ var dc=[];for(i=0;i<bits.length;i+=8){var b=0;for(var k=0;k<8;k++)b=(b<<1)|bits[i+k];dc.push(b)}
+ var pad=[0xEC,0x11],p=0;
+ while(dc.length<total)dc.push(pad[(p++)%2]);
+ /* blocks */
+ var blocks=[],pos=0,nb=e[1]+e[3];
+ for(i=0;i<nb;i++){var len=i<e[1]?e[2]:e[4];
+  var d=dc.slice(pos,pos+len);pos+=len;blocks.push({d:d,e:ecc(d,e[0])})}
+ var maxD=Math.max(e[2],e[4]),out=[];
+ for(i=0;i<maxD;i++)for(var j=0;j<nb;j++)if(i<blocks[j].d.length)out.push(blocks[j].d[i]);
+ for(i=0;i<e[0];i++)for(j=0;j<nb;j++)out.push(blocks[j].e[i]);
+
+ /* matrix */
+ var size=17+4*ver;
+ var m=[],fn=[];
+ for(i=0;i<size;i++){m.push(new Array(size).fill(0));fn.push(new Array(size).fill(0))}
+ function set(r,c,v){m[r][c]=v;fn[r][c]=1}
+ function finder(r,c){for(var a=-1;a<=7;a++)for(var b=-1;b<=7;b++){
+  var rr=r+a,cc=c+b;if(rr<0||cc<0||rr>=size||cc>=size)continue;
+  var on=(a>=0&&a<=6&&(b===0||b===6))||(b>=0&&b<=6&&(a===0||a===6))||(a>=2&&a<=4&&b>=2&&b<=4);
+  set(rr,cc,on?1:0)}}
+ finder(0,0);finder(0,size-7);finder(size-7,0);
+ for(i=8;i<size-8;i++){set(6,i,i%2===0?1:0);set(i,6,i%2===0?1:0)}
+ var ac=ALIGN[ver];
+ for(i=0;i<ac.length;i++)for(j=0;j<ac.length;j++){
+  var r=ac[i],c=ac[j];
+  if((r===6&&c===6)||(r===6&&c===size-7)||(r===size-7&&c===6))continue;
+  for(var a=-2;a<=2;a++)for(var b=-2;b<=2;b++)
+   set(r+a,c+b,(Math.max(Math.abs(a),Math.abs(b))!==1)?1:0)}
+ set(size-8,8,1);
+ /* reserve format */
+ for(i=0;i<9;i++){if(i!==6)fn[8][i]=1;if(i!==6)fn[i][8]=1}
+ for(i=0;i<8;i++){fn[8][size-1-i]=1;fn[size-1-i][8]=1}
+ if(ver>=7){for(i=0;i<6;i++)for(j=0;j<3;j++){fn[i][size-11+j]=1;fn[size-11+j][i]=1}}
+ /* data */
+ var bi=0,dir=-1,col=size-1;
+ var dbits=[];for(i=0;i<out.length;i++)for(k=7;k>=0;k--)dbits.push((out[i]>>k)&1);
+ while(col>0){
+  if(col===6)col--;
+  for(var rowi=0;rowi<size;rowi++){
+   var row=dir<0?size-1-rowi:rowi;
+   for(var cx=0;cx<2;cx++){var cc2=col-cx;
+    if(fn[row][cc2])continue;
+    m[row][cc2]=bi<dbits.length?dbits[bi]:0;bi++}}
+  dir=-dir;col-=2}
+ /* mask + penalty */
+ function maskFn(k,r,c){
+  switch(k){case 0:return (r+c)%2===0;case 1:return r%2===0;case 2:return c%3===0;
+   case 3:return (r+c)%3===0;case 4:return (Math.floor(r/2)+Math.floor(c/3))%2===0;
+   case 5:return ((r*c)%2+(r*c)%3)===0;case 6:return (((r*c)%2+(r*c)%3)%2)===0;
+   default:return (((r+c)%2+(r*c)%3)%2)===0}}
+ function penalty(g){
+  var n=g.length,s=0,r,c,i2,run,last;
+  for(r=0;r<n;r++){run=1;last=g[r][0];for(c=1;c<n;c++){if(g[r][c]===last)run++;else{if(run>=5)s+=3+(run-5);run=1;last=g[r][c]}}if(run>=5)s+=3+(run-5)}
+  for(c=0;c<n;c++){run=1;last=g[0][c];for(r=1;r<n;r++){if(g[r][c]===last)run++;else{if(run>=5)s+=3+(run-5);run=1;last=g[r][c]}}if(run>=5)s+=3+(run-5)}
+  for(r=0;r<n-1;r++)for(c=0;c<n-1;c++){var v=g[r][c];if(v===g[r][c+1]&&v===g[r+1][c]&&v===g[r+1][c+1])s+=3}
+  var pat=[1,0,1,1,1,0,1,0,0,0,0],pat2=[0,0,0,0,1,0,1,1,1,0,1];
+  function look(arr){var cnt=0;for(var i3=0;i3+11<=arr.length;i3++){
+   var ok1=true,ok2=true;
+   for(var j3=0;j3<11;j3++){if(arr[i3+j3]!==pat[j3])ok1=false;if(arr[i3+j3]!==pat2[j3])ok2=false}
+   if(ok1)cnt++;if(ok2)cnt++}return cnt}
+  for(r=0;r<n;r++)s+=40*look(g[r]);
+  for(c=0;c<n;c++){var colArr=[];for(r=0;r<n;r++)colArr.push(g[r][c]);s+=40*look(colArr)}
+  var dark=0;for(r=0;r<n;r++)for(c=0;c<n;c++)dark+=g[r][c];
+  var pct=dark*100/(n*n);s+=Math.floor(Math.abs(pct-50)/5)*10;
+  return s}
+ var best=null,bestScore=1e9,bestMask=0;
+ for(var mk=0;mk<8;mk++){
+  var g=[];for(r=0;r<size;r++)g.push(m[r].slice());
+  for(r=0;r<size;r++)for(c=0;c<size;c++)if(!fn[r][c]&&maskFn(mk,r,c))g[r][c]^=1;
+  /* format info */
+  var fb=fmtBits(mk);
+  for(i=0;i<15;i++){var bit=(fb>>i)&1;
+   if(i<6)g[i][8]=bit; else if(i===6)g[7][8]=bit; else if(i===7)g[8][8]=bit;
+   else if(i===8)g[8][7]=bit; else g[8][14-i]=bit;
+   if(i<8)g[8][size-1-i]=bit; else g[size-15+i][8]=bit}
+  g[size-8][8]=1;
+  if(ver>=7){var vb=verBits(ver);
+   for(i=0;i<18;i++){var b2=(vb>>i)&1;var rr2=Math.floor(i/3),cc3=i%3;
+    g[rr2][size-11+cc3]=b2;g[size-11+cc3][rr2]=b2}}
+  var sc=penalty(g);
+  if(sc<bestScore){bestScore=sc;best=g;bestMask=mk}}
+ return best}
+return {encode:encode};
+})();
+
 /* ---------- math helpers ---------- */
 function gcd(a,b){while(b){var t=a%b;a=b;b=t}return a||1}
 function red(n,d){var k=gcd(n,d);return [n/k,d/k]}
-function R(a,b){return a+Math.floor(Math.random()*(b-a+1))}
-function pick(a){return a[Math.floor(Math.random()*a.length)]}
+var RNG=Math.random;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;
+ var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;
+ return ((t^t>>>14)>>>0)/4294967296}}
+function R(a,b){return a+Math.floor(RNG()*(b-a+1))}
+function pick(a){return a[Math.floor(RNG()*a.length)]}
 /* token string for a fraction value, already reduced */
 function fmt(n,d){var r=red(n,d);n=r[0];d=r[1];
  if(d===1)return '['+n+']';
@@ -443,28 +734,48 @@ gen(4,function(){var w=R(1,3),b=R(2,6),a=num(b),i1=w*b+a,d=R(2,8),c=num(d);
   text:'['+w+'_'+a+'/'+b+'] × ['+c+'/'+d+'] = ?',ans:[i1*c,b*d],
   how:['앞의 대분수를 가분수로',raw(i1,b)+' × ['+c+'/'+d+'] = '+raw(i1*c,b*d),tidy(i1*c,b*d,'= ')]}});
 
-/* tier plan by round */
-function tierFor(r,isFinal){
- if(isFinal)return 4;
- if(r<=4)return 1; if(r<=9)return 2; if(r<=14)return 3; return 4;}
-var lastGen=-1, levelCap=0; /* 0 = 전체 진도 */
-function makeQ(r,isFinal){
- var t=tierFor(r,isFinal);
- if(levelCap)t=Math.min(t,levelCap);
+/* ---------- 방 번호로 정해지는 문제 ----------
+   방 번호 4자리 = 씨앗 3자리 + 진도 1자리.
+   같은 방 번호 · 같은 문제 번호면 어느 기기에서나 똑같은 문제가 나온다. */
+function tierFor(r){ if(r<=3)return 1; if(r<=6)return 2; if(r<=10)return 3; return 4}
+var levelCap=0; /* 0 = 전체 진도 */
+function makeQ(code,r){
+ RNG=mulberry32((((code*7919)>>>0)^((r*2654435761)>>>0))>>>0);
+ RNG();RNG();
+ var t=tierFor(r),cap=code%10;
+ if(cap)t=Math.min(t,cap);
  var pool=[],i;
  for(i=0;i<GENS.length;i++)if(GENS[i].t===t)pool.push(i);
- if(pool.length>1){var p2=pool.filter(function(x){return x!==lastGen});if(p2.length)pool=p2}
- var gi=pick(pool);lastGen=gi;
- var q=GENS[gi].f();q.gi=gi;return q}
+ var gi=pool[Math.floor(RNG()*pool.length)];
+ var q=GENS[gi].f();q.gi=gi;
+ RNG=Math.random;
+ return q}
 
 /* ---------- state ---------- */
 var EMO=['🦊','🐼','🐰','🐯','🐨','🐸','🐵','🦁','🐮','🐷','🐙','🦄','🐝','🐧','🦉','🐢','🦕','🐳','🦋','🐞',
          '🍎','🍊','🍇','🍓','🍑','🍉','🥝','🍒','🌽','🥕','🍄','🌻','⭐','🌈','⚡','🔥','💎','🎈','🎨','🚀'];
-var S={players:[],round:0,q:null,phase:'lobby',dur:40,left:40,run:false,
-       revive:false,final:false,marks:{},tid:0,seq:1};
+var S={players:[],round:0,q:null,phase:'role',dur:40,left:40,run:false,
+       revive:false,final:false,marks:{},tid:0,seq:1,code:0};
 
 function alive(){return S.players.filter(function(p){return p.alive})}
 function dead(){return S.players.filter(function(p){return !p.alive})}
+
+/* ---------- 방 번호 · QR ---------- */
+function baseUrl(){return location.href.split('#')[0]}
+function newCode(){S.code=(100+Math.floor(Math.random()*900))*10+levelCap;drawRoom()}
+function setLevel(v){levelCap=v;S.code=Math.floor(S.code/10)*10+v;drawRoom()}
+function drawRoom(){
+ var link=baseUrl()+'#'+S.code;
+ $('#roomNo').textContent=S.code;
+ $('#roomLink').textContent=link.replace(/^https?:\/\//,'');
+ var c=$('#qr'),g=c.getContext('2d'),m;
+ try{m=QR.encode(link)}catch(e){c.style.opacity='0';return}
+ c.style.opacity='1';
+ var n=m.length,q=2,px=n+q*2,k=Math.max(2,Math.floor(340/px));
+ c.width=px*k;c.height=px*k;
+ g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);
+ g.fillStyle='#000';
+ for(var r=0;r<n;r++)for(var cc=0;cc<n;cc++)if(m[r][cc])g.fillRect((cc+q)*k,(r+q)*k,k,k);}
 
 /* ---------- lobby ---------- */
 function saveRoster(){try{localStorage.setItem('gb_roster',JSON.stringify(
@@ -486,8 +797,7 @@ function drawLobby(){
   el.querySelector('.del').onclick=function(){
    S.players=S.players.filter(function(x){return x!==p});saveRoster();drawLobby()};
   g.appendChild(el)});
- $('#cntN').textContent=S.players.length;
- $('#startBtn').disabled=S.players.length<1;}
+ $('#cntN').textContent=S.players.length;}
 
 function segs(host,items,cur,cb){
  host.innerHTML='';
@@ -500,7 +810,7 @@ function segs(host,items,cur,cb){
 
 /* ---------- screens ---------- */
 function show(id){
- ['scLobby','scQuiz','scScore','scEnd'].forEach(function(s){
+ ['scRole','scLobby','scQuiz','scScore','scEnd'].forEach(function(s){
   $('#'+s).classList.toggle('on',s===id)})}
 
 function toast(msg){
@@ -519,17 +829,19 @@ function nextQuestion(isFinal){
  stopTimer();
  S.final=!!isFinal;
  S.round++;
- S.q=makeQ(S.round,S.final);
+ S.q=makeQ(S.code,S.round);
  S.marks={};
  S.phase='ask';
  var q=S.q;
  $('#rN').textContent=S.round;
+ $('#chRoom').textContent='방 '+S.code;
  $('#chLes').textContent=S.final?'🔔 최종 문제':q.les;
  $('#chLes').className='chip'+(S.final?' rev':'');
  $('#chTag').textContent=S.revive?'패자부활전 · '+q.tag:q.tag;
  $('#chTag').className='chip'+(S.revive?' rev':' alt');
  $('#aliveN').textContent=(S.revive?dead().length:alive().length);
  $('#totN').textContent=S.players.length;
+ $('#aliveBox').hidden=S.players.length===0;
  var calc=q.text.length<=34;
  $('#qicon').textContent=q.icon;
  $('#qicon').style.display=calc?'none':'';
@@ -537,6 +849,7 @@ function nextQuestion(isFinal){
  qt.style.textAlign=calc?'center':'left';
  $('#ansbox').classList.remove('on');
  $('#revBtn').style.display='';$('#scoreBtn').style.display='none';$('#skipBtn').style.display='';
+ $('#bellBtn').style.display='none';
  $('#tBtn').style.display=S.dur?'':'none';
  var box=$('#qbox');box.style.animation='none';box.offsetHeight;box.style.animation='';
  show('scQuiz');
@@ -574,8 +887,11 @@ function reveal(){
   var d=document.createElement('div');d.innerHTML=md(line);
   d.style.animationDelay=(.25+i*.35)+'s';h.appendChild(d)});
  $('#ansbox').classList.add('on');
+ var solo=S.players.length===0;
  $('#revBtn').style.display='none';$('#skipBtn').style.display='none';
  $('#tBtn').style.display='none';$('#scoreBtn').style.display='';
+ $('#scoreBtn').textContent=solo?'다음 문제 ▶':'채점하기 ▶';
+ $('#bellBtn').style.display=solo?'':'none';
  dingdong();}
 
 /* ---------- scoring ---------- */
@@ -636,8 +952,9 @@ function confirmScore(){
 /* ---------- end ---------- */
 function endGame(){
  stopTimer();S.phase='end';
+ var solo=S.players.length===0;
  var win=alive();
- $('#endTtl').textContent=win.length?'골든벨을 울렸습니다!':'오늘의 도전 끝!';
+ $('#endTtl').textContent=(solo||win.length)?'골든벨을 울렸습니다!':'오늘의 도전 끝!';
  $('#endTtl').style.fontSize=win.length?'':'60px';
  var w=$('#winners');w.innerHTML='';
  win.slice(0,8).forEach(function(p,i){
@@ -648,9 +965,9 @@ function endGame(){
   el.querySelector('.nm2').textContent=p.name;
   w.appendChild(el)});
  if(!win.length){var el=document.createElement('div');el.className='wcard';
-  el.textContent='다음에 다시 도전!';w.appendChild(el)}
+  el.textContent=solo?'🔔 모두 수고했어요!':'다음에 다시 도전!';w.appendChild(el)}
  var rk=$('#rank');rk.innerHTML='';
- $('#ranklab').style.display=S.round>0?'':'none';
+ $('#ranklab').style.display=(solo||S.round===0)?'none':'';
  S.players.slice().sort(function(a,b){return b.correct-a.correct}).slice(0,24)
   .forEach(function(p){
    var c=document.createElement('div');c.className='rcard';
@@ -661,11 +978,11 @@ function endGame(){
    s.textContent=p.correct+'개';c.appendChild(s);
    rk.appendChild(c)});
  show('scEnd');
- if(win.length){bellRing();confetti()}}
+ if(solo||win.length){bellRing();confetti()}}
 
 function restart(){
  S.players.forEach(function(p){p.alive=true;p.correct=0;p.out=0});
- S.round=0;S.revive=false;S.final=false;lastGen=-1;
+ S.round=0;S.revive=false;S.final=false;
  nextQuestion(false);}
 
 /* ---------- confetti ---------- */
@@ -706,10 +1023,13 @@ $('#pasteOk').onclick=function(){
  $('#pasteArea').style.display='none';$('#pasteOk').style.display='none';
  saveRoster();drawLobby()};
 $('#clrBtn').onclick=function(){if(confirm('참가자를 모두 지울까요?')){S.players=[];S.seq=1;saveRoster();drawLobby()}};
+$('#roleT').onclick=function(){ac();if(!S.code)newCode();else drawRoom();show('scLobby')};
+$('#roleS').onclick=function(){openStudent('')};
 $('#startBtn').onclick=function(){ac();restart()};
 $('#tBtn').onclick=toggleTimer;
 $('#revBtn').onclick=reveal;
-$('#scoreBtn').onclick=openScore;
+$('#scoreBtn').onclick=function(){if(S.players.length===0)nextQuestion(false);else openScore()};
+$('#bellBtn').onclick=function(){S.final=true;endGame()};
 $('#skipBtn').onclick=function(){S.round--;nextQuestion(S.final)};
 $('#allO').onclick=function(){var l=S.revive?dead():alive();
  l.forEach(function(p){S.marks[p.id]='o'});drawScore(l)};
@@ -720,7 +1040,7 @@ $('#backBtn').onclick=function(){S.phase='reveal';show('scQuiz')};
 $('#reviveBtn').onclick=function(){S.revive=true;toast('패자부활전!');nextQuestion(false)};
 $('#finalBtn').onclick=function(){S.revive=false;toast('🔔 최종 문제');nextQuestion(true)};
 $('#againBtn').onclick=function(){parts=[];restart()};
-$('#lobbyBtn').onclick=function(){parts=[];stopTimer();
+$('#lobbyBtn').onclick=function(){parts=[];stopTimer();S.final=false;
  S.players.forEach(function(p){p.alive=true;p.correct=0});drawLobby();show('scLobby')};
 
 document.addEventListener('keydown',function(e){
@@ -734,12 +1054,107 @@ document.addEventListener('keydown',function(e){
  else if(S.phase==='score'){
   if(e.key==='Enter'){e.preventDefault();confirmScore()}}});
 
+
+/* ================= 학생 화면 ================= */
+var ME={code:0,name:'',round:1,alive:true,correct:0,q:null,answered:false};
+function saveMe(){try{localStorage.setItem('gb_me',JSON.stringify(
+ {code:ME.code,name:ME.name,round:ME.round,alive:ME.alive,correct:ME.correct}))}catch(e){}}
+
+function openStudent(code){
+ document.body.classList.add('student');
+ var de=document.documentElement;
+ de.style.overflow='auto';de.style.height='auto';
+ document.body.style.overflow='auto';document.body.style.height='auto';
+ var saved=null;try{saved=JSON.parse(localStorage.getItem('gb_me')||'null')}catch(e){}
+ if(code)$('#jCode').value=code;
+ else if(saved&&saved.code)$('#jCode').value=saved.code;
+ if(saved&&saved.name)$('#jName').value=saved.name;
+ setTimeout(function(){($('#jCode').value?$('#jName'):$('#jCode')).focus()},80);}
+
+function readAns(){
+ var W=$('#inW').value.trim(),N=$('#inN').value.trim(),D=$('#inD').value.trim();
+ if(!W&&!N&&!D)return null;
+ if((N&&!D)||(D&&!N))return null;
+ var w=W?parseInt(W,10):0,n=N?parseInt(N,10):0,d=D?parseInt(D,10):0;
+ if(isNaN(w)||isNaN(n)||isNaN(d))return null;
+ if(!N&&!D)return [w,1];
+ if(d===0)return null;
+ return [w*d+n,d];}
+
+function badge(){
+ $('#sBadge').textContent=ME.alive?'생존':'탈락';
+ $('#sBadge').className='sbadge'+(ME.alive?'':' out');}
+
+function renderS(){
+ ME.q=makeQ(ME.code,ME.round);ME.answered=false;
+ $('#sRn').textContent=ME.round;
+ $('#sLes').textContent=ME.q.les;
+ $('#sTag').textContent=ME.q.tag;
+ var calc=ME.q.text.length<=34;
+ $('#sIcon').textContent=ME.q.icon;
+ $('#sIcon').hidden=calc;
+ $('#sText').innerHTML=md(ME.q.text);
+ $('#sText').style.fontSize=calc?'34px':'';
+ $('#inW').value='';$('#inN').value='';$('#inD').value='';
+ $('#sAnsWrap').hidden=false;$('#sRes').innerHTML='';$('#sFoot').hidden=true;
+ $('#sRevive').hidden=true;
+ $('#sStat').textContent=ME.name+' · 맞힌 문제 '+ME.correct+'개';
+ badge();saveMe();
+ try{window.scrollTo(0,0)}catch(e){}}
+
+function submitS(){
+ if(ME.answered)return;
+ var v=readAns();
+ if(!v){$('#sRes').innerHTML='<div class="anshint" style="color:#ffb3b3;font-size:16px">답을 다시 확인해 주세요</div>';return}
+ ME.answered=true;
+ var a=ME.q.ans,ok=(v[0]*a[1]===a[0]*v[1]);
+ if(ok){ME.correct++;dingdong()}else{ME.alive=false;buzz()}
+ var box=document.createElement('div');
+ box.className='res '+(ok?'ok':'no');
+ var rt=document.createElement('div');rt.className='rt';rt.textContent=ok?'⭕ 정답!':'❌ 아쉬워요';
+ var ra=document.createElement('div');ra.className='ra';ra.innerHTML=md(fmt(a[0],a[1]));
+ var rh=document.createElement('div');rh.className='rh';
+ rh.innerHTML=ME.q.how.filter(function(x){return x}).map(function(l){return md(l)}).join('<br>');
+ box.appendChild(rt);box.appendChild(ra);box.appendChild(rh);
+ $('#sRes').innerHTML='';$('#sRes').appendChild(box);
+ $('#sAnsWrap').hidden=true;$('#sFoot').hidden=false;
+ $('#sRevive').hidden=ME.alive;
+ $('#sStat').textContent=ME.name+' · 맞힌 문제 '+ME.correct+'개';
+ badge();saveMe();}
+
+$('#jGo').onclick=function(){
+ var c=($('#jCode').value||'').trim();
+ if(!/^\d{4}$/.test(c)){$('#jErr').textContent='칠판에 있는 방 번호 4자리를 써 주세요';return}
+ $('#jErr').textContent='';
+ var fresh=(+c)!==ME.code;
+ ME.code=+c;ME.name=($('#jName').value||'').trim()||'나';
+ var saved=null;try{saved=JSON.parse(localStorage.getItem('gb_me')||'null')}catch(e){}
+ if(saved&&saved.code===ME.code){ME.round=saved.round||1;ME.alive=saved.alive!==false;ME.correct=saved.correct||0}
+ else{ME.round=1;ME.alive=true;ME.correct=0}
+ ac();
+ $('#stJoin').hidden=true;$('#stPlay').hidden=false;
+ renderS();};
+$('#jCode').onkeydown=function(e){if(e.key==='Enter')$('#jName').focus()};
+$('#jName').onkeydown=function(e){if(e.key==='Enter')$('#jGo').click()};
+$('#sSubmit').onclick=submitS;
+['#inW','#inN','#inD'].forEach(function(id){
+ $(id).onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();submitS()}}});
+$('#sNext').onclick=function(){ME.round++;renderS()};
+$('#nNext').onclick=function(){ME.round++;renderS()};
+$('#nPrev').onclick=function(){if(ME.round>1){ME.round--;renderS()}};
+$('#sRevive').onclick=function(){ME.alive=true;badge();$('#sRevive').hidden=true;saveMe();beep(880,'triangle',.3,.16)};
+
 /* init */
 segs($('#timeSeg'),[['20초',20],['30초',30],['40초',40],['60초',60],['무제한',0]],40,
  function(v){S.dur=v;if(S.phase==='ask')resetTimer()});
 segs($('#sndSeg'),[['켜기',1],['끄기',0]],1,function(v){sndOn=!!v;if(v){ac();beep(880,'sine',.12,.12)}});
-segs($('#lvSeg'),[['전체',0],['~4차시',1],['~5차시',2],['~7차시',3]],0,function(v){levelCap=v});
+segs($('#lvSeg'),[['전체',0],['~4차시',1],['~5차시',2],['~7차시',3]],0,setLevel);
 loadRoster();drawLobby();
+function checkHash(){
+ var h=(location.hash||'').replace('#','').trim();
+ if(/^\d{4}$/.test(h)&&!document.body.classList.contains('student'))openStudent(h);}
+addEventListener('hashchange',checkHash);
+checkHash();
 })();
 </script>
 </body>
