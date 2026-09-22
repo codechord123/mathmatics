@@ -263,6 +263,57 @@ body.student #sapp{display:block}
 .sfoot .sbtn{margin-top:0}
 .sstat{text-align:center;font-size:15px;color:rgba(255,255,255,.45);font-weight:700;margin-top:16px}
 #sapp .fr{font-size:.74em;vertical-align:middle;position:relative;top:-.04em}
+
+/* ---- 등수 화면 (칠판) ---- */
+.rkhead{text-align:center;margin-bottom:16px}
+.rkinfo{font-size:22px;font-weight:700;color:rgba(255,255,255,.6);margin-top:4px}
+.rkinfo b{color:#ffd24a}
+.rkbody{display:grid;grid-template-columns:480px 1fr;gap:26px;height:642px}
+.rkleft{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:22px;padding:22px 24px}
+.rkright{background:rgba(0,0,0,.22);border:2px solid rgba(255,255,255,.10);border-radius:22px;padding:18px 20px;display:flex;flex-direction:column}
+.slab2{font-size:20px;font-weight:800;color:rgba(255,255,255,.6);margin-bottom:6px}
+.rkin{width:100%;font:inherit;font-size:28px;font-weight:800;padding:12px 16px;border-radius:14px;
+ border:2px solid rgba(255,255,255,.25);background:rgba(0,0,0,.3);color:#fff;outline:none}
+.rkin:focus{border-color:#ffd24a;background:rgba(0,0,0,.45)}
+.rkin.big{font-size:48px;text-align:center;letter-spacing:.32em;padding:10px 0 10px .32em}
+.rkin::placeholder{color:rgba(255,255,255,.3)}
+.rkchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;max-height:112px;overflow:auto}
+.rkchip{padding:6px 12px;border-radius:999px;font-size:17px;font-weight:800;cursor:pointer;
+ background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18)}
+.rkchip:hover{background:#ffd24a;color:#3a2500}
+.rkprev{height:32px;font-size:23px;font-weight:800;color:#8ff0bb;margin:8px 0 4px;text-align:center}
+.rkprev.bad{color:#ffb3b3}
+.rkcnt{font-size:23px;font-weight:800;color:rgba(255,255,255,.7);margin-bottom:10px}
+.rkcnt b{font-size:34px;color:#ffd24a}
+.rklist{flex:1;overflow:auto;display:flex;flex-direction:column;gap:7px}
+.rkrow{display:grid;grid-template-columns:76px 1fr 130px 150px;align-items:center;gap:10px;
+ padding:10px 16px;border-radius:14px;background:rgba(255,255,255,.07);
+ border:2px solid rgba(255,255,255,.10);animation:pop .3s ease both}
+.rkrow .pos{font-size:28px;font-weight:900;color:rgba(255,255,255,.55);text-align:center}
+.rkrow .who{font-size:27px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rkrow .sc{font-size:24px;font-weight:800;color:#8ff0bb;text-align:right}
+.rkrow .tm{font-size:24px;font-weight:800;color:#b9dcff;text-align:right}
+.rkrow.m1{background:linear-gradient(90deg,rgba(255,210,74,.3),rgba(255,210,74,.09));border-color:#ffd24a}
+.rkrow.m2{background:linear-gradient(90deg,rgba(214,224,240,.24),rgba(214,224,240,.06));border-color:#cfd9ea}
+.rkrow.m3{background:linear-gradient(90deg,rgba(226,148,84,.24),rgba(226,148,84,.06));border-color:#e29454}
+.rkrow.m1 .pos,.rkrow.m2 .pos,.rkrow.m3 .pos{font-size:32px;color:#fff}
+.rkhelp{margin-top:18px;font-size:17px;line-height:1.75;color:rgba(255,255,255,.45);font-weight:700}
+.rkhelp b{color:#ffd24a}
+.rkempty{color:rgba(255,255,255,.35);font-size:21px;font-weight:700;text-align:center;margin-top:40px;line-height:1.7}
+
+/* ---- 학생 결과 화면 ---- */
+.rescard{background:rgba(255,255,255,.07);border:2px solid rgba(255,210,74,.35);
+ border-radius:20px;padding:22px 18px;text-align:center}
+.rname{font-size:26px;font-weight:900;color:#ffd24a;margin-bottom:14px}
+.rstats{display:flex;gap:12px;margin-bottom:18px}
+.rstats>div{flex:1;background:rgba(0,0,0,.26);border-radius:14px;padding:12px 8px}
+.rstats .rk{display:block;font-size:15px;font-weight:800;color:rgba(255,255,255,.5);margin-bottom:4px}
+.rstats b{font-size:32px;font-weight:900}
+.codelab{font-size:16px;font-weight:800;color:rgba(255,255,255,.55);letter-spacing:.08em}
+.codebig{font-size:66px;font-weight:900;letter-spacing:.18em;line-height:1.25;
+ background:linear-gradient(180deg,#fff7d6,#ffd24a 55%,#e79b00);
+ -webkit-background-clip:text;background-clip:text;color:transparent}
+.restime{font-size:15px;font-weight:800;color:rgba(255,255,255,.5);margin-top:6px}
 </style>
 </head>
 <body>
@@ -297,8 +348,9 @@ body.student #sapp{display:block}
           <div class="rlink" id="roomLink"></div>
         </div>
       </div>
-      <p class="rnote">📱 아이들은 <b>QR을 찍거나 링크</b>로 들어와 <b>방 번호</b>를 입력하면
-        이 화면과 <b>똑같은 문제</b>가 자기 기기에 나옵니다.</p>
+      <p class="rnote">📱 아이들은 <b>QR·링크</b>로 들어와 <b>이름</b>과 <b>방 번호</b>를 쓰면 이 화면과
+        <b>똑같은 문제</b>가 자기 기기에 나오고, 답은 <b>자동으로 채점</b>됩니다.
+        끝나면 아이 화면의 <b>4자리 번호</b>를 받아 적어 <b>🏆 등수</b>를 매기세요.</p>
       <p class="rwarn" id="rwarn">아이들이 들어오려면 처음 한 번, 오른쪽 위 <b>공유</b>에서
         <b>“링크가 있는 모든 사용자”</b>로 바꿔 주세요.</p>
       <div class="opt"><span class="ol">제한 시간</span><div class="segs" id="timeSeg"></div></div>
@@ -324,6 +376,7 @@ body.student #sapp{display:block}
     </div>
   </div>
   <button class="start" id="startBtn">골든벨 시작 ▶</button>
+  <button class="btn ghost" id="rankBtn2" style="position:absolute;right:44px;bottom:36px">🏆 등수</button>
 </section>
 
 <section class="scr" id="scQuiz">
@@ -370,6 +423,36 @@ body.student #sapp{display:block}
   </div>
 </section>
 
+<section class="scr" id="scRank">
+  <div class="rkhead">
+    <h1 class="ttl" style="font-size:52px">🏆 등 수</h1>
+    <div class="rkinfo">아이들 화면에 뜬 <b>4자리 결과 번호</b>를 받아 적으면 등수가 매겨집니다</div>
+  </div>
+  <div class="rkbody">
+    <div class="rkleft">
+      <div class="slab2">이름</div>
+      <input id="rkName" class="rkin" maxlength="10" placeholder="이름" autocomplete="off">
+      <div class="rkchips" id="rkChips"></div>
+      <div class="slab2" style="margin-top:16px">결과 번호</div>
+      <input id="rkCode" class="rkin big" inputmode="numeric" maxlength="4" placeholder="0000">
+      <div class="rkprev" id="rkPrev">&nbsp;</div>
+      <button class="btn gold wide" id="rkAdd">등록 ▶</button>
+      <div class="serr" id="rkErr"></div>
+      <p class="rkhelp">이름을 쓰고 <b>Enter</b> → 번호를 쓰고 <b>Enter</b> 면 바로 등록됩니다.<br>
+        같은 이름을 다시 넣으면 결과가 바뀝니다.<br>
+        등수는 <b>맞힌 개수</b>가 먼저, 같으면 <b>빨리 푼 사람</b>이 위입니다.</p>
+    </div>
+    <div class="rkright">
+      <div class="rkcnt"><b id="rkN">0</b>명 등록</div>
+      <div class="rklist" id="rkList"></div>
+    </div>
+  </div>
+  <div class="qctrl">
+    <button class="btn ghost danger" id="rkClear">결과 지우기</button>
+    <button class="btn ghost" id="rkBack">◀ 돌아가기</button>
+  </div>
+</section>
+
 <section class="scr" id="scEnd">
   <div class="bellwrap"><div class="bigbell">🔔</div></div>
   <h1 class="ttl" id="endTtl">골든벨을 울렸습니다!</h1>
@@ -377,7 +460,8 @@ body.student #sapp{display:block}
   <div class="ranklab" id="ranklab">오늘 맞힌 문제 수</div>
   <div class="rank" id="rank"></div>
   <div class="qctrl">
-    <button class="btn gold" id="againBtn">다시 하기</button>
+    <button class="btn gold" id="rankBtn">🏆 등수 매기기</button>
+    <button class="btn ghost" id="againBtn">다시 하기</button>
     <button class="btn ghost" id="lobbyBtn">입장 화면으로</button>
   </div>
 </section>
@@ -423,6 +507,22 @@ body.student #sapp{display:block}
         <button class="sbtn" id="sNext">다음 문제 ▶</button>
       </div>
       <div class="sstat" id="sStat"></div>
+      <button class="sbtn ghost" id="sResult" style="margin-top:14px">🏁 내 결과 보기</button>
+    </section>
+
+    <section id="stResult" hidden>
+      <div class="shd"><div class="b">🏁</div><h1>내 결과</h1><p id="rRoom"></p></div>
+      <div class="rescard">
+        <div class="rname" id="rName"></div>
+        <div class="rstats">
+          <div><span class="rk">맞힌 문제</span><b id="rCorrect">0</b></div>
+          <div><span class="rk">걸린 시간</span><b id="rTime">0초</b></div>
+        </div>
+        <div class="codelab">선생님께 보여 주세요</div>
+        <div class="codebig" id="rCode">0000</div>
+        <div class="restime">이 번호에 맞힌 개수와 걸린 시간이 들어 있어요</div>
+      </div>
+      <button class="sbtn" id="rBack">문제로 돌아가기</button>
     </section>
   </div>
 </div>
@@ -760,6 +860,82 @@ var S={players:[],round:0,q:null,phase:'role',dur:40,left:40,run:false,
 function alive(){return S.players.filter(function(p){return p.alive})}
 function dead(){return S.players.filter(function(p){return !p.alive})}
 
+/* ---------- 결과 번호 ----------
+   4자리: 맞힌 개수(0~19) × 500 + 걸린 시간 ÷ 2 (0~499, 즉 0~998초) */
+function encodeResult(correct,time){
+ var c=Math.max(0,Math.min(19,correct|0));
+ var t=Math.max(0,Math.min(499,Math.round(time/2)));
+ var v=String(c*500+t);
+ while(v.length<4)v='0'+v;
+ return v}
+function decodeResult(code){
+ if(!/^\d{4}$/.test(code))return null;
+ var p=+code;
+ return {correct:Math.floor(p/500),time:(p%500)*2}}
+function hms(t){
+ var m=Math.floor(t/60),ss=t%60;
+ return m?(m+'분 '+ss+'초'):(ss+'초')}
+
+/* ---------- 등수판 (칠판) ---------- */
+var RANK=[];
+function saveRank(){try{localStorage.setItem('gb_rank',JSON.stringify(RANK))}catch(e){}}
+function loadRank(){try{var v=JSON.parse(localStorage.getItem('gb_rank')||'[]');
+ if(v&&v.length)RANK=v}catch(e){}}
+function rankSort(){RANK.sort(function(a,b){
+ return (b.correct-a.correct)||(a.time-b.time)||a.name.localeCompare(b.name)})}
+function drawRank(){
+ rankSort();
+ var L=$('#rkList');L.innerHTML='';
+ $('#rkN').textContent=RANK.length;
+ if(!RANK.length){
+  var e=document.createElement('div');e.className='rkempty';
+  e.textContent='아직 등록된 결과가 없어요.\n아이들 화면의 「🏁 내 결과」에 있는 4자리 번호를 받아 적으세요.';
+  e.style.whiteSpace='pre-line';L.appendChild(e);}
+ else RANK.forEach(function(r,i){
+  var row=document.createElement('div');
+  row.className='rkrow'+(i<3?' m'+(i+1):'');
+  row.style.animationDelay=Math.min(i*.02,.2)+'s';
+  var pos=document.createElement('div');pos.className='pos';
+  pos.textContent=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'위';
+  var who=document.createElement('div');who.className='who';who.textContent=r.name;
+  var sc=document.createElement('div');sc.className='sc';sc.textContent=r.correct+'개';
+  var tm=document.createElement('div');tm.className='tm';tm.textContent=hms(r.time);
+  row.appendChild(pos);row.appendChild(who);row.appendChild(sc);row.appendChild(tm);
+  L.appendChild(row)});
+ // 아직 등록 안 한 명단 이름들
+ var C=$('#rkChips');C.innerHTML='';
+ var done={};RANK.forEach(function(r){done[r.name]=1});
+ S.players.forEach(function(p){
+  if(done[p.name])return;
+  var b=document.createElement('div');b.className='rkchip';b.textContent=p.em+' '+p.name;
+  b.onclick=function(){$('#rkName').value=p.name;$('#rkCode').focus()};
+  C.appendChild(b)});
+ saveRank();}
+
+function openRank(){S.phase='rank';drawRank();show('scRank');
+ $('#rkErr').textContent='';$('#rkPrev').innerHTML='&nbsp;';
+ setTimeout(function(){$('#rkName').focus()},60)}
+
+function rkPreview(){
+ var d=decodeResult(($('#rkCode').value||'').trim());
+ var el=$('#rkPrev');
+ if(!d){el.innerHTML='&nbsp;';el.className='rkprev';return}
+ el.className='rkprev';
+ el.textContent='→ '+d.correct+'개 · '+hms(d.time);}
+
+function rkAdd(){
+ var name=($('#rkName').value||'').trim();
+ var code=($('#rkCode').value||'').trim();
+ var d=decodeResult(code);
+ if(!name){$('#rkErr').textContent='이름을 써 주세요';$('#rkName').focus();return}
+ if(!d){$('#rkErr').textContent='결과 번호 4자리를 확인해 주세요';$('#rkCode').focus();return}
+ $('#rkErr').textContent='';
+ RANK=RANK.filter(function(r){return r.name!==name});
+ RANK.push({name:name,correct:d.correct,time:d.time});
+ $('#rkName').value='';$('#rkCode').value='';$('#rkPrev').innerHTML='&nbsp;';
+ drawRank();beep(880,'triangle',.16,.14);
+ $('#rkName').focus();}
+
 /* ---------- 방 번호 · QR ---------- */
 function baseUrl(){return location.href.split('#')[0]}
 function newCode(){S.code=(100+Math.floor(Math.random()*900))*10+levelCap;drawRoom()}
@@ -810,7 +986,7 @@ function segs(host,items,cur,cb){
 
 /* ---------- screens ---------- */
 function show(id){
- ['scRole','scLobby','scQuiz','scScore','scEnd'].forEach(function(s){
+ ['scRole','scLobby','scQuiz','scScore','scRank','scEnd'].forEach(function(s){
   $('#'+s).classList.toggle('on',s===id)})}
 
 function toast(msg){
@@ -1030,6 +1206,14 @@ $('#tBtn').onclick=toggleTimer;
 $('#revBtn').onclick=reveal;
 $('#scoreBtn').onclick=function(){if(S.players.length===0)nextQuestion(false);else openScore()};
 $('#bellBtn').onclick=function(){S.final=true;endGame()};
+$('#rankBtn').onclick=openRank;
+$('#rankBtn2').onclick=openRank;
+$('#rkAdd').onclick=rkAdd;
+$('#rkCode').oninput=rkPreview;
+$('#rkName').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();$('#rkCode').focus()}};
+$('#rkCode').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();rkAdd()}};
+$('#rkClear').onclick=function(){if(confirm('등록한 결과를 모두 지울까요?')){RANK=[];drawRank()}};
+$('#rkBack').onclick=function(){show(S.round>0?'scEnd':'scLobby')};
 $('#skipBtn').onclick=function(){S.round--;nextQuestion(S.final)};
 $('#allO').onclick=function(){var l=S.revive?dead():alive();
  l.forEach(function(p){S.marks[p.id]='o'});drawScore(l)};
@@ -1056,9 +1240,10 @@ document.addEventListener('keydown',function(e){
 
 
 /* ================= 학생 화면 ================= */
-var ME={code:0,name:'',round:1,alive:true,correct:0,q:null,answered:false};
+var ME={code:0,name:'',round:1,alive:true,correct:0,time:0,done:0,q:null,answered:false,qStart:0};
 function saveMe(){try{localStorage.setItem('gb_me',JSON.stringify(
- {code:ME.code,name:ME.name,round:ME.round,alive:ME.alive,correct:ME.correct}))}catch(e){}}
+ {code:ME.code,name:ME.name,round:ME.round,alive:ME.alive,correct:ME.correct,
+  time:ME.time,done:ME.done}))}catch(e){}}
 
 function openStudent(code){
  document.body.classList.add('student');
@@ -1098,7 +1283,8 @@ function renderS(){
  $('#inW').value='';$('#inN').value='';$('#inD').value='';
  $('#sAnsWrap').hidden=false;$('#sRes').innerHTML='';$('#sFoot').hidden=true;
  $('#sRevive').hidden=true;
- $('#sStat').textContent=ME.name+' · 맞힌 문제 '+ME.correct+'개';
+ $('#sStat').textContent=ME.name+' · 맞힌 문제 '+ME.correct+'개 · '+hms(ME.time);
+ ME.qStart=Date.now();
  badge();saveMe();
  try{window.scrollTo(0,0)}catch(e){}}
 
@@ -1107,6 +1293,8 @@ function submitS(){
  var v=readAns();
  if(!v){$('#sRes').innerHTML='<div class="anshint" style="color:#ffb3b3;font-size:16px">답을 다시 확인해 주세요</div>';return}
  ME.answered=true;
+ var dt=Math.max(1,Math.min(180,Math.round((Date.now()-ME.qStart)/1000)));
+ ME.time+=dt;ME.done++;
  var a=ME.q.ans,ok=(v[0]*a[1]===a[0]*v[1]);
  if(ok){ME.correct++;dingdong()}else{ME.alive=false;buzz()}
  var box=document.createElement('div');
@@ -1115,11 +1303,12 @@ function submitS(){
  var ra=document.createElement('div');ra.className='ra';ra.innerHTML=md(fmt(a[0],a[1]));
  var rh=document.createElement('div');rh.className='rh';
  rh.innerHTML=ME.q.how.filter(function(x){return x}).map(function(l){return md(l)}).join('<br>');
- box.appendChild(rt);box.appendChild(ra);box.appendChild(rh);
+ var rtm=document.createElement('div');rtm.className='restime';rtm.textContent='⏱ '+dt+'초 걸렸어요';
+ box.appendChild(rt);box.appendChild(ra);box.appendChild(rh);box.appendChild(rtm);
  $('#sRes').innerHTML='';$('#sRes').appendChild(box);
  $('#sAnsWrap').hidden=true;$('#sFoot').hidden=false;
  $('#sRevive').hidden=ME.alive;
- $('#sStat').textContent=ME.name+' · 맞힌 문제 '+ME.correct+'개';
+ $('#sStat').textContent=ME.name+' · 맞힌 문제 '+ME.correct+'개 · '+hms(ME.time);
  badge();saveMe();}
 
 $('#jGo').onclick=function(){
@@ -1129,8 +1318,9 @@ $('#jGo').onclick=function(){
  var fresh=(+c)!==ME.code;
  ME.code=+c;ME.name=($('#jName').value||'').trim()||'나';
  var saved=null;try{saved=JSON.parse(localStorage.getItem('gb_me')||'null')}catch(e){}
- if(saved&&saved.code===ME.code){ME.round=saved.round||1;ME.alive=saved.alive!==false;ME.correct=saved.correct||0}
- else{ME.round=1;ME.alive=true;ME.correct=0}
+ if(saved&&saved.code===ME.code){ME.round=saved.round||1;ME.alive=saved.alive!==false;
+  ME.correct=saved.correct||0;ME.time=saved.time||0;ME.done=saved.done||0}
+ else{ME.round=1;ME.alive=true;ME.correct=0;ME.time=0;ME.done=0}
  ac();
  $('#stJoin').hidden=true;$('#stPlay').hidden=false;
  renderS();};
@@ -1142,6 +1332,17 @@ $('#sSubmit').onclick=submitS;
 $('#sNext').onclick=function(){ME.round++;renderS()};
 $('#nNext').onclick=function(){ME.round++;renderS()};
 $('#nPrev').onclick=function(){if(ME.round>1){ME.round--;renderS()}};
+$('#sResult').onclick=function(){
+ $('#rRoom').textContent='방 '+ME.code;
+ $('#rName').textContent=ME.name;
+ $('#rCorrect').textContent=ME.correct+'개';
+ $('#rTime').textContent=hms(ME.time);
+ $('#rCode').textContent=encodeResult(ME.correct,ME.time);
+ $('#stPlay').hidden=true;$('#stResult').hidden=false;
+ try{window.scrollTo(0,0)}catch(e){}};
+$('#rBack').onclick=function(){
+ $('#stResult').hidden=true;$('#stPlay').hidden=false;
+ ME.qStart=Date.now()};
 $('#sRevive').onclick=function(){ME.alive=true;badge();$('#sRevive').hidden=true;saveMe();beep(880,'triangle',.3,.16)};
 
 /* init */
@@ -1149,7 +1350,7 @@ segs($('#timeSeg'),[['20초',20],['30초',30],['40초',40],['60초',60],['무제
  function(v){S.dur=v;if(S.phase==='ask')resetTimer()});
 segs($('#sndSeg'),[['켜기',1],['끄기',0]],1,function(v){sndOn=!!v;if(v){ac();beep(880,'sine',.12,.12)}});
 segs($('#lvSeg'),[['전체',0],['~4차시',1],['~5차시',2],['~7차시',3]],0,setLevel);
-loadRoster();drawLobby();
+loadRoster();loadRank();drawLobby();
 function checkHash(){
  var h=(location.hash||'').replace('#','').trim();
  if(/^\d{4}$/.test(h)&&!document.body.classList.contains('student'))openStudent(h);}
